@@ -14,7 +14,7 @@ class EmployeeModel(models.Model):
         if self.baseinfo:
             return self.baseinfo.name
         else:
-            return self.pk    
+            return 'unnamed employee'
 
 class BasicInfo(models.Model):
     name = models.CharField(_('name'), max_length=50, blank=True)
