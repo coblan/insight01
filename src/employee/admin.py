@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
-from helpers.director.shortcut import FormPage,TablePage,ModelFields,ModelTable,page_dc
+from helpers.director.shortcut import FormPage,TablePage,ModelFields,ModelTable,page_dc,model_dc,permit_list
 
 from django.contrib import admin
 from .models import EmployeeModel,BasicInfo
@@ -31,7 +31,7 @@ class EmployeeFormPage(FormPage):
         self.pk=request.GET.get('pk')
         
         if self.pk:
-            emp = EmployeeModel.objects.get(self.pk)
+            emp = EmployeeModel.objects.get(pk=self.pk)
         else:
             emp=EmployeeModel()
             
@@ -44,8 +44,12 @@ class EmployeeFormPage(FormPage):
                 'employee':empf.get_context(),
                 'baseinfo':basf.get_context(),
             },
+            'delset':['employee','baseinfo'],
             'namelist':[{'label':'账户信息','fields':['employee.user']},
-                        {'label':'基本信息','fields':['baseinfo.name','baseinfo.age']}]
+                        {'label':'基本信息','fields':['baseinfo.name','baseinfo.age']}],
+            'save_step':[{'save':'baseinfo'},
+                        {'assign':'baseinfo','obj':'employee','value':'baseinfo'},
+                        {'save':'employee'},]
         }
         
         
@@ -56,7 +60,13 @@ class EmployeeTable(ModelTable):
 
 class EmployeeTablePage(TablePage):
     tableCls=EmployeeTable
-        
+ 
+model_dc[BasicInfo]={'fields':BasicInfoFields}
+model_dc[EmployeeModel]={'fields':EmployeeFields}
+
+permit_list.append(EmployeeModel)
+permit_list.append(BasicInfo)
+
 page_dc.update({
     'employee':EmployeeTablePage,
     'employee.edit':EmployeeFormPage
