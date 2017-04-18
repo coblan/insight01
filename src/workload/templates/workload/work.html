@@ -1,0 +1,104 @@
+{% extends "director/index.html" %}
+{% load static %}
+{% load jsonify %}
+
+{% block page_content %}
+<script src='{% static "js/table.pack.js" %}'></script>
+<script type="text/javascript">
+
+    //	row_filters=
+    //	placeholder =
+    //	row_sort=
+    //	heads=
+    //	rows=
+    //	row_pages =
+
+    //	can_add=
+    //	can_del=
+    //	search_args=ex.parseSearch()
+    //	search字段从 search_args._q 来取值
+    $(function () {
+        table=new Vue({
+            el:'#there',
+            data:{
+//		        heads:heads,
+//		        rows:rows,
+//		        row_filters:row_filters,
+//		        row_sort:row_sort,
+//		        row_pages:row_pages,
+//		        placeholder:placeholder,
+//		        selected:[],
+//		        del_info:[],
+//		        menu:menu,
+//		        can_add:can_add,
+//		        can_del:can_del,
+//		        model:model,
+//		        search_args:search_args,
+//		        ex:ex,
+            },
+            mixins:[table_fun],
+            watch:{
+                'row_sort.sort_str':function (v) {
+                    this.search_args._sort=v
+                    this.search()
+                }
+            },
+            methods:{
+                create_root:function(){
+                    var post_data=[{fun:'create_root_index'}]
+                    ex.post(ajax_url,JSON.stringify(post_data),function(resp){
+                        alert(resp)
+                    })
+                }
+
+            },
+
+        })
+    })
+
+</script>
+<div id='there'>
+    <path-nav :menu='menu' v-if="!search_args._pop"></path-nav>
+    <div class='btn-panel flex flex-sb' style="padding-left:20px; ">
+
+        <!--<div v-if="row_filters.length==0" class="flex-grow"></div>-->
+        <com-filter class="flex" :heads="row_filters" :search="search_args"
+                    :search_tip='search_tip' @submit="search()"></com-filter>
+
+
+
+        <!--<div class='btn-group' style='float: right;' v-if="!search_args._pop">-->
+        <!--<a type="button" class="btn btn-success btn-sm" :href='add_new()' v-if='can_add' role="button">创建</a>-->
+        <!--<button type="button" class="btn btn-danger btn-sm" @click='del_item()' v-if='can_del'>删除</button>-->
+        <!--</div>-->
+
+    </div>
+
+    <div class="flex">
+        <div class="index">
+            <button @click="create_root()">添加根目录</button>
+            <button>添目录</button>
+        </div>
+        <div>
+            <com-table-btn v-if="!search_args._pop" :add_new="add_new" :del_item="del_item"></com-table-btn>
+            <com-table class='table fake-suit' :has_check="!search_args._pop" :map="map"
+                       :row_sort="row_sort" :heads="heads" :rows="rows" v-model="selected"></com-table>
+
+
+
+            <paginator :nums='row_pages.options' :crt='row_pages.crt_page' @goto_page='goto_page($event)'></paginator>
+        </div>
+    </div>
+
+
+
+</div>
+<style type="text/css" media="screen" id="test">
+.index{
+    background-color: white;
+}
+
+</style>
+{% block extra %}
+{% endblock %}
+{% endblock %}

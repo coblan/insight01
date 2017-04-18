@@ -4,6 +4,7 @@ from helpers.director.engine import BaseEngine,can_list,can_touch,fa,page
 from helpers.director.shortcut import page_dc
 from django.contrib.auth.models import User,Group
 from employee.models import EmployeeModel,BasicInfo
+from workload.models import Work,WorkRecord
 
 
 class PcEngine(BaseEngine):
@@ -21,11 +22,11 @@ class PcEngine(BaseEngine):
              {'label':'员工名册','url':page('employee'),'visible':can_touch(EmployeeModel)},
              #{'label':'工资记录','url':page('salary'),'visible':can_touch(SalaryRecords)},
              ]},
-        #{'label':'工作量统计','icon':fa('fa-users'),'visible':can_list((TaskModel,WorkModel)),
-         #'submenu':[{'label':'任务','url': page('task'),'visible':can_touch(TaskModel)},
-                    #{'label':'工作','url':page('workloads'),'visible':can_touch(WorkModel)}
-                    #]
-         #},
+        {'label':'工作管理','icon':fa('fa-users'),'visible':can_list((Work,WorkRecord)),
+         'submenu':[{'label':'工作类型','url': page('work'),'visible':can_touch(Work)},
+                    {'label':'工作记录','url':page('workrecord'),'visible':can_touch(WorkRecord)}
+                    ]
+         },
         #{'label':'Page Admin','url':page('webpage'),'icon':fa('fa-home'),'visible':can_touch(WebPage)},
     
     ]    

@@ -18,9 +18,11 @@ from django.conf.urls import url,include
 from django.contrib import admin
 from hello.engine import PcEngine
 from helpers.director import urls as director_urls
+from helpers.director import login_url
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'pc/([\w\.]+)/?$',PcEngine.as_view(),name=PcEngine.url_name),
-    url(r'^accounts/',include(director_urls)),
+    url(r'^accounts/',include(login_url)),
+    url(r'^d/',include(director_urls)),
 ]

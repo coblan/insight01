@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 
 from helpers.director.shortcut import FormPage,TablePage,ModelFields,ModelTable,page_dc,model_dc,permit_list
-
+from helpers.director.db_tools import to_dict
 from django.contrib import admin
 from .models import EmployeeModel,BasicInfo
 
@@ -57,6 +57,12 @@ class EmployeeFormPage(FormPage):
 
 class EmployeeTable(ModelTable):
     model=EmployeeModel
+    
+    def get_rows(self):
+        """
+        """
+        query=self.get_query()
+        return [to_dict(x, include=self.permited_fields(),filt_attr=lambda row:{'user':unicode(row)}) for x in query]     
 
 class EmployeeTablePage(TablePage):
     tableCls=EmployeeTable
