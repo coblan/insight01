@@ -8,7 +8,7 @@ from employee.models import EmployeeModel
 # Create your models here.
 
 class Index(models.Model):
-    name=models.CharField('name',max_length=500,blank=True)
+    name=models.CharField('name',max_length=500,default='new index')
     par = models.ForeignKey('self',verbose_name='parent dir',blank=True,null=True,related_name='childs')
     
 

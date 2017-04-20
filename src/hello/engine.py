@@ -23,7 +23,8 @@ class PcEngine(BaseEngine):
              #{'label':'工资记录','url':page('salary'),'visible':can_touch(SalaryRecords)},
              ]},
         {'label':'工作管理','icon':fa('fa-users'),'visible':can_list((Work,WorkRecord)),
-         'submenu':[{'label':'工作类型','url': page('work'),'visible':can_touch(Work)},
+         'submenu':[{'label':'工时目录','url': page('workindex'),'visible':can_touch(Work)},
+                    {'label':'工作类型','url': page('work'),'visible':can_touch(Work)},
                     {'label':'工作记录','url':page('workrecord'),'visible':can_touch(WorkRecord)}
                     ]
          },

@@ -18,6 +18,10 @@
     //	can_del=
     //	search_args=ex.parseSearch()
     //	search字段从 search_args._q 来取值
+
+    item_heads=heads
+    dir_heads={{ dir_heads | jsonify }}
+
     $(function () {
         table=new Vue({
             el:'#there',
@@ -29,43 +33,123 @@
                 crt_view:'',
                 crt_name:'',
                 selected:[],
+                cut_list:[],
             },
-            mixins:[table_fun],
-            watch:{
-                'row_sort.sort_str':function (v) {
-                    this.search_args._sort=v
-                    this.search()
-                }
-            },
+            mixins:[field_fun],
+//            watch:{
+//                'row_sort.sort_str':function (v) {
+//                    this.search_args._sort=v
+//                    this.search()
+//                }
+//            },
             mounted:function(){
                 this.dir_data()
+                this.kw={}
             },
             computed:{
                 par_pk:function(){
                     if(this.par){return this.par.pk}
                     else{return null}
                 },
-                can_rename:function(){
-                    
+                can_cut:function(){
+                    if(this.selected.length>0 ){
+                        return true
+                    }
+                },
+                can_paste:function(){
+                    return this.cut_list.length>0
                 }
+
             },
             methods:{
+                cut:function(){
+                    this.cut_list=this.selected.slice()
+                },
+                paste:function(){
+                    var self=this
+                    var post_data=[{fun:'items_paste',rows:this.cut_list,par:this.par_pk}]
+                    self.cut_list=[]
+                    ex.post(ajax_url,JSON.stringify(post_data),function(resp){
+                        self.dir_data(self.par)
+                    })
+                },
+                get_dir_pk:function(dir){
+                    if(dir){return dir.pk}
+                    else{return null}
+                },
                 dir_data:function(par){
                     var self=this
-                    this.par=par
-                    var post_data=[{fun:'dir_data',par:this.par_pk,}]
-                    ex.post(ajax_url,JSON.stringify(post_data),function(resp){
+                    if(par){
+                        var kw={
+                            heads:dir_heads,
+                            row:par,
+
+                        }
+                        this.kw=kw
+                    }
+                    this.selected=[]
+                    show_upload()
+                    var url=ajax_url+ex.template('?_op=dir_data:par:{par}',{par:this.get_dir_pk(par)})
+                    ex.get(url,function(resp){
                         self.dirs=resp.dir_data.dirs
+                        self.items=resp.dir_data.items
                         self.parents=resp.dir_data.parents
+                        self.par=par
+                        hide_upload(200)
                     })
                 },
                 dir_create:function(){
                     var self=this
-                    var post_data=[{fun:'dir_create',par:this.par_pk,name:this.crt_name}]
-                    ex.post(ajax_url,JSON.stringify(post_data),function(resp){
+//                    this.crt_view=''
+                    show_upload()
+                    var url=ajax_url+ex.template('?_op=dir_create:par:{par}',{par:this.par_pk})
+                    ex.get(url,function(resp){
                         self.dirs.push(resp.dir_create)
+                        var kw={
+                            heads:dir_heads,
+                            row:resp.dir_create
+                        }
+                        self.kw=kw
+                        hide_upload(200)
                     })
                 },
+                item_create:function(){
+                    var self=this
+                    var url=ajax_url+ex.template('?_op=item_create:par:{par}',{par:this.par_pk})
+                    ex.get(url,function(resp){
+                        var kw={
+                            heads:item_heads,
+                            row:resp.item_create
+                        }
+                        self.kw=kw
+                    })
+
+                },
+                item_del:function(){
+                    var self=this
+                    show_upload()
+                    var post_data=[{fun:'item_del',rows:this.selected}]
+                    ex.post(ajax_url,JSON.stringify(post_data),function(resp){
+                        self.dir_data(self.par)
+                        hide_upload(200)
+                    })
+                },
+                item_save:function(){
+                    var self=this
+                    show_upload()
+                    var post_data=[{fun:'save',row:this.kw.row}]
+                    ex.post('',JSON.stringify(post_data),function(resp){
+//                        alert(resp)
+                        hide_upload(200)
+                    })
+                },
+                swith_item:function(item){
+                    var kw={
+                        heads:item_heads,
+                        row:item,
+                    }
+                    this.kw=kw
+                }
 
             },
 
@@ -74,34 +158,38 @@
 
 </script>
 <div id='there'>
-    <path-nav :menu='menu' v-if="!search_args._pop"></path-nav>
+    <path-nav :menu='menu' ></path-nav>
     <div class='btn-panel flex flex-sb' style="padding-left:20px; ">
 
         <!--<div v-if="row_filters.length==0" class="flex-grow"></div>-->
-        <com-filter class="flex" :heads="row_filters" :search="search_args"
-                    :search_tip='search_tip' @submit="search()"></com-filter>
+        <!--<com-filter class="flex" :heads="row_filters" :search="search_args"-->
+                    <!--:search_tip='search_tip' @submit="search()"></com-filter>-->
 
 
 
     </div>
 
     <div class="flex">
-        <div class="index">
-            <ul>
-                <li><span @click="dir_data()" class="clickable">root</span></li>
-                <li v-for="par in parents"><span v-text="par.name" @click="dir_data(par)" class="clickable"></span></li>
-                <li v-if="par"><span v-text="par.name"></span></li>
-            </ul>
-                <div>
-                    <button @click="crt_view='dir_name_editor'">新建目录</button>
-                    <button>新建项目</button>
-                    <button v-show="can_rename" @click="rename()">重命名</button>
-                </div>
+        <div class="index-panel">
+
+            <ol class="breadcrumb">
+                <li ><a href="javacript:void(0);" @click="dir_data()">root</a></li>
+                <li v-for="dir in parents" ><a href="javacript:void(0);" v-text="dir.name" @click="dir_data(dir)" ></a></li>
+                <li v-if="par"><a href="javacript:void(0);" v-text="par.name" class="active"></a></li>
+            </ol>
+
+
                 <div>
                     <ul>
                         <li v-for="dir in dirs">
-                            <input type="checkbox" v-model="selected"/>
+                            <input type="checkbox" :value="dir" v-model="selected"/>
+                            <i class="fa fa-folder" aria-hidden="true"></i>
                             <span v-text="dir.name" class="clickable" @click="dir_data(dir)"></span>
+                        </li>
+                        <li v-for="item in items">
+                            <input type="checkbox" :value="item" v-model="selected"/>
+                            <i class="fa fa-file-o" aria-hidden="true"></i>
+                            <span v-text="item.name" class="clickable" @click="swith_item(item)"></span>
                         </li>
                     </ul>
                 </div>
@@ -109,98 +197,59 @@
             <!--<com-catalog></com-catalog>-->
 
         </div>
-        <div>
-            <com-table-btn v-if="!search_args._pop" :add_new="add_new" :del_item="del_item"></com-table-btn>
-            <com-table class='table fake-suit' :has_check="!search_args._pop" :map="map"
-                       :row_sort="row_sort" :heads="heads" :rows="rows" v-model="selected"></com-table>
+        <div class="flex-v">
+            <div class="btn-toolbar" role="toolbar" aria-label="...">
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" @click="dir_create()">新建目录</button>
+                    <button type="button" class="btn btn-default" @click="item_create()">新建工时</button>
+                </div>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" :disabled="selected.length==0" @click="item_del()">删除选中项</button>
+                </div>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" :disabled ="!can_cut" @click="cut()">剪切</button>
+                    <button type="button" class="btn btn-default" :disabled ="!can_paste" @click="paste()">粘贴</button>
+                </div>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" @click="item_save()">保存修改</button>
+                </div>
+            </div>
 
 
+            <!--<com-table-btn v-if="!search_args._pop" :add_new="add_new" :del_item="del_item"></com-table-btn>-->
+            <!--<com-table class='table fake-suit' :has_check="!search_args._pop" :map="map"-->
+                       <!--:row_sort="row_sort" :heads="heads" :rows="rows" v-model="selected"></com-table>-->
 
-            <paginator :nums='row_pages.options' :crt='row_pages.crt_page' @goto_page='goto_page($event)'></paginator>
+            <div class='field-panel' v-if="kw.heads">
+
+                <field  v-for='head in kw.heads' :key="head.name" :name='head.name' :kw='kw'></field>
+            </div>
+
+            <!--<paginator :nums='row_pages.options' :crt='row_pages.crt_page' @goto_page='goto_page($event)'></paginator>-->
         </div>
     </div>
 
-<modal v-show="crt_view=='dir_name_editor'" @click.native="crt_view=''">
-    <div style="width: 500px;height: 200px;" @click.stop="">
-        <label for="">名称</label>
-        <input type="text" v-model="crt_name"/>
-        <button @click="dir_create()">确定</button>
-    </div>
+<!--<modal v-show="crt_view=='dir_name_editor'" @click.native="crt_view=''">-->
+    <!--<div style="width: 500px;height: 200px;" @click.stop="">-->
+        <!--<label for="">名称</label>-->
+        <!--<input type="text" v-model="crt_name"/>-->
+        <!--<button @click="dir_create()">确定</button>-->
+    <!--</div>-->
+<!--</modal>-->
 
-</modal>
+
 
 </div>
-<script type="application/javascript">
-    Vue.component('com-catalog',{
-        template:'#com-catalog',
-        props:{
-            /*
-            * {
-            * dir_data:
-            * dir_new:
-            * dir_edit:
-            * remove
-            * move
-            * item_new
-            * item_edit
-            * }
-            * */
-            url:{},
-            dirs:{},
-            com_dir:{
-                default:function(){
-                    return 'com_dir'
-                }
-            }
-        },
-        data:function(){
-            return {
-                par:'',
-                dirs:[],
-                items:[],
-            }
-        },
-        methods:{
-
-            get_data:function(){
-                var self =this
-                var url=ex.appendSearch(this.url,{par:this.par})
-                ex.get(url,function(resp){
-                    self.dirs=resp.dirs
-                    self.items=resp.items
-                })
-            }
-        },
-        component:{
-            com_dir:{
-                props:['dir'],
-                template:'<li><input type="checkbox"/><span v-text="dir.name"></span></li>'
-            }
-        }
-
-    })
-</script>
-<template id="com-catalog">
-<div>
-    <div>
-        <button @click="create_root()">新建目录</button>
-        <button>新建项目</button>
-    </div>
-    <div>
-    <ul>
-        <component v-for="dir in dirs" :is="com_dir" :dir="dir"></component>
-    </ul>
-    </div>
-</div>
-</template>
 
 <style type="text/css" media="screen" id="test">
-.index{
+.index-panel{
     background-color: white;
+    min-width: 300px;
 }
     .clickable:hover{
         cursor: pointer;
     }
+
 
 </style>
 {% block extra %}
