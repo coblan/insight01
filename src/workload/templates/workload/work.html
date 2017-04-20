@@ -22,7 +22,13 @@
         table=new Vue({
             el:'#there',
             data:{
-
+                parents:[],
+                par:'',
+                dirs:[],
+                items:[],
+                crt_view:'',
+                crt_name:'',
+                selected:[],
             },
             mixins:[table_fun],
             watch:{
@@ -31,14 +37,35 @@
                     this.search()
                 }
             },
+            mounted:function(){
+                this.dir_data()
+            },
+            computed:{
+                par_pk:function(){
+                    if(this.par){return this.par.pk}
+                    else{return null}
+                },
+                can_rename:function(){
+                    
+                }
+            },
             methods:{
-                create_dir:function(){
-                    var post_data=[{fun:'create_dir'}]
+                dir_data:function(par){
+                    var self=this
+                    this.par=par
+                    var post_data=[{fun:'dir_data',par:this.par_pk,}]
                     ex.post(ajax_url,JSON.stringify(post_data),function(resp){
-                        alert(resp)
+                        self.dirs=resp.dir_data.dirs
+                        self.parents=resp.dir_data.parents
                     })
                 },
-
+                dir_create:function(){
+                    var self=this
+                    var post_data=[{fun:'dir_create',par:this.par_pk,name:this.crt_name}]
+                    ex.post(ajax_url,JSON.stringify(post_data),function(resp){
+                        self.dirs.push(resp.dir_create)
+                    })
+                },
 
             },
 
@@ -60,7 +87,26 @@
 
     <div class="flex">
         <div class="index">
-            <com-catalog :url=""></com-catalog>
+            <ul>
+                <li><span @click="dir_data()" class="clickable">root</span></li>
+                <li v-for="par in parents"><span v-text="par.name" @click="dir_data(par)" class="clickable"></span></li>
+                <li v-if="par"><span v-text="par.name"></span></li>
+            </ul>
+                <div>
+                    <button @click="crt_view='dir_name_editor'">新建目录</button>
+                    <button>新建项目</button>
+                    <button v-show="can_rename" @click="rename()">重命名</button>
+                </div>
+                <div>
+                    <ul>
+                        <li v-for="dir in dirs">
+                            <input type="checkbox" v-model="selected"/>
+                            <span v-text="dir.name" class="clickable" @click="dir_data(dir)"></span>
+                        </li>
+                    </ul>
+                </div>
+
+            <!--<com-catalog></com-catalog>-->
 
         </div>
         <div>
@@ -74,7 +120,14 @@
         </div>
     </div>
 
+<modal v-show="crt_view=='dir_name_editor'" @click.native="crt_view=''">
+    <div style="width: 500px;height: 200px;" @click.stop="">
+        <label for="">名称</label>
+        <input type="text" v-model="crt_name"/>
+        <button @click="dir_create()">确定</button>
+    </div>
 
+</modal>
 
 </div>
 <script type="application/javascript">
@@ -108,6 +161,7 @@
             }
         },
         methods:{
+
             get_data:function(){
                 var self =this
                 var url=ex.appendSearch(this.url,{par:this.par})
@@ -144,6 +198,9 @@
 .index{
     background-color: white;
 }
+    .clickable:hover{
+        cursor: pointer;
+    }
 
 </style>
 {% block extra %}
