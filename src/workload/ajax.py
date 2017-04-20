@@ -47,7 +47,8 @@ def dir_create(par=None):
 
 def item_create(par):
     par=par or None
-    return to_dict(Work(index_id=par))
+    work = Work.objects.create(index_id=par)
+    return to_dict(work)
 
 def items_paste(rows,par):
     if par:

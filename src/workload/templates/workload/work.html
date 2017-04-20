@@ -19,7 +19,7 @@
     //	search_args=ex.parseSearch()
     //	search字段从 search_args._q 来取值
 
-    item_heads=heads
+    item_heads= heads
     dir_heads={{ dir_heads | jsonify }}
 
     $(function () {
@@ -34,6 +34,7 @@
                 crt_name:'',
                 selected:[],
                 cut_list:[],
+
             },
             mixins:[field_fun],
 //            watch:{
@@ -44,6 +45,7 @@
 //            },
             mounted:function(){
                 this.dir_data()
+//                this.kw={heads:[],row:{}}
                 this.kw={}
             },
             computed:{
@@ -80,22 +82,24 @@
                 dir_data:function(par){
                     var self=this
                     if(par){
-                        var kw={
-                            heads:dir_heads,
-                            row:par,
-
-                        }
-                        this.kw=kw
+                        this.kw.heads=dir_heads
+                        this.kw.row=par
+//                        var kw={
+//                            heads:dir_heads,
+//                            row:par,
+//
+//                        }
+//                        this.kw=kw
                     }
                     this.selected=[]
-                    show_upload()
+
                     var url=ajax_url+ex.template('?_op=dir_data:par:{par}',{par:this.get_dir_pk(par)})
                     ex.get(url,function(resp){
                         self.dirs=resp.dir_data.dirs
                         self.items=resp.dir_data.items
                         self.parents=resp.dir_data.parents
                         self.par=par
-                        hide_upload(200)
+
                     })
                 },
                 dir_create:function(){
@@ -122,33 +126,52 @@
                             row:resp.item_create
                         }
                         self.kw=kw
+                        self.items.push(resp.item_create)
                     })
 
                 },
                 item_del:function(){
                     var self=this
                     show_upload()
-                    var post_data=[{fun:'item_del',rows:this.selected}]
-                    ex.post(ajax_url,JSON.stringify(post_data),function(resp){
-                        self.dir_data(self.par)
-                        hide_upload(200)
+                    var obj={}
+                    ex.each(this.selected,function(item){
+                        if(!obj[item._class]){
+                            obj[item._class]=item.pk
+                        }else{
+                            obj[item._class]+=':'+item.pk
+                        }
                     })
+                    var del_str=''
+                    for(var k in obj){
+                        del_str +=k+':'+obj[k]+','
+                    }
+                    location=engine_url+'/del_rows?rows='+del_str
+
                 },
                 item_save:function(){
                     var self=this
                     show_upload()
                     var post_data=[{fun:'save',row:this.kw.row}]
                     ex.post('',JSON.stringify(post_data),function(resp){
-//                        alert(resp)
+                        if(resp.save.errors){
+                            self.kw.errors=resp.save.errors
+                        }else{
+                            self.kw.errors={}
+                        }
                         hide_upload(200)
                     })
                 },
                 swith_item:function(item){
-                    var kw={
-                        heads:item_heads,
-                        row:item,
-                    }
-                    this.kw=kw
+//                    var kw={
+//                        heads:item_heads,
+//                        row:item,
+//                    }
+//                    this.kw=kw
+//                    this.kw.heads=item_heads
+                    Vue.set(this.kw,'heads',item_heads)
+//                    this.kw.heads=item_heads
+                    Vue.set(this.kw,'row',item)
+//                    this.kw.row=item
                 }
 
             },
@@ -220,7 +243,7 @@
             <!--<com-table class='table fake-suit' :has_check="!search_args._pop" :map="map"-->
                        <!--:row_sort="row_sort" :heads="heads" :rows="rows" v-model="selected"></com-table>-->
 
-            <div class='field-panel' v-if="kw.heads">
+            <div class='field-panel' v-if="kw.heads && kw.heads.length>0">
 
                 <field  v-for='head in kw.heads' :key="head.name" :name='head.name' :kw='kw'></field>
             </div>
