@@ -195,6 +195,7 @@
     <div class="flex">
         <div class="index-panel">
 
+            <!--<com-dir :dirs="dirs" :items="items" :parents="parents" :par="par" :selected="selected" @dir_click="dir_data($event)" @item_click="swith_item($event)"></com-dir>-->
             <ol class="breadcrumb">
                 <li ><a href="javacript:void(0);" @click="dir_data()">root</a></li>
                 <li v-for="dir in parents" ><a href="javacript:void(0);" v-text="dir.name" @click="dir_data(dir)" ></a></li>
@@ -252,17 +253,60 @@
         </div>
     </div>
 
-<!--<modal v-show="crt_view=='dir_name_editor'" @click.native="crt_view=''">-->
-    <!--<div style="width: 500px;height: 200px;" @click.stop="">-->
-        <!--<label for="">名称</label>-->
-        <!--<input type="text" v-model="crt_name"/>-->
-        <!--<button @click="dir_create()">确定</button>-->
-    <!--</div>-->
-<!--</modal>-->
-
-
 
 </div>
+
+<!--<script type="application/javascript">-->
+    <!--Vue.component('com-dir',{-->
+        <!--template:'#com-dir',-->
+        <!--props:['dirs','items','parents','par'],-->
+        <!--data:function(){-->
+          <!--return {-->
+              <!--selected:[]-->
+          <!--}-->
+        <!--},-->
+        <!--watch:{-->
+          <!--selected:function(v){-->
+              <!--this.$emit('select',v)-->
+          <!--}-->
+        <!--},-->
+        <!--methods:{-->
+            <!--dir_click:function(dir){-->
+                <!--this.$emit('dir_click',dir)-->
+            <!--},-->
+            <!--item_click:function(item){-->
+                <!--this.$emit('item_click',item)-->
+            <!--}-->
+        <!--}-->
+
+    <!--})-->
+<!--</script>-->
+
+<!--<template id='com-dir'>-->
+<!--<div>-->
+    <!--<ol class="breadcrumb">-->
+        <!--<li ><a href="javacript:void(0);" @click="dir_click()">root</a></li>-->
+        <!--<li v-for="dir in parents" ><a href="javacript:void(0);" v-text="dir.name" @click="dir_click(dir)" ></a></li>-->
+        <!--<li v-if="par"><a href="javacript:void(0);" v-text="par.name" class="active"></a></li>-->
+    <!--</ol>-->
+
+    <!--<div>-->
+        <!--<ul>-->
+            <!--<li v-for="dir in dirs">-->
+                <!--<input type="checkbox" :value="dir" v-model="selected"/>-->
+                <!--<i class="fa fa-folder" aria-hidden="true"></i>-->
+                <!--<span v-text="dir.name" class="clickable" @click="dir_click(dir)"></span>-->
+            <!--</li>-->
+            <!--<li v-for="item in items">-->
+                <!--<input type="checkbox" :value="item" v-model="selected"/>-->
+                <!--<i class="fa fa-file-o" aria-hidden="true"></i>-->
+                <!--<span v-text="item.name" class="clickable" @click="item_click(item)"></span>-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+
+<!--</div>-->
+<!--</template>-->
 
 <style type="text/css" media="screen" id="test">
 .index-panel{
@@ -273,8 +317,9 @@
         cursor: pointer;
     }
 
-
 </style>
+
+
 {% block extra %}
 {% endblock %}
 {% endblock %}
