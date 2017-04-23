@@ -66,6 +66,12 @@ class EmployeeTable(ModelTable):
 
 class EmployeeTablePage(TablePage):
     tableCls=EmployeeTable
+
+#class EmployeeTablePageWX(EmployeeTablePage):
+    #template='wx/table.html'
+
+class EmployeeFormPageWX(EmployeeFormPage):
+    template='director/fieldset.html'
  
 model_dc[BasicInfo]={'fields':BasicInfoFields}
 model_dc[EmployeeModel]={'fields':EmployeeFields}
@@ -75,5 +81,7 @@ permit_list.append(BasicInfo)
 
 page_dc.update({
     'employee':EmployeeTablePage,
-    'employee.edit':EmployeeFormPage
+    'employee.edit':EmployeeFormPage,
+    'employee.wx':EmployeeTablePage,
+    'employee.wx.edit':EmployeeFormPageWX,
 })

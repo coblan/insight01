@@ -5,6 +5,7 @@ from helpers.director.shortcut import page_dc
 from django.contrib.auth.models import User,Group
 from employee.models import EmployeeModel,BasicInfo
 from workload.models import Work,WorkRecord
+from .pages import WXHome
 
 
 class PcEngine(BaseEngine):
@@ -33,3 +34,20 @@ class PcEngine(BaseEngine):
     ]    
 
 PcEngine.add_pages(page_dc)
+
+class WxEngine(BaseEngine):
+    url_name='wx_engine'
+    prefer='wx'
+    menu=[
+        {'label':'home','url':page('home.wx'),'icon':fa('fa-home fa-2x')},
+        {'label':'员工名册','url':page('employee.wx'),'visible':can_touch(EmployeeModel)},
+        {'label':'工作类型(目录)','url':page('workindex.wx'),'visible':can_touch(EmployeeModel)},
+        {'label':'工作类型','url':page('work.wx'),'visible':can_touch(EmployeeModel)},
+        {'label':'工作记录','url':page('workrecord.wx'),'visible':can_touch(EmployeeModel)},
+        {'label':'自我工作','url':page('wkself.wx'),'visible':can_touch(EmployeeModel)},
+        
+        
+    ]
+
+WxEngine.add_pages(page_dc)
+WxEngine.add_pages({'home.wx':WXHome})

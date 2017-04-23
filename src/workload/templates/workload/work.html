@@ -45,8 +45,8 @@
 //            },
             mounted:function(){
                 this.dir_data()
-//                this.kw={heads:[],row:{}}
-                this.kw={}
+                this.kw={heads:[],row:{}}
+
             },
             computed:{
                 par_pk:function(){
@@ -98,7 +98,10 @@
                         self.dirs=resp.dir_data.dirs
                         self.items=resp.dir_data.items
                         self.parents=resp.dir_data.parents
-                        self.par=par
+                        var par=self.parents.pop()
+                        if(par){
+                            self.par=par
+                        }
 
                     })
                 },
@@ -199,7 +202,7 @@
             <ol class="breadcrumb">
                 <li ><a href="javacript:void(0);" @click="dir_data()">root</a></li>
                 <li v-for="dir in parents" ><a href="javacript:void(0);" v-text="dir.name" @click="dir_data(dir)" ></a></li>
-                <li v-if="par"><a href="javacript:void(0);" v-text="par.name" class="active"></a></li>
+                <li v-if="par"><a href="javacript:;" v-text="par.name" class="active"></a></li>
             </ol>
 
 

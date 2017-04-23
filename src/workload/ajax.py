@@ -23,6 +23,7 @@ def dir_data(par):
     parents=[]
     if par:
         this_dir=Index.objects.get(id=par)
+        parents.append(this_dir)
         while this_dir.par:
             parents.append(this_dir.par)
             this_dir=this_dir.par

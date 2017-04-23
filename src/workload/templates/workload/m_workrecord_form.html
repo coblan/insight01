@@ -1,0 +1,219 @@
+{% extends "wx/base.html" %}
+{% load static %}
+{% load jsonify %}
+
+
+{% block page_content %}
+<script src="{% static 'js/fields_mb.pack.js' %}"></script>
+<script type="text/javascript">
+
+
+
+    ex.each(heads,function(head){
+        if(head.name=='work'){
+            head.type='btn-dir'
+        }
+    })
+//    search_args=ex.parseSearch()
+//    search_args.crt_view = search_args.crt_view || 'main'
+
+//    function handler(state){
+//        form.router(state)
+//    }
+
+    ln.history_handle({
+        init:{crt_view:'main'},
+        handler:function(state){
+            form.router(state)
+        },
+    })
+
+    ln.readCache()
+//    window.addEventListener('popstate', function(e){
+//        if(e.state){
+//            form.router(e.state)
+//        }else{
+//            history.back()
+//        }
+//    },false)
+//
+//    function pushState(state){
+//        history.pushState(state,'')
+//        form.router(state)
+//    }
+//    history.pushState({crt_view:'main'},'')
+
+    $(function(){
+        form =new Vue({
+            el:'#there',
+            data:{
+                menu:menu,
+                kw:{
+                    heads:heads,
+                    row:row,
+                    error:{},
+                },
+                crt_view:'main',
+                out_src:''
+            },
+            mixins:[field_fun],
+            created:function(){
+                ex.each(this.kw.heads,function(head){
+                    if(!head.placeholder){
+                        head.placeholder='请输入'+head.label
+                    }
+                })
+            },
+            mounted:function(){
+
+            },
+            methods:{
+                router:function(state){
+                    if(state.crt_view){
+                        this.crt_view=state.crt_view
+                    }
+                },
+                goto:function(url){
+                    location=url
+                },
+
+
+                itclick:function(item){
+                    this.kw.row.work=item.pk
+                    history.back()
+                }
+
+            }
+        })
+    })
+</script>
+
+<div id="there">
+    <div v-show="crt_view=='main'">
+
+        <div class="weui-cells__title">编辑内容</div>
+        <div class="weui-cells weui-cells_form">
+            <field v-for="head in kw.heads" :name="head.name" :kw="kw"></field>
+        </div>
+
+        <div class="weui-btn-area">
+            <a class="weui-btn weui-btn_primary" href="javascript:;" id="showTooltips" @click="submit()" style="width: 50vw;">确定</a>
+        </div>
+
+    </div>
+    <div v-show="crt_view=='dir'">
+        <com-dir @itclick="itclick($event)"></com-dir>
+    </div>
+
+    <!--<iframe :src="out_src" frameborder="0" style="width: 100vw;height: 100vh;"></iframe>-->
+</div>
+
+<style type="text/css">
+
+</style>
+
+<template id="btn-dir">
+    <div @click="open()">
+        <span v-text="show_name">here</span>
+        <!--<button v-text="row[name]"></button>-->
+    </div>
+</template>
+<script type="application/javascript">
+    Vue.component('btn-dir',{
+        template:'#btn-dir',
+        props:['row','name','kw'],
+        computed:{
+          show_name:function(){
+              var pk =this.row[this.name]
+              var option = ex.findone(this.kw.options,{value:pk})
+              if(option){
+                  return option.label
+              }else{
+                  return '点击选择'
+              }
+          }
+        },
+        methods:{
+            open:function(){
+                ln.pushState({crt_view:'dir'})
+
+            }
+        }
+    })
+    Vue.component('com-dir',{
+        template:'#com-dir',
+        props:['url'],
+        data:function(){
+            return {
+                par:{pk:null},
+                parents:[],
+                dirs:[],
+                items:[],
+            }
+        },
+        mounted:function(){
+            this.dir_data(this.par)
+        },
+        methods:{
+            dir_data:function(par){
+                var self=this
+                this.par=par
+                var url=ajax_url+ex.template('?_op=dir_data:par:{par}',{par:this.par.pk})
+                ex.get(url,function(resp){
+                    self.dirs=resp.dir_data.dirs
+                    self.items=resp.dir_data.items
+                    self.parents=resp.dir_data.parents
+                    var par = self.parents.pop()
+                    if(par){
+                        self.par.name=par.name
+                    }
+
+                })
+            },
+            on_click:function(item){
+                this.$emit('itclick',item)
+            }
+        }
+
+    })
+</script>
+
+<template id="com-dir">
+    <div class="flex">
+        <div style="width: 100vw; ">
+
+            <ol class="breadcrumb flex-grow" style="font-size: 1.5em;margin-bottom: 5px;">
+                <li ><a  @click="dir_data({pk:null})">root</a></li>
+                <li v-for="dir in parents" ><a  v-text="dir.name" @click="dir_data(dir)" ></a></li>
+                <li v-if="par.name"><a  v-text="par.name" class="active"></a></li>
+            </ol>
+
+            <div class="weui-cells" style="margin-top: 0" >
+                <div class="weui-cell weui-cell_access" v-for="dir in dirs" >
+                    <div class="weui-cell__hd" style="padding-right: 20px">
+                        <!--<input type="checkbox" :value="dir" v-model="selected" />-->
+                        <i class="fa fa-folder fa-2x" aria-hidden="true"></i>
+                    </div>
+                    <div class="weui-cell__bd" @click="dir_data(dir)">
+                        <span v-text="dir.name" ></span>
+                        <div class="weui-cell__ft"></div>
+                    </div>
+                </div>
+
+                <div class="weui-cell" v-for="item in items" >
+                    <div class="weui-cell__hd" style="padding-right: 20px">
+                        <!--<input type="checkbox" :value="item" v-model="selected" />-->
+                        <i class="fa fa-file-o fa-2x" aria-hidden="true"></i>
+                    </div>
+                    <div class="weui-cell__bd" @click="on_click(item)">
+                        <span v-text="item.name" ></span>
+                        <div class="weui-cell__ft"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        </div>
+
+</template>
+{% endblock %}

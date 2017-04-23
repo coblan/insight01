@@ -1,0 +1,46 @@
+{% extends "wx/base.html" %}
+{% load static %}
+{% load jsonify %}
+
+
+{% block page_content %}
+<script src="{% static 'js/fields_mb.pack.js' %}"></script>
+<script type="text/javascript">
+
+    ln.readCache()
+
+    $(function(){
+        new Vue({
+            el:'#there',
+            data:{
+                menu:menu,
+
+            },
+
+            methods:{
+            }
+        })
+    })
+</script>
+
+<div id="there">
+
+    <div class="weui-grids">
+        <a :href="act.url" class="weui-grid" v-for="act in menu">
+            <div class="weui-grid__icon">
+                <span v-html="act.icon"></span>
+            </div>
+            <p class="weui-grid__label" v-text="act.label"></p>
+        </a>
+    </div>
+
+</div>
+
+<!--<script type="application/javascript">-->
+    <!--alert(window.opener)-->
+<!--</script>-->
+
+{% endblock %}
+
+
+
