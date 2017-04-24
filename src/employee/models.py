@@ -7,9 +7,14 @@ from django.utils.translation import ugettext as _
 # Create your models here.
 
 class EmployeeModel(models.Model):
-    user = models.ForeignKey(User,verbose_name=_('user'), blank=True, null=True)
+    user = models.ForeignKey(User,verbose_name=_('account'), blank=True, null=True)
     baseinfo=models.OneToOneField('BasicInfo',verbose_name=_('basic info'),blank=True,null=True)
    
+    def __init__(self,*args,**kw):
+        super(EmployeeModel,self).__init__(*args,**kw)
+        if not self.baseinfo:
+            self.baseinfo=BasicInfo()
+       
     def __unicode__(self):
         if self.baseinfo:
             return self.baseinfo.name

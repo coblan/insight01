@@ -1,0 +1,82 @@
+{% extends "wx/base.html" %}
+{% load static %}
+{% load jsonify %}
+
+
+{% block page_content %}
+<script src="{% static 'js/fields_mb.pack.js' %}"></script>
+<script type="text/javascript">
+
+    no_emp = {{ no_emp | jsonify | default:'false' }}
+    username='{{ username }}'
+    base_heads={{ base_heads | jsonify | default:'[]' }}
+    base_row={{ base_row | jsonify | default:'{}' }}
+
+    $(function(){
+        new Vue({
+            el:'#there',
+            data:{
+                no_emp:no_emp,
+                username:username,
+                base_kw:{
+                    heads:base_heads,
+                    row:base_row,
+                }
+            },
+            mixins:[field_fun],
+
+            mounted:function(){
+
+            },
+            methods:{
+            }
+        })
+    })
+</script>
+
+<div id="there">
+
+
+    <div v-if="no_emp">
+        <h1>
+            你还不是员工，请告知管理员你申请的账号，等待转换为员工账号。
+        </h1>
+
+    </div>
+    <div>
+        您的账号是 <span v-text="username"></span>
+    </div>
+    <div>
+        <div class="weui-cells__title">个人信息</div>
+        <div class="weui-cells weui-cells_form">
+            <field v-for="head in base_kw.heads" :name="head.name" :kw="base_kw"></field>
+        </div>
+
+        <div class="weui-btn-area">
+            <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips" @click="submit()" style="width: 50vw;">修改</a>
+        </div>
+    </div>
+
+
+
+</div>
+
+<style type="text/css">
+    /*.field.weui-cell::before{*/
+    /*content: " ";*/
+    /*position: absolute;*/
+    /*left: 0;*/
+    /*top: 0;*/
+    /*right: 0;*/
+    /*height: 1px;*/
+    /*border-top: 1px solid #d9d9d9;*/
+    /*color: #d9d9d9;*/
+    /*-webkit-transform-origin: 0 0;*/
+    /*transform-origin: 0 0;*/
+    /*-webkit-transform: scaleY(.5);*/
+    /*transform: scaleY(.5);*/
+    /*left: 15px;*/
+    /*}*/
+</style>
+
+{% endblock %}

@@ -19,11 +19,13 @@ from django.contrib import admin
 from hello.engine import PcEngine,WxEngine
 from helpers.director import urls as director_urls
 from helpers.director import login_url
+from employee import views as emp_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'pc/([\w\.]+)/?$',PcEngine.as_view(),name=PcEngine.url_name),
     url(r'wx/([\w\.]+)/?$',WxEngine.as_view(),name=WxEngine.url_name),
     url(r'^accounts/',include(login_url)),
+    url(r'^my_info/?$',emp_views.my_info),
     url(r'^d/',include(director_urls)),
 ]

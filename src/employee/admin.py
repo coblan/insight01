@@ -22,6 +22,14 @@ class EmployeeFields(ModelFields):
     class Meta:
         model=EmployeeModel
         exclude=[]
+    
+    #def get_heads(self):
+        #heads = super(EmployeeFields,self).get_heads()
+        #for head in heads:
+            #if head.get('name')=='user':
+                #head['forign']=True
+        #return heads
+    
 
 class EmployeeFormPage(FormPage):
     fieldsCls=EmployeeFields
@@ -71,7 +79,7 @@ class EmployeeTablePage(TablePage):
     #template='wx/table.html'
 
 class EmployeeFormPageWX(EmployeeFormPage):
-    template='director/fieldset.html'
+    template='wx/fieldset.html'
  
 model_dc[BasicInfo]={'fields':BasicInfoFields}
 model_dc[EmployeeModel]={'fields':EmployeeFields}
