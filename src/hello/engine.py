@@ -12,7 +12,7 @@ class PcEngine(BaseEngine):
     url_name='pc_engine'
     menu=[
         {'label':'home','url':'/','icon':fa('fa-home')},
-        {'label':'账号管理','url':page('user'),'icon':fa('fa-users'),'visible':can_list((User,Group)),
+        {'label':'账号管理','url':page('user'),'icon':fa('fa-key'),'visible':can_list((User,Group)),
          'submenu':[
              {'label':'用户管理','url':page('user'),'visible':can_touch(User)},
              {'label':'用户组','url':page('group'),'visible':can_touch(Group)},
@@ -23,7 +23,7 @@ class PcEngine(BaseEngine):
              {'label':'员工名册','url':page('employee'),'visible':can_touch(EmployeeModel)},
              #{'label':'工资记录','url':page('salary'),'visible':can_touch(SalaryRecords)},
              ]},
-        {'label':'工作管理','icon':fa('fa-users'),'visible':can_list((Work,WorkRecord)),
+        {'label':'工作管理','icon':fa('fa-suitcase'),'visible':can_list((Work,WorkRecord)),
          'submenu':[{'label':'工时目录','url': page('workindex'),'visible':can_touch(Work)},
                     {'label':'工作类型','url': page('work'),'visible':can_touch(Work)},
                     {'label':'工作记录','url':page('workrecord'),'visible':can_touch(WorkRecord)}
