@@ -2,11 +2,15 @@
 
 from helpers.director.db_tools import from_dict
 
+
+def get_global():
+    return globals()
+
 def save_self_info(base_info,user):
     """
     """
     instance = from_dict(base_info)
-    if not instance.employeemodel:
+    if getattr(instance,'employeemodel',None) is None:
         emp =user.employeemodel_set.first()
         emp.baseinfo=instance
         emp.save()

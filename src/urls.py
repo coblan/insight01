@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'wx/([\w\.]+)/?$',WxEngine.as_view(),name=WxEngine.url_name),
     url(r'^accounts/',include(login_url)),
     url(r'^my_info/?$',emp_views.my_info),
-    # url(r'^d/',include(director_urls)),
+    url(r'^d/',include(director_urls)),
     url(r'^face/', include(face_urls)),
 ]
 

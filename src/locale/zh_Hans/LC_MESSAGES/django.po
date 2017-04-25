@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-24 17:05+0800\n"
+"POT-Creation-Date: 2017-04-26 00:33+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,37 +19,45 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: .\employee\models.py:10
-msgid "user"
-msgstr ""
+msgid "account"
+msgstr "账号"
 
-#: .\employee\models.py:11 .\employee\models.py:33
+#: .\employee\models.py:11 .\employee\models.py:42
 msgid "basic info"
-msgstr ""
-
-#: .\employee\models.py:20
-msgid "name"
-msgstr ""
-
-#: .\employee\models.py:21
-msgid "age"
-msgstr ""
-
-#: .\employee\models.py:22
-msgid "head image"
-msgstr ""
-
-#: .\employee\models.py:23
-msgid "id  number"
-msgstr ""
+msgstr "基本信息"
 
 #: .\employee\models.py:24
-msgid "address"
-msgstr ""
+msgid "male"
+msgstr "男"
 
 #: .\employee\models.py:25
-msgid "gen"
-msgstr ""
+msgid "femal"
+msgstr "女"
 
-#: .\employee\models.py:26
+#: .\employee\models.py:29
+msgid "name"
+msgstr "姓名"
+
+#: .\employee\models.py:30
+msgid "age"
+msgstr "年龄"
+
+#: .\employee\models.py:31
+msgid "head image"
+msgstr "头像"
+
+#: .\employee\models.py:32
+msgid "id  number"
+msgstr "身份证号码"
+
+#: .\employee\models.py:33
+msgid "address"
+msgstr "地址"
+
+#: .\employee\models.py:34
+msgid "gen"
+msgstr "性别"
+
+#: .\employee\models.py:35
 msgid "phone"
-msgstr ""
+msgstr "电话号码"

@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from .models import Index,Work
 from helpers.director.db_tools import to_dict,from_dict
 
-def get_globe():
+def get_global():
     return globals()
 
 def dir_data(pk):

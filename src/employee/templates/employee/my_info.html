@@ -4,6 +4,11 @@
 
 
 {% block page_content %}
+<script src="http://192.168.1.101:9999/target/target-script-min.js#anonymous"></script>
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/cropper/2.3.4/cropper.min.css">
+<script src="https://cdn.bootcss.com/cropper/2.3.4/cropper.min.js"></script>
+
 <script src="{% static 'js/fields_mb.pack.js' %}"></script>
 <script type="text/javascript">
 
@@ -30,7 +35,10 @@
             },
             methods:{
                 submit:function(){
-
+                    var post_data=[{fun:'save_self_info','base_info':this.base_kw.row}]
+                    ex.post("{% url 'ajax_url' app='employee' %}",JSON.stringify(post_data),function(resp){
+                        alert(resp)
+                    })
                 }
             }
         })
