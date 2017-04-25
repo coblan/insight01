@@ -23,12 +23,15 @@
                     row:base_row,
                 }
             },
-            mixins:[field_fun],
+//            mixins:[field_fun],
 
             mounted:function(){
 
             },
             methods:{
+                submit:function(){
+
+                }
             }
         })
     })
@@ -56,6 +59,8 @@
             <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips" @click="submit()" style="width: 50vw;">修改</a>
         </div>
     </div>
+
+    <img-crop></img-crop>
 
 
 

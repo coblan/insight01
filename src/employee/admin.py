@@ -16,6 +16,18 @@ class BasicInfoFields(ModelFields):
     class Meta:
         model=BasicInfo
         exclude=[]
+    
+    def get_heads(self):
+        heads=super(BasicInfoFields,self).get_heads()
+        for head in heads:
+            if head.get('name')=='head':
+                head['type']='picture'
+                head['config']={
+                'crop':True,
+                'aspectRatio': 1,
+                'size':{'width':250,'height':250}
+            }
+        return heads
 
 class EmployeeFields(ModelFields):
     

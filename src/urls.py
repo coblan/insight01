@@ -20,6 +20,7 @@ from hello.engine import PcEngine,WxEngine
 from helpers.director import urls as director_urls
 from helpers.director import login_url
 from employee import views as emp_views
+from helpers.face import urls as face_urls
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -27,5 +28,13 @@ urlpatterns = [
     url(r'wx/([\w\.]+)/?$',WxEngine.as_view(),name=WxEngine.url_name),
     url(r'^accounts/',include(login_url)),
     url(r'^my_info/?$',emp_views.my_info),
-    url(r'^d/',include(director_urls)),
+    # url(r'^d/',include(director_urls)),
+    url(r'^face/', include(face_urls)),
 ]
+
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
