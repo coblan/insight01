@@ -29,6 +29,7 @@ class PcEngine(BaseEngine):
                     {'label':'工作记录','url':page('workrecord'),'visible':can_touch(WorkRecord)}
                     ]
          },
+        {'label':'留言','url':page('comment'),'icon':fa('fa-home')},
         #{'label':'Page Admin','url':page('webpage'),'icon':fa('fa-home'),'visible':can_touch(WebPage)},
     
     ]    
@@ -45,7 +46,8 @@ class WxEngine(BaseEngine):
         {'label':'工作类型','url':page('work.wx'),'visible':can_touch(EmployeeModel),'icon':fa('fa-suitcase fa-2x')},
         {'label':'工作记录','url':page('workrecord.wx'),'visible':can_touch(EmployeeModel),'icon':fa('fa-suitcase fa-2x')},
         {'label':'自我工作','url':page('wkself.wx'),'visible':can_touch(EmployeeModel)},
-        
+        {'label':'提意见','url':page('commentself.wx'),'visible':can_touch(EmployeeModel)},
+        {'label':'管理意见','url':page('comment.wx'),'visible':can_touch(EmployeeModel)},
         
     ]
 
