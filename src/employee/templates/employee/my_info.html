@@ -4,18 +4,23 @@
 
 
 {% block page_content %}
-<script src="http://192.168.1.101:9999/target/target-script-min.js#anonymous"></script>
+<!--<script src="http://192.168.1.101:9999/target/target-script-min.js#anonymous"></script>-->
 
-<link rel="stylesheet" href="https://cdn.bootcss.com/cropper/2.3.4/cropper.min.css">
-<script src="https://cdn.bootcss.com/cropper/2.3.4/cropper.min.js"></script>
-
-<script src="{% static 'js/fields_mb.pack.js' %}"></script>
+<!--<script src="{% static 'js/fields_mb.pack.js' %}"></script>-->
 <script type="text/javascript">
 
     no_emp = {{ no_emp | jsonify | default:'false' }}
-    username='{{ username }}'
+    username='{{ user.username }}'
     base_heads={{ base_heads | jsonify | default:'[]' }}
     base_row={{ base_row | jsonify | default:'{}' }}
+
+    chg = '{% url 'change_password' %}'
+    logout_url='{% url "logout" %}'
+    uid={{ user.id }}
+
+//    ex.each(base_heads,function(head){
+//        head.placeholder='请输入'+
+//    })
 
     $(function(){
         new Vue({
@@ -26,10 +31,18 @@
                 base_kw:{
                     heads:base_heads,
                     row:base_row,
-                }
+                },
+
             },
 //            mixins:[field_fun],
-
+            computed:{
+                chg_url:function(){
+                    return ex.appendSearch(chg,{uid:uid,next:encodeURIComponent(location.href)})
+                },
+                logout_url:function(){
+                    return ex.appendSearch(logout_url,{next:encodeURIComponent(location.href)})
+                },
+            },
             mounted:function(){
 
             },
@@ -37,7 +50,10 @@
                 submit:function(){
                     var post_data=[{fun:'save_self_info','base_info':this.base_kw.row}]
                     ex.post("{% url 'ajax_url' app='employee' %}",JSON.stringify(post_data),function(resp){
-                        alert(resp)
+//                        alert(resp)
+                        if(!resp.save_self_info.msg){
+                            weui.toast('操作成功', 3000);
+                        }
                     })
                 }
             }
@@ -54,21 +70,41 @@
         </h1>
 
     </div>
-    <div>
-        您的账号是 <span v-text="username"></span>
+
+
+    <div class="weui-cells__title">账号信息</div>
+    <div class="weui-cells">
+
+        <!--<div style="text-align: right">-->
+            <!--<a href="sss" style="padding-left: 40px;padding-right: 20px;">退出登录</a>-->
+            <!--<a :href="chg_url" style="padding-right: 20px;">修改密码</a>-->
+        <!--</div>-->
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <span style="padding-right: 20px;">您的账号是</span>
+            </div>
+            <div class="weui-cell__bd">
+                <span v-text="username" ></span>
+
+            </div>
+            <div class="weui-cell__ft">
+                <a :href="logout_url" style="padding-left: 40px;padding-right: 20px;">退出登录</a>
+                <a :href="chg_url" style="padding-right: 20px;">修改密码</a>
+            </div>
+        </div>
     </div>
-    <div>
+
+    <div v-if="!no_emp">
         <div class="weui-cells__title">个人信息</div>
         <div class="weui-cells weui-cells_form">
             <field v-for="head in base_kw.heads" :name="head.name" :kw="base_kw"></field>
         </div>
 
         <div class="weui-btn-area">
-            <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips" @click="submit()" style="width: 50vw;">修改</a>
+            <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips" @click="submit()" style="width: 50vw;">保存修改</a>
         </div>
     </div>
 
-    <img-crop></img-crop>
 
 
 
@@ -92,4 +128,21 @@
     /*}*/
 </style>
 
+{% endblock %}
+
+{% block main_menu %}
+<div class="weui-tabbar nav footer">
+    <a href="javascript:;" class="weui-tabbar__item ">
+        <i class="fa fa-car weui-tabbar__icon" aria-hidden="true" ></i>
+        <p class="weui-tabbar__label">信息</p>
+    </a>
+    <a href="/wx/home.wx" class="weui-tabbar__item ">
+        <i class="fa fa-car weui-tabbar__icon" aria-hidden="true" ></i>
+        <p class="weui-tabbar__label">工作</p>
+    </a>
+    <a href="/my_info" class="weui-tabbar__item weui-bar__item_on">
+        <i class="fa fa-car weui-tabbar__icon" aria-hidden="true" ></i>
+        <p class="weui-tabbar__label">我的信息</p>
+    </a>
+</div>
 {% endblock %}

@@ -42,8 +42,8 @@ class WxEngine(BaseEngine):
         {'label':'home','url':page('home.wx'),'icon':fa('fa-home fa-2x')},
         {'label':'员工名册','url':page('employee.wx'),'visible':can_touch(EmployeeModel)},
         {'label':'工作类型(目录)','url':page('workindex.wx'),'visible':can_touch(EmployeeModel)},
-        {'label':'工作类型','url':page('work.wx'),'visible':can_touch(EmployeeModel)},
-        {'label':'工作记录','url':page('workrecord.wx'),'visible':can_touch(EmployeeModel)},
+        {'label':'工作类型','url':page('work.wx'),'visible':can_touch(EmployeeModel),'icon':fa('fa-suitcase fa-2x')},
+        {'label':'工作记录','url':page('workrecord.wx'),'visible':can_touch(EmployeeModel),'icon':fa('fa-suitcase fa-2x')},
         {'label':'自我工作','url':page('wkself.wx'),'visible':can_touch(EmployeeModel)},
         
         

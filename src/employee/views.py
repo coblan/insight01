@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def my_info(request):
     user= request.user
-    ctx={'username':user.username}
+    ctx={}
     emp= EmployeeModel.objects.filter(user=request.user).first()
     if not emp:
         ctx['no_emp']=True

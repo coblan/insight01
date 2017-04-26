@@ -5,27 +5,19 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
-    <title>work insight</title>
-
-    <script type="application/javascript">
-        lib={
-            font_awesome:"{% static 'css/lib/font-awesome4.7.min.css' %}",
-        }
-    </script>
-
-
+    <title>Deposits and Withdrawals</title>
     <script src="{% static 'js/lib/jquery.min.js' %}"></script>
     <!--<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>-->
     <!--<script src="https://cdn.bootcss.com/vue/2.1.6/vue.js"></script>-->
     <script src="{% static 'js/lib/vue.js' %}"></script>
-    <script src="{% static 'js/lib/bootstrap.min.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'css/lib/bootstrap.min.css' %}">
+    <script src="{% static 'js/lib/boostrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/lib/boostrap.min.css' %}">
 
     <!--<script src="https://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
     <!--<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
-    <!--<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">-->
     <link rel="stylesheet" href="{% static 'css/lib/font-awesome4.7.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/lib/weui.min.css' %}">
+    <!--<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">-->
     <!--<link href="https://cdn.bootcss.com/weui/1.1.1/style/weui.min.css" rel="stylesheet">-->
     <script src="{% static 'js/exfun.js' %}"></script>
     <script src="{% static 'js/weui.min.js' %}"></script>
@@ -35,35 +27,45 @@
 
     <!--<script src="../build/fields.pack.js"></script>-->
 
-
     {% include 'director/reverse.html' %}
 
     <script type="text/javascript">
-        var strategies = Vue.config.optionMergeStrategies
-        strategies.myOption = strategies.methods
-
         menu = {{ menu | jsonify }}
 
         var org_height=$(window).height()
         $(function(){
             $(window).resize(function(){
+//                alert('orgin is '+org_height)
                 var delta = org_height - $(window).height()
+//                var top = $(".footer.nav").offset().top;
                 if(Math.abs(delta)  > 200){
                     $(".footer.nav").hide()
                 }else{
                     $(".footer.nav").show()
                 }
-
+//                alert($(window).height())
+//                if($(window).height()<org_height-4)
+//                console.log($(window).height())
             })
 
         })
 
-        ex.each(menu,function(act){
-            if(act.url==location.pathname){
-                $('title').html(act.label)
-            }
-        })
-
+        //        $(function(){
+        //            new Vue({
+        //                el:'#there',
+        //                data:{
+        //                    menu:menu,
+        //                },
+        //                mounted:function(){
+        //
+        //                },
+        //                methods:{
+        //                    goto:function(url){
+        //                        location=url
+        //                    }
+        //                }
+        //            })
+        //        })
 
     </script>
 </head>
@@ -76,36 +78,35 @@
 
         {% endblock %}
     </div>
-    {% block main_menu %}
     <div class="weui-tabbar nav footer">
         <a href="javascript:;" class="weui-tabbar__item ">
             <i class="fa fa-car weui-tabbar__icon" aria-hidden="true" ></i>
             <p class="weui-tabbar__label">信息</p>
         </a>
-        <a href="/wx/home.wx" class="weui-tabbar__item weui-bar__item_on">
+        <a href="/m/m_home" class="weui-tabbar__item ">
             <i class="fa fa-car weui-tabbar__icon" aria-hidden="true" ></i>
             <p class="weui-tabbar__label">工作</p>
         </a>
-        <a href="/my_info" class="weui-tabbar__item">
+        <a href="javascript:;" class="weui-tabbar__item weui-bar__item_on">
             <i class="fa fa-car weui-tabbar__icon" aria-hidden="true" ></i>
             <p class="weui-tabbar__label">我的信息</p>
         </a>
+
     </div>
-    {% endblock %}
-
-
 </div>
 
+
 <style type="text/css">
-    body{
-        background-color: #f7f5f3;
-    }
+
     .weui-tabbar.nav{
         position: fixed;
         bottom: 0px;
     }
     .weui-tab__panel{
         padding-bottom: 150px;
+    }
+    body{
+        background-color: #f7f5f3;
     }
 </style>
 </body>
