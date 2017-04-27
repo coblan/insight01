@@ -28,6 +28,9 @@ class CommentForm(ModelFields):
             self.instance.emp=self.crt_user.employeemodel_set.first()
     
     def can_access(self):
+        """
+        superuser 不会调用该函数，所以这里不用考虑superuser
+        """
         access = super(CommentForm,self).can_access()
         if has_permit(self.crt_user,'all_comment'):
             return access

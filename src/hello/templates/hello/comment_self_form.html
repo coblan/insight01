@@ -4,6 +4,9 @@
 
 
 {% block page_content %}
+<link href="https://cdn.bootcss.com/element-ui/1.2.9/theme-default/index.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/element-ui/1.2.9/index.js"></script>
+
 <script src="{% static 'js/fields_mb.pack.js' %}"></script>
 <script type="text/javascript">
 
@@ -25,6 +28,18 @@
             mounted:function(){
 
             },
+            computed:{
+                emp_name:function(){
+                   var emp_head = ex.findone(this.kw.heads,{name:'emp'})
+                    var options=emp_head.options
+                    return ex.findone(options,{value:this.kw.row.emp}).label
+                } ,
+                pub_options:function(){
+                    var pub_type = ex.findone(this.kw.heads,{name:'pub_type'})
+
+                    return pub_type.options
+                }
+            },
             methods:{
             }
         })
@@ -33,13 +48,48 @@
 
 <div id="there">
 
+    <div style="text-align: center;padding: 2em;">
+        <el-button size="small"><i class="fa fa-user" aria-hidden="true"></i>
+        <span v-text="emp_name"></span></el-button>
+    </div>
+
+    <el-form ref="form"  label-width="80px" class="el-form-pad">
+        <el-form-item label="发布类型">
+            <!--<el-select v-model="kw.row.pub_type" placeholder="请选择">-->
+                <!--<el-option-->
+                        <!--v-for="item in pub_options"-->
+                        <!--:label="item.label"-->
+                        <!--:value="item.value">-->
+                <!--</el-option>-->
+            <!--</el-select>-->
+            <el-radio-group v-model="kw.row.pub_type">
+                <el-radio v-for="item in pub_options" :label="item.value"><span v-text="item.label"></span></el-radio>
+                <!--<el-radio label="线下场地免费"></el-radio>-->
+            </el-radio-group>
+        </el-form-item>
+
+        <el-form-item label="留言">
+            <el-input
+                    type="textarea"
+                    :autosize="{ minRows: 2}"
+                    placeholder="请输入留言"
+                    v-model="kw.row.content">
+            </el-input>
+            </el-form-item>
+    </el-form>
+
+
+
 
     <div class="weui-cells__title">编辑内容</div>
-    <div class="weui-cells weui-cells_form">
-
+    <el-form ref="form"  label-width="80px" class="pad">
         <field v-for="head in kw.heads" :name="head.name" :kw="kw"></field>
 
-    </div>
+    </el-form>
+
+
+
+
 
     <div class="weui-btn-area">
         <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips" @click="submit()" style="width: 50vw;">确定</a>
@@ -49,6 +99,7 @@
 </div>
 
 <style type="text/css">
+
 
 </style>
 
