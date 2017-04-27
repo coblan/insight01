@@ -1,0 +1,55 @@
+{% extends "wx/base.html" %}
+{% load static %}
+{% load jsonify %}
+
+
+{% block page_content %}
+<script src="{% static 'js/fields_mb.pack.js' %}"></script>
+<script type="text/javascript">
+
+    ln.readCache()
+
+    $(function(){
+        new Vue({
+            el:'#there',
+            data:{
+                menu:menu,
+                kw:{
+                    heads:heads,
+                    row:row,
+                    error:{},
+                }
+            },
+            mixins:[field_fun],
+
+            mounted:function(){
+
+            },
+            methods:{
+            }
+        })
+    })
+</script>
+
+<div id="there">
+
+
+    <div class="weui-cells__title">编辑内容</div>
+    <div class="weui-cells weui-cells_form">
+
+        <field v-for="head in kw.heads" :name="head.name" :kw="kw"></field>
+
+    </div>
+
+    <div class="weui-btn-area">
+        <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips" @click="submit()" style="width: 50vw;">确定</a>
+    </div>
+
+
+</div>
+
+<style type="text/css">
+
+</style>
+
+{% endblock %}

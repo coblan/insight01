@@ -15,29 +15,29 @@
     $(function(){
 
 //            history.pushState({view:'table'},'title')
-        search_args=ex.parseSearch()
+//        search_args=ex.parseSearch()
+        search_args.comment_range=search_args.comment_range|| 'all'
         crt_view = search_args.crt_view || 'table'
 
-        history.pushState({view:crt_view},'title',location.href)
-        window.addEventListener('popstate', function(e){
-            if(e.state){
-                table.crt_view= e.state.view
-            }else{
-                history.back()
-            }
-
-        },false)
         var table= new Vue({
             el:'#there',
             data:{
 //                    menu:menu,
 //                    rows:rows,
                 crt_view:crt_view,
-                sort:''
             },
             mixins:[table_fun],
             mounted:function(){
 
+            },
+            computed:{
+                comment_range:function(){
+                    var map_obj={
+                        'all':'全部',
+                        'only_self':'只看自己'
+                    }
+                    return map_obj[search_args.comment_range]
+                }
             },
             methods:{
                 goto:function(url){
@@ -53,6 +53,12 @@
                 back:function(){
                     history.back()
                 },
+                update_search:function(args){
+                    search_args.comment_range=args
+                    search_args._page=1
+                    location=ex.appendSearch(engine_url+'/'+page_name,search_args)
+
+                }
 
             }
         })
@@ -64,55 +70,75 @@
 
 <div id="there">
 
-    <el-radio-group v-model="sort">
-        <el-radio-button label="上海"></el-radio-button>
-        <el-radio-button label="广州"></el-radio-button>
-    </el-radio-group>
+    <div style="text-align: center;">
+
+    </div>
+
+    <!--<div style="text-align: right;padding-right: 2em;">-->
+        <!--<el-button icon="plus"></el-button>-->
+    <!--</div>-->
+
 
     <div v-show="crt_view=='table'">
 
         <div class="flex">
-            <div class="flex-grow"></div>
+            <div class="flex-grow" style="text-align: center;">
+                <el-radio-group v-model="comment_range">
+                    <el-radio-button label="只看自己" @click.native="update_search('only_self')" ></el-radio-button>
+                    <el-radio-button label="全部" @click.native="update_search('all')" ></el-radio-button>
+                </el-radio-group>
+            </div>
             <div style="text-align: right;padding: 0.5em 1em;">
                 <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
             </div>
         </div>
 
-
-
-        <div class="weui-cells__title">列表项</div>
-        <div class="weui-cells">
-            <a class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows">
-                <div class="weui-cell__hd" style="padding-right: 20px">
-                    <input type="checkbox" :value="row.pk" v-model="selected" />
-                </div>
-                <div class="weui-cell__bd" @click="ge_edit(row.pk)">
-                    <p v-text="row._label"></p>
-                </div>
-                <div class="weui-cell__ft">
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <div v-show="crt_view=='search'">
-
-        <com-filter :row_filters="row_filters" :search_args="search_args" :search_tip='search_tip'></com-filter>
-
-        <div class="weui-btn-area">
-            <a class="weui-btn weui-btn_primary" href="javascript:" @click='search()' style="width: 50%;">
-                <i class="fa fa-search" aria-hidden="true"></i>
-            </a>
+        <div v-for="row in rows" class="comment-row">
+            <div class="head">
+                <el-button size="mini"><i class="fa fa-user" aria-hidden="true"></i></el-button>
+                <span v-text="row.emp" style="padding-left: 1em;"></span>
+            </div>
+            <div class="bd">
+                <p v-text="row.content"></p>
+            </div>
+            <div class="rep">
+                <span>答复:</span>
+                <p v-text="row.rep_content"></p>
+            </div>
         </div>
 
+        <!--<div class="weui-cells__title">列表项</div>-->
+        <!--<div class="weui-cells">-->
+            <!--<a class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows">-->
+                <!--<div class="weui-cell__hd" style="padding-right: 20px">-->
+                    <!--<input type="checkbox" :value="row.pk" v-model="selected" />-->
+                <!--</div>-->
+                <!--<div class="weui-cell__bd" @click="ge_edit(row.pk)">-->
+                    <!--<p v-text="row._label"></p>-->
+                <!--</div>-->
+                <!--<div class="weui-cell__ft">-->
+                <!--</div>-->
+            <!--</a>-->
+        <!--</div>-->
     </div>
+
+    <!--<div v-show="crt_view=='search'">-->
+
+        <!--<com-filter :row_filters="row_filters" :search_args="search_args" :search_tip='search_tip'></com-filter>-->
+
+        <!--<div class="weui-btn-area">-->
+            <!--<a class="weui-btn weui-btn_primary" href="javascript:" @click='search()' style="width: 50%;">-->
+                <!--<i class="fa fa-search" aria-hidden="true"></i>-->
+            <!--</a>-->
+        <!--</div>-->
+
+    <!--</div>-->
 
     <modal v-show="show_menu" @click.native="show_menu=false">
         <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
-
-            <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新建</div>
-            <div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>
-            <div class="weui-actionsheet__cell" @click="crt_view='search';show_menu=false" v-if="can_search">排序过滤</div>
+            <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新留言</div>
+            <!--<div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>-->
+            <!--<div class="weui-actionsheet__cell" @click="crt_view='search';show_menu=false" v-if="can_search">排序过滤</div>-->
         </div>
         <div class="weui-actionsheet__cell">
             <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
@@ -122,7 +148,21 @@
 </div>
 
 <style type="text/css">
-
+    .comment-row{
+        background-color: white;
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+    .comment-row .head{
+        border-bottom: 1px dashed #ebebeb;
+    }
+    .comment-row .bd{
+        padding: 1em 0;
+    }
+    .comment-row .rep{
+        border-left: 2px solid #c4c4c4;
+        padding: 10px 10px 5px 20px;
+    }
 </style>
 
 {% endblock %}

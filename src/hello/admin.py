@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
+from helpers.director.db_tools import to_dict
 from django.contrib import admin
 from helpers.director.shortcut import ModelTable,TablePage,page_dc,ModelFields,FormPage,model_dc,permit_list,has_permit
 from .models import Comment
@@ -22,7 +23,7 @@ class CommentForm(ModelFields):
     def __init__(self, dc={}, pk=None, crt_user=None):
         super(CommentForm,self).__init__(dc, pk, crt_user)
         
-        # 初始化的时候加上employee，因为不能让员工有修改emp属性的权限
+        # 初始化的时候加上emp，因为不能让员工有修改emp属性的权限
         if not self.instance.emp and self.crt_user.employeemodel_set.first():
             self.instance.emp=self.crt_user.employeemodel_set.first()
     
@@ -42,13 +43,26 @@ class CommentFormPage(FormPage):
 
 class Commentself(ModelTable):
     model=Comment
+    
+    def get_rows(self):
+        query=self.get_query()
+        return [to_dict(x, include=self.permited_fields(),filt_attr=lambda inst: {'emp':unicode(inst.emp)}) for x in query] 
+    
     def inn_filter(self,query):
-        query=query.filter(Q(emp__user=self.crt_user) | Q(pub_type='public'))
-        return query
+        if self.kw.get('comment_range','all')=='all':
+            query=query.filter(Q(emp__user=self.crt_user) | Q(pub_type='public'))
+        elif self.kw.get('comment_range')=='only_self':
+            query=query.filter(emp__user=self.crt_user)
+        return query.order_by('-id')
     
 class CommentselfPage(TablePage):
     template='hello/comment_self.html'
     tableCls=Commentself
+
+class CommentselfFormPage(FormPage):
+    fieldsCls=CommentForm
+    template='hello/comment_self_form.html'
+
 
 model_dc[Comment]={'fields':CommentForm}
 
@@ -63,5 +77,6 @@ page_dc.update({
     'comment.wx':CommentTabPage,
     'comment.wx.edit':CommentFormPage,
     'commentself.wx':CommentselfPage,
+    'commentself.wx.edit':CommentselfFormPage
     
 })
