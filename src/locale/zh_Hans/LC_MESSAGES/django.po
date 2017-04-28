@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-26 00:33+0800\n"
+"POT-Creation-Date: 2017-04-28 11:20+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,3 +61,31 @@ msgstr "性别"
 #: .\employee\models.py:35
 msgid "phone"
 msgstr "电话号码"
+
+#: .\hello\models.py:9
+msgid "Public"
+msgstr "公开"
+
+#: .\hello\models.py:10
+msgid "Private"
+msgstr "保密"
+
+#: .\hello\models.py:14
+msgid "employee"
+msgstr "员工"
+
+#: .\hello\models.py:15
+msgid "content"
+msgstr "内容"
+
+#: .\hello\models.py:16
+msgid "create time"
+msgstr "创建时间"
+
+#: .\hello\models.py:17
+msgid "reply content"
+msgstr "回复"
+
+#: .\hello\models.py:18
+msgid "publish type"
+msgstr "发布类型"

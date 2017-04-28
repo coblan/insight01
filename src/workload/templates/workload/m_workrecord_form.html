@@ -92,9 +92,11 @@
     <div v-show="crt_view=='main'">
 
         <div class="weui-cells__title">编辑内容</div>
-        <el-form ref="form"  label-width="80px" class="el-form-pad">
+        <div class="form-pad">
             <field v-for="head in kw.heads" :name="head.name" :kw="kw"></field>
-        </el-form>
+        </div>
+
+
         <!--<div class="weui-cells weui-cells_form">-->
             <!--<field v-for="head in kw.heads" :name="head.name" :kw="kw"></field>-->
         <!--</div>-->
@@ -117,8 +119,7 @@
 
 <template id="btn-dir">
     <div @click="open()">
-        <span v-text="show_name">here</span>
-        <!--<button v-text="row[name]"></button>-->
+        <span v-text="show_name" style="color: #0099CC">here</span>
     </div>
 </template>
 <script type="application/javascript">
