@@ -1,0 +1,115 @@
+{% extends "wx/base.html" %}
+{% load static %}
+{% load jsonify %}
+
+
+{% block page_content %}
+
+<script type="text/javascript">
+
+
+
+
+    $(function(){
+
+
+        search_args=ex.parseSearch()
+        crt_view = search_args.crt_view || 'table'
+
+
+        var table= new Vue({
+            el:'#there',
+            data:{
+//                    menu:menu,
+//                    rows:rows,
+                crt_view:crt_view,
+            },
+            mixins:[table_fun],
+            mounted:function(){
+
+            },
+            methods:{
+                goto:function(url){
+                    location=url
+                },
+                ge_edit:function(pk){
+                    location= ex.template('{engine_url}/{page_name}.edit?pk={pk}',{engine_url:engine_url,page_name:page_name,pk:pk})
+                },
+                switch_to:function(name){
+                    history.pushState({view:name},'',ex.appendSearch({crt_view:name}))
+                    this.crt_view=name
+                },
+                back:function(){
+                    history.back()
+                },
+
+            }
+        })
+    })
+</script>
+
+
+
+
+<div id="there">
+
+
+
+    <div v-show="crt_view=='table'">
+
+        <div class="flex">
+            <div class="flex-grow"></div>
+            <div style="text-align: right;padding: 0.5em 1em;">
+                <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
+            </div>
+        </div>
+
+
+
+        <div class="weui-cells__title">列表项</div>
+        <div class="weui-cells">
+            <a class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows">
+                <div class="weui-cell__hd" style="padding-right: 20px">
+                    <input type="checkbox" :value="row.pk" v-model="selected" />
+                    <img :src="row.head" width="48px;"/>
+                </div>
+                <div class="weui-cell__bd" @click="ge_edit(row.pk)">
+                    <p v-text="row._label"></p>
+                </div>
+                <div class="weui-cell__ft">
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div v-show="crt_view=='search'">
+
+        <com-filter :row_filters="row_filters" :search_args="search_args" :search_tip='search_tip'></com-filter>
+
+        <div class="weui-btn-area">
+            <a class="weui-btn weui-btn_primary" href="javascript:" @click='search()' style="width: 50%;">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </a>
+        </div>
+
+    </div>
+
+    <modal v-show="show_menu" @click.native="show_menu=false">
+        <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
+
+            <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新建</div>
+            <div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>
+            <div class="weui-actionsheet__cell" @click="crt_view='search';show_menu=false" v-if="can_search">排序过滤</div>
+        </div>
+        <div class="weui-actionsheet__cell">
+            <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
+        </div>
+    </modal>
+
+</div>
+
+<style type="text/css">
+
+</style>
+
+{% endblock %}

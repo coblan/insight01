@@ -82,13 +82,13 @@ class EmployeeTable(ModelTable):
         """
         """
         query=self.get_query()
-        return [to_dict(x, include=self.permited_fields(),filt_attr=lambda row:{'user':unicode(row)}) for x in query]     
+        return [to_dict(x, include=self.permited_fields(),filt_attr=lambda row:{'user':unicode(row),'head':row.baseinfo.head}) for x in query]     
 
 class EmployeeTablePage(TablePage):
     tableCls=EmployeeTable
 
-#class EmployeeTablePageWX(EmployeeTablePage):
-    #template='wx/table.html'
+class EmployeeTablePageWX(EmployeeTablePage):
+    template='employee/m_emp_table.html'
 
 class EmployeeFormPageWX(EmployeeFormPage):
     template='wx/fieldset.html'
@@ -102,6 +102,6 @@ permit_list.append(BasicInfo)
 page_dc.update({
     'employee':EmployeeTablePage,
     'employee.edit':EmployeeFormPage,
-    'employee.wx':EmployeeTablePage,
+    'employee.wx':EmployeeTablePageWX,
     'employee.wx.edit':EmployeeFormPageWX,
 })

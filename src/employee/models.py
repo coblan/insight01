@@ -14,6 +14,7 @@ class EmployeeModel(models.Model):
         super(EmployeeModel,self).__init__(*args,**kw)
         if not self.baseinfo:
             self.baseinfo=BasicInfo()
+            self.save()
        
     def __unicode__(self):
         if self.baseinfo:
@@ -34,7 +35,12 @@ class BasicInfo(models.Model):
     gen = models.CharField(_('gen'),max_length=30,blank=True,choices=GEN)
     phone = models.CharField(_('phone'),max_length=100,blank=True)
     
-    
+    def __init__(self,*args,**kw):
+        super(BasicInfo,self).__init__(*args,**kw)
+        if not self.head:
+            self.head='/static/image/user.jpg'
+            self.save()
+            
     def __unicode__(self):
         return self.name
     

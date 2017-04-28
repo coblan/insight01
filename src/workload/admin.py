@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from django.contrib import admin
 from .models import Work,WorkRecord,Index
-from helpers.director.shortcut import page_dc,FormPage,TablePage,ModelTable,ModelFields,model_dc,RowFilter
+from helpers.director.shortcut import page_dc,FormPage,TablePage,ModelTable,ModelFields,model_dc,RowFilter,permit_list
 
 
 # Register your models here.
@@ -66,6 +66,7 @@ class WRselfForm(ModelFields):
         
         if not self.instance.pk:
             self.instance.emp= self.crt_user.employeemodel_set.first()
+            self.instance.save()
         return super(WRselfForm,self).get_row()
         
 class WRselfFormPage(FormPage):
@@ -96,6 +97,12 @@ class WorkIndex(FormPage):
         
 class WorkIndexWX(WorkIndex):
     template='workload/m_work.html'
+
+permit_list.append(WorkRecord)
+permit_list.append(Work)
+permit_list.append({'name':'workrecord','label':'工作SP','fields':[
+    {'name':'check_all','label':'查看所有工作','type':'bool'},
+]})
 
 
 model_dc[Work]={'fields':WorkForm}
