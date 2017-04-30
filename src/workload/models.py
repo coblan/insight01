@@ -36,7 +36,7 @@ class Work(models.Model):
         return self.name
 
 class WorkRecord(models.Model):
-    work=models.ForeignKey(Work,verbose_name='工作',null=True)
+    work=models.ForeignKey(Work,verbose_name='工时类型',null=True)
     emp=models.ForeignKey(EmployeeModel,verbose_name='员工',blank=False,null=True)
     ex_span=models.FloatField('调整工时',default=0,help_text='单位(小时)')
     status=models.CharField('状态',max_length=20,choices=WORK_STATUS,default='waiting')

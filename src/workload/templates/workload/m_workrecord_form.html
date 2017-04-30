@@ -112,7 +112,8 @@
 
 <template id="btn-dir">
     <div >
-        <el-button @click="open()" v-text="show_name" style="color: #0099CC;padding: 0.3em 2em;" :disabled="is_tmp">选择</el-button>
+        <span v-if="kw.readonly" v-text="show_name"></span>
+        <el-button v-else @click="open()" v-text="show_name" style="color: #0099CC;padding: 0.3em 2em;" :disabled="is_tmp">选择</el-button>
         <!--<el-checkbox v-model="is_tmp">临时工时</el-checkbox>-->
     </div>
 </template>
