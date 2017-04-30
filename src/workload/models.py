@@ -19,7 +19,7 @@ class Index(models.Model):
 
 WORK_STATUS=(
     ('pass','通过'),
-    ('unpass','未通过'),
+    ('reject','未通过'),
     ('waiting','等待审核')
 )
 
@@ -44,6 +44,7 @@ class WorkRecord(models.Model):
     detail=models.TextField(verbose_name='详细',blank=True)
     create_time=models.DateTimeField(verbose_name='创建时间',auto_now=True)
     desp_img=models.CharField('描述图片',max_length=300,blank=True)
+    count=models.IntegerField(verbose_name='数量',default=1)
     #tmp=models.BooleanField('临时工时',default=False)
     
     def __unicode__(self):

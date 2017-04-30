@@ -81,7 +81,7 @@
     })
 </script>
 
-<div id="there">
+<div id="there" v-cloak>
     <div v-show="crt_view=='main'">
 
         <div class="weui-cells__title">编辑内容</div>
@@ -89,10 +89,6 @@
             <field v-for="head in cmp_kw.heads" :name="head.name" :kw="cmp_kw"></field>
         </div>
 
-
-        <!--<div class="weui-cells weui-cells_form">-->
-            <!--<field v-for="head in kw.heads" :name="head.name" :kw="kw"></field>-->
-        <!--</div>-->
 
         <div class="weui-btn-area">
             <a class="weui-btn weui-btn_primary" href="javascript:;" id="showTooltips" @click="submit()" style="width: 50vw;">确定</a>

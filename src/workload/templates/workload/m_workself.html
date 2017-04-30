@@ -10,7 +10,7 @@
 
     $(function(){
 
-        crt_view = search_args.crt_view || 'table'
+        crt_view = 'table'
 
         var table= new Vue({
             el:'#there',
@@ -34,19 +34,33 @@
                     history.pushState({view:name},'',ex.appendSearch({crt_view:name}))
                     this.crt_view=name
                 },
-                back:function(){
-                    history.back()
-                },
+//                back:function(){
+//                    history.back()
+//                },
+
+                get_color:function(row){
+                    if(row.status=='waiting'){
+                        return '#828fb2'
+                    }else if(row.status=='pass'){
+                        return '#88b288'
+                    }else if(row.status=='reject'){
+                        return '#b25d64'
+                    }
+                }
 
             }
         })
     })
 </script>
 
+<style>
+    .ff{
+        color: #828fb2;
+    }
+</style>
 
 
-
-<div id="there">
+<div id="there" v-cloak>
 
 
     <!--<button @click="switch_to('search')">过滤</button>-->
@@ -64,7 +78,8 @@
 
         <div class="weui-cells__title">列表项</div>
         <div class="weui-cells">
-            <a class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows">
+            <a class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
+               :style="{backgroundColor:get_color(row),color:'#fff'}">
                 <!--<div class="weui-cell__hd" style="padding-right: 20px">-->
                     <!--<input type="checkbox" :value="row.pk" v-model="selected" />-->
                 <!--</div>-->

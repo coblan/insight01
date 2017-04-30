@@ -224,7 +224,7 @@
     })
 
 </script>
-<div id='there'>
+<div id='there' v-cloak>
     <!--<path-nav :menu='menu' ></path-nav>-->
     <div class='btn-panel flex flex-sb' style="padding-left:20px; ">
 
@@ -233,7 +233,6 @@
 
     <div class="flex" v-show="crt_view=='main'">
         <div style="width: 100vw; ">
-
             <div class="flex">
                 <ol class="breadcrumb flex-grow" style="font-size: 1.5em;margin-bottom: 5px;">
                     <li ><a  @click="set_par({pk:null})">root</a></li>

@@ -43,6 +43,7 @@ class EmployeeFields(ModelFields):
             users.append(self.instance.user)
         options['user']=[{'value':user.pk,'label':unicode(user)}for user in users]
         return options
+    
     #def get_heads(self):
         #heads = super(EmployeeFields,self).get_heads()
         #for head in heads:
