@@ -1595,7 +1595,7 @@ exports = module.exports = __webpack_require__(0)();
 
 
 // module
-exports.push([module.i, ".form-pad {\n  background-color: white;\n  padding: 2em 1em; }\n  .form-pad .field {\n    display: flex;\n    margin-top: 2em; }\n  .form-pad .field label {\n    width: 80px; }\n  .form-pad .field .bd {\n    flex-grow: 1; }\n", ""]);
+exports.push([module.i, ".form-pad {\n  background-color: white;\n  padding: 2em 1em; }\n  .form-pad .field {\n    display: flex;\n    margin-top: 2em; }\n  .form-pad .field label {\n    width: 80px; }\n  .form-pad .field .bd {\n    flex-grow: 1; }\n\n.help_text {\n  color: #a4a1a5;\n  font-style: italic;\n  font-size: 0.8em; }\n", ""]);
 
 // exports
 
@@ -1942,7 +1942,7 @@ var field = {
         }
     },
     methods: {},
-    template: '<div v-if="head" :class=\'["field",{"error":error_data(head.name)}]\'>\n        <label :for="\'id_\'+name" >\n            <span v-text=\'head.label\'></span>\n            <span class="req_star" v-if=\'head.required\'>*</span>\n        </label>\n        <div class="bd">\n            <component :is=\'head.type\'\n                    :row=\'row\'\n                    :name=\'name\'\n                    :kw=\'head\'>\n             </component>\n             <slot></slot>\n            <div v-for=\'error in error_data(name)\' v-text=\'error\' class=\'error\'></div>\n        </div>\n\n    </div>'
+    template: '<div v-if="head" :class=\'["field",{"error":error_data(head.name)}]\'>\n        <label :for="\'id_\'+name" >\n            <span v-text=\'head.label\'></span>\n            <span class="req_star" v-if=\'head.required\'>*</span>\n        </label>\n        <div class="bd">\n            <component :is=\'head.type\'\n                    :row=\'row\'\n                    :name=\'name\'\n                    :kw=\'head\'>\n             </component>\n             <div class="help_text" v-text=\'head.help_text\'></div>\n             <slot></slot>\n            <div v-for=\'error in error_data(name)\' v-text=\'error\' class=\'error\'></div>\n        </div>\n\n    </div>'
 
 };
 

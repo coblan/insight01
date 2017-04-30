@@ -38,13 +38,13 @@ class Work(models.Model):
 class WorkRecord(models.Model):
     work=models.ForeignKey(Work,verbose_name='工时类型',null=True)
     emp=models.ForeignKey(EmployeeModel,verbose_name='员工',blank=False,null=True)
-    ex_span=models.FloatField('调整工时',default=0,help_text='单位(小时)')
+    ex_span=models.FloatField('调整工时',default=0,help_text='单位(小时)，小数或整数')
     status=models.CharField('状态',max_length=20,choices=WORK_STATUS,default='waiting')
     short=models.CharField('简短描述',max_length=300,blank=True)
     detail=models.TextField(verbose_name='详细',blank=True)
     create_time=models.DateTimeField(verbose_name='创建时间',auto_now=True)
     desp_img=models.CharField('描述图片',max_length=300,blank=True)
-    count=models.IntegerField(verbose_name='数量',default=1)
+    count=models.IntegerField(verbose_name='数量',default=1,help_text='整数')
     #tmp=models.BooleanField('临时工时',default=False)
     
     def __unicode__(self):
