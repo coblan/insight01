@@ -14,12 +14,6 @@
             head.type='btn-dir'
         }
     })
-//    search_args=ex.parseSearch()
-//    search_args.crt_view = search_args.crt_view || 'main'
-
-//    function handler(state){
-//        form.router(state)
-//    }
 
     ln.history_handle({
         init:{crt_view:'main'},
@@ -28,33 +22,15 @@
         },
     })
 
-    ln.readCache()
-//    window.addEventListener('popstate', function(e){
-//        if(e.state){
-//            form.router(e.state)
-//        }else{
-//            history.back()
-//        }
-//    },false)
-//
-//    function pushState(state){
-//        history.pushState(state,'')
-//        form.router(state)
-//    }
-//    history.pushState({crt_view:'main'},'')
-
     $(function(){
         form =new Vue({
             el:'#there',
             data:{
                 menu:menu,
-                kw:{
-                    heads:heads,
-                    row:row,
-                    error:{},
-                },
                 crt_view:'main',
-                out_src:''
+                out_src:'',
+                has_work:true,
+
             },
             mixins:[field_fun],
             created:function(){
@@ -63,6 +39,23 @@
                         head.placeholder='请输入'+head.label
                     }
                 })
+            },
+            computed:{
+                cmp_kw:function(){
+                    return this.kw
+//                    var this_heads=heads
+//                    if(row.tmp){
+//                        this_heads=ex.exclude(heads,{name:'work'})
+//                    }else{
+//                        this_heads=ex.exclude(heads,{name:'desp_img'})
+//                    }
+//                    this_heads=ex.sort_by_names(this_heads,['tmp','work'],true)
+//                    return {
+//                        heads:this_heads,
+//                        row:row,
+//                        errors:this.kw.errors,
+//                    }
+                }
             },
             mounted:function(){
 
@@ -93,7 +86,7 @@
 
         <div class="weui-cells__title">编辑内容</div>
         <div class="form-pad">
-            <field v-for="head in kw.heads" :name="head.name" :kw="kw"></field>
+            <field v-for="head in cmp_kw.heads" :name="head.name" :kw="cmp_kw"></field>
         </div>
 
 
@@ -118,14 +111,27 @@
 </style>
 
 <template id="btn-dir">
-    <div @click="open()">
-        <span v-text="show_name" style="color: #0099CC">here</span>
+    <div >
+        <el-button @click="open()" v-text="show_name" style="color: #0099CC;padding: 0.3em 2em;" :disabled="is_tmp">选择</el-button>
+        <!--<el-checkbox v-model="is_tmp">临时工时</el-checkbox>-->
     </div>
 </template>
 <script type="application/javascript">
     Vue.component('btn-dir',{
         template:'#btn-dir',
         props:['row','name','kw'],
+        data:function(){
+            return {
+                is_tmp:false
+            }
+        },
+        watch:{
+//          is_tmp:function(v){
+//              if(v){
+//                  this.row[this.name]=null
+//              }
+//          }
+        },
         computed:{
           show_name:function(){
               var pk =this.row[this.name]

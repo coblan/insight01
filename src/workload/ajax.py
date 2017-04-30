@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from .models import Index,Work
 from helpers.director.db_tools import to_dict,from_dict
+from helpers.director.shortcut import ModelPermit
+from django.core.exceptions import PermissionDenied
 
 def get_global():
     return globals()
@@ -38,7 +40,9 @@ def dir_data(par):
         items=[to_dict(item) for item in Work.objects.filter(index=None)]
     return {'dirs':rows,'parents':parents,'items':items}
 
-def dir_create(par=None):
+def dir_create(user,par=None):
+    if not ModelPermit(Index,user).can_add():
+        raise PermissionDenied,'not permit create index'
     if not par:
         i = Index.objects.create()
     else:

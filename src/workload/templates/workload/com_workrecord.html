@@ -1,0 +1,17 @@
+<script type="application/javascript">
+    Vue.component('workrecord-list-cell',{
+        template:'#workrecord-list-cell',
+        props:['wr'],
+        methods:{
+            desp_img:function(){
+                return this.wr.work.desp_img
+            }
+        }
+    })
+</script>
+
+<template id="workrecord-list-cell">
+    <div>
+        <img :src="desp_img" alt="">
+    </div>
+</template>

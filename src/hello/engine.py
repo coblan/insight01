@@ -26,7 +26,7 @@ class PcEngine(BaseEngine):
              ]},
         {'label':'工作管理','icon':fa('fa-suitcase'),'visible':can_list((Work,WorkRecord)),
          'submenu':[{'label':'工时目录','url': page('workindex'),'visible':can_touch(Work)},
-                    {'label':'工作类型','url': page('work'),'visible':can_touch(Work)},
+                    {'label':'工时类型','url': page('work'),'visible':can_touch(Work)},
                     {'label':'工作记录','url':page('workrecord'),'visible':can_touch(WorkRecord)}
                     ]
          },
@@ -43,13 +43,14 @@ class WxEngine(BaseEngine):
     menu=[
         {'label':'home','url':page('home.wx'),'icon':fa('fa-home fa-2x')},
         {'label':'员工名册','url':page('employee.wx'),'visible':can_touch(EmployeeModel),'icon':fa('fa-users fa-2x')},
-        {'label':'工时类型(目录)','url':page('workindex.wx'),'visible':can_touch(EmployeeModel),'icon':fa('fa-clock-o fa-2x')},
+        {'label':'工时类型(目录)','url':page('workindex.wx'),'visible':can_touch(Work),'icon':fa('fa-clock-o fa-2x')},
         #{'label':'工时类型','url':page('work.wx'),'visible':can_touch(EmployeeModel),'icon':fa('fa-suitcase fa-2x')},
-        {'label':'工作提交','url':page('wkself.wx'),'visible':can_touch(WorkRecord),'icon':fa('fa-hand-paper-o fa-2x')},
+        {'label':'工作提交','url':page('wkself.wx'),'icon':fa('fa-hand-paper-o fa-2x'),\
+         'visible':and_list([WorkRecord,lambda user: user.employeemodel_set.exists()]),},
         {'label':'工作审核','url':page('workrecord.wx'),'visible':and_list(['workrecord.check_all',WorkRecord]),'icon':fa('fa-eye fa-2x')},
         
         {'label':'提意见','url':page('commentself.wx'),'visible':can_touch(Comment),'icon':fa('fa-pencil-square-o fa-2x')},
-        {'label':'管理意见','url':page('comment.wx'),'visible':can_touch(EmployeeModel),'icon':fa('fa-pencil-square fa-2x')},
+        {'label':'管理意见','url':page('comment.wx'),'visible':and_list([Comment,'comment.all']),'icon':fa('fa-pencil-square fa-2x')},
         
     ]
 

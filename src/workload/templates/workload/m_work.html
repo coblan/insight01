@@ -37,23 +37,10 @@
         }
     })
 
-//    if(!history.state){
-//        history.pushState({par:par},'title',ex.appendSearch({par:par_pk}))
-//    }
-//    window.addEventListener('popstate', function(e){
-//        if(e.state){
-//            if(e.state){
-//                table.dir_data(e.state.par)
-//            }
-//            if(e.state.selected){
-//                table.selected=e.state.selected
-//            }
-//            table.crt_view='main'
-//        }else{
-//            history.back()
-//        }
-//    },false)
-
+    work_editable={{ work_editable | jsonify | default:'false' }}
+    dir_editable={{ dir_editable | jsonify}}
+    dir_can_add={{ dir_can_add | jsonify }}
+    work_can_add={{ work_can_add | jsonify }}
     $(function () {
         table=new Vue({
             el:'#there',
@@ -70,6 +57,10 @@
                 show_menu:false,
 
                 ln:ln,
+                work_editable:work_editable,
+                dir_editable:dir_editable,
+                dir_can_add:dir_can_add,
+                work_can_add:work_can_add,
 
             },
             mixins:[field_fun],
@@ -97,7 +88,7 @@
                 can_paste:function(){
                     return this.cut_list.length>0
                 },
-                can_edit:function(){
+                has_select:function(){
                     return this.selected.length==1
                 }
 
@@ -254,12 +245,10 @@
                 </div>
             </div>
 
-
-
             <div class="weui-cells" style="margin-top: 0" >
                 <div class="weui-cell weui-cell_access" v-for="dir in dirs" >
                     <div class="weui-cell__hd" style="padding-right: 20px">
-                        <input type="checkbox" :value="dir" v-model="selected" />
+                        <input v-if="dir_editable" type="checkbox" :value="dir" v-model="selected" />
                         <i class="fa fa-folder fa-2x" aria-hidden="true"></i>
                     </div>
                     <div class="weui-cell__bd" @click="set_par(dir)">
@@ -270,7 +259,7 @@
 
                 <div class="weui-cell" v-for="item in items" >
                     <div class="weui-cell__hd" style="padding-right: 20px">
-                        <input type="checkbox" :value="item" v-model="selected" />
+                        <input v-if="work_editable" type="checkbox" :value="item" v-model="selected" />
                         <i class="fa fa-file-o fa-2x" aria-hidden="true"></i>
                     </div>
                     <div class="weui-cell__bd" @click="edit(item)">
@@ -280,30 +269,14 @@
                 </div>
             </div>
 
-            <!--<div>-->
-                <!--<ul>-->
-                    <!--<li v-for="dir in dirs">-->
-                        <!--<input type="checkbox" :value="dir" v-model="selected" />-->
-                        <!--<i class="fa fa-folder" aria-hidden="true"></i>-->
-                        <!--<span v-text="dir.name" class="clickable" @click="dir_data(dir)"></span>-->
-                    <!--</li>-->
-                    <!--<li v-for="item in items">-->
-                        <!--<input type="checkbox" :value="item" v-model="selected"/>-->
-                        <!--<i class="fa fa-file-o" aria-hidden="true"></i>-->
-                        <!--<span v-text="item.name" class="clickable" @click="swith_item(item)"></span>-->
-                    <!--</li>-->
-                <!--</ul>-->
-            <!--</div>-->
-
-
         </div>
 
         <modal v-show="show_menu" @click.native="show_menu=false">
             <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
-                <div class="weui-actionsheet__cell" @click="edit(selected[0]);show_menu=false" v-show="can_edit">编辑</div>
+                <div class="weui-actionsheet__cell" @click="edit(selected[0]);show_menu=false" v-show="has_select">编辑</div>
 
-                <div class="weui-actionsheet__cell" @click="dir_create();show_menu=false">新建目录</div>
-                <div class="weui-actionsheet__cell" @click="item_create();show_menu=false">新建工时</div>
+                <div class="weui-actionsheet__cell" @click="dir_create();show_menu=false" v-if="dir_can_add">新建目录</div>
+                <div class="weui-actionsheet__cell" @click="item_create();show_menu=false" v-if="work_can_add">新建工时</div>
                 <div class="weui-actionsheet__cell" @click="item_del();show_menu=false" v-show="selected.length>0">删除选中项</div>
                 <div class="weui-actionsheet__cell" @click="cut();show_menu=false" v-show="can_cut">剪切</div>
                 <div class="weui-actionsheet__cell" @click="paste();show_menu=false" v-show="can_paste">粘贴</div>
@@ -325,20 +298,6 @@
         </div>
 
     </div>
-
-    <!--<div class="weui-cells weui-cells_form"  v-if="kw.heads && kw.heads.length>0">-->
-        <!--<div class="weui-panel__hd">当前项编辑</div> class="weui-panel"-->
-
-        <!--<div class="weui-panel__bd">-->
-            <!--<div class="weui-cells weui-cells_form" v-if="kw.heads && kw.heads.length>0">-->
-                <!--<field  v-for='head in kw.heads' :key="head.name" :name='head.name' :kw='kw'></field>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="weui-cells weui-cells_form editor" v-if="kw.heads && kw.heads.length>0">-->
-        <!--<field  v-for='head in kw.heads' :key="head.name" :name='head.name' :kw='kw'></field>-->
-    <!--</div>-->
 
 
 </div>

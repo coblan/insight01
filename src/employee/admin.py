@@ -6,7 +6,8 @@ from helpers.director.shortcut import FormPage,TablePage,ModelFields,ModelTable,
 from helpers.director.db_tools import to_dict
 from django.contrib import admin
 from .models import EmployeeModel,BasicInfo
-
+from django.contrib.auth.models import User
+from django.db.models import Q
 # Register your models here.
 
 
@@ -35,6 +36,13 @@ class EmployeeFields(ModelFields):
         model=EmployeeModel
         exclude=[]
     
+    def get_options(self):
+        options= super(EmployeeFields,self).get_options()
+        users = list(User.objects.filter(employeemodel=None))
+        if self.instance.user:
+            users.append(self.instance.user)
+        options['user']=[{'value':user.pk,'label':unicode(user)}for user in users]
+        return options
     #def get_heads(self):
         #heads = super(EmployeeFields,self).get_heads()
         #for head in heads:
@@ -66,7 +74,7 @@ class EmployeeFormPage(FormPage):
             },
             'delset':['employee','baseinfo'],
             'namelist':[{'label':'账户信息','fields':['employee.user']},
-                        {'label':'基本信息','fields':['baseinfo.name','baseinfo.age']}],
+                        {'label':'基本信息','fields':['baseinfo.name','baseinfo.age','baseinfo.head']}],
             'save_step':[{'save':'baseinfo'},
                         {'assign':'baseinfo','obj':'employee','value':'baseinfo'},
                         {'save':'employee'},]

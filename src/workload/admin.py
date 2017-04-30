@@ -4,8 +4,9 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from django.contrib import admin
 from .models import Work,WorkRecord,Index
-from helpers.director.shortcut import page_dc,FormPage,TablePage,ModelTable,ModelFields,model_dc,RowFilter,permit_list
-
+from helpers.director.shortcut import page_dc,FormPage,\
+     TablePage,ModelTable,ModelFields,model_dc,RowFilter,permit_list,has_permit,ModelPermit
+from django import forms
 
 # Register your models here.
 class IndexForm(ModelFields):
@@ -17,6 +18,17 @@ class WorkForm(ModelFields):
     class Meta:
         model=Work
         exclude=['index']
+    def get_heads(self):
+        heads= super(WorkForm,self).get_heads()
+        for head in heads:
+            if head.get('name')=='desp_img':
+                head['type']='picture'
+                head['config']={
+                'crop':True,
+                'aspectRatio': 1,
+                'size':{'width':250,'height':250}
+            }
+        return heads
 
 class WorkFormPage(FormPage):
     fieldsCls=WorkForm
@@ -32,6 +44,36 @@ class WorkRecordForm(ModelFields):
     class Meta:
         model=WorkRecord
         exclude=[]
+    
+    def get_heads(self):
+        heads= super(WorkRecordForm,self).get_heads()
+        for head in heads:
+            if head.get('name')=='desp_img':
+                head['type']='picture'
+                head['config']={
+                'crop':True,
+                'aspectRatio': 1,
+                'size':{'width':250,'height':250}
+            }
+        return heads  
+    
+    def clean(self):
+        cleaned_data = super(WorkRecordForm,self).clean()
+        if not has_permit(self.crt_user,'workrecord.check_all'):
+            if self.instance.status!='waiting': 
+                raise forms.ValidationError('you have no permition to edit this workrecord again')
+
+    #def can_access(self):
+        #access = super(WorkRecordForm,self).can_access()
+        #if not has_permit(self.crt_user,'workrecord.check_all'):
+            #if self.instance.status!='waiting':
+                
+    #def clean(self,*args,**kw):
+        #cleaned_data = super(WorkRecordForm, self).clean()
+        #if not cleaned_data.get('tmp') and not cleaned_data.get('work'):
+            #self.add_error('work', '当非临时工作时，必须选择工时种类')
+         
+        
     
 class WorkRecordFormPage(FormPage):
     fieldsCls=WorkRecordForm
@@ -49,9 +91,20 @@ class WorkRecordTable(ModelTable):
     def inn_filter(self, query):
         query =super(WorkRecordTable,self).inn_filter(query)
         return query.order_by('-id')
+    def dict_row(self,inst):
+        if  inst.work:
+            return {
+                'work_desp_img':inst.work.desp_img
+            }
+        else:
+            return {}
 
 class WorkRecordTablePage(TablePage):
     tableCls=WorkRecordTable
+
+class WorkRecordTablePageWX(WorkRecordTablePage):
+    pass
+    #template='workload/m_workrecord.html'
 
 class WorkRecordFormPageWX(WorkRecordFormPage):
     template='workload/m_workrecord_form.html'
@@ -63,11 +116,28 @@ class WRselfForm(ModelFields):
         exclude=[]
     
     def get_row(self):
-        
-        if not self.instance.pk:
-            self.instance.emp= self.crt_user.employeemodel_set.first()
-            self.instance.save()
+       
+        #if not self.instance.pk:
+        self.instance.emp= self.crt_user.employeemodel_set.first()
+            #self.instance.save()
         return super(WRselfForm,self).get_row()
+    
+    def get_heads(self):
+        heads= super(WRselfForm,self).get_heads()
+        for head in heads:
+            if head.get('name')=='desp_img':
+                head['type']='picture'
+                head['config']={
+                'crop':True,
+                'aspectRatio': 1,
+                'size':{'width':250,'height':250}
+            }
+        if self.instance.status!='waiting':
+            for head in heads:
+                head['readonly']=True
+                
+        return heads 
+    
         
 class WRselfFormPage(FormPage):
     template='workload/m_workrecord_form.html'
@@ -82,18 +152,29 @@ class WRselfTable(ModelTable):
 
 class WRselfTablePage(TablePage):
     tableCls=WRselfTable
+    template='workload/m_workself.html'
 
 
         
-class WorkIndex(FormPage):
+class WorkIndex(object):
     template='workload/work.html'
     def __init__(self,request):
         self.request=request
+        
+    def get_context(self):
+        workform = WorkForm(crt_user=self.request.user)
+        indexform=IndexForm(crt_user=self.request.user)
         self.ctx={
             'app':'workload',
-            'heads':WorkForm(crt_user=self.request.user).get_heads(),
-            'dir_heads':IndexForm(crt_user=self.request.user).get_heads(),
+            'heads':workform.get_heads(),
+            'work_editable':bool( workform.permit.changeable_fields()),
+            'work_can_add':workform.permit.can_add(),
+            'dir_heads':indexform.get_heads(),
+            'dir_editable':bool(indexform.permit.changeable_fields()),
+            'dir_can_add':indexform.permit.can_add(),
         }
+        return self.ctx
+     
         
 class WorkIndexWX(WorkIndex):
     template='workload/m_work.html'
@@ -120,7 +201,7 @@ page_dc.update({
     'work.wx.edit':WorkFormPage,
     
     'workrecord':WorkRecordTablePage,
-    'workrecord.wx':WorkRecordTablePage,
+    'workrecord.wx':WorkRecordTablePageWX,
     
     'workrecord.edit':WorkRecordFormPage,
     'workrecord.wx.edit':WorkRecordFormPageWX,
