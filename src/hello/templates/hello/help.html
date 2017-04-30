@@ -1,0 +1,64 @@
+<!doctype html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <script src="{% static 'js/lib/jquery.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/lib/font-awesome4.7.min.css' %}">
+    <script src="{% static 'js/weui.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/lib/weui.min.css' %}">
+    <script src="{% static 'js/lib/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/lib/bootstrap.min.css' %}">
+    <title>帮助</title>
+    </head>
+<body>
+<div>
+    <h2>关注</h2>
+    <p>扫描二维码关注公众号</p>
+    <img src="/static/image/heyulin_test_wechat.png" alt="">
+
+    <h2>注册</h2>
+    <p>点击“工作”菜单，进入工作面板，如果你没有登陆惠要求你登陆。</p>
+    <p>如果你已经有账号了，请输入账号密码登陆；如果没有，请点击注册，生成一个账号。</p>
+    <p>当登录后，如果你还不员工，请通知管理员你的账号，等待管理员将你升级为员工。如果已经升级为员工，那么就可以进行正常操作了。</p>
+
+    <h2>操作</h2>
+    <p>将你的工作提交</p>
+    <p>给管理员留言</p>
+</div>
+
+<div class="weui-tabbar nav footer">
+    <a href="/wx/help.wx" class="weui-tabbar__item weui-bar__item_on">
+        <i class="fa fa-info-circle weui-tabbar__icon" aria-hidden="true" ></i>
+        <p class="weui-tabbar__label">信息</p>
+    </a>
+    <a href="/wx/home.wx" class="weui-tabbar__item ">
+        <i class="fa fa-th weui-tabbar__icon" aria-hidden="true"></i>
+        <p class="weui-tabbar__label">控制台</p>
+    </a>
+    <a href="/my_info" class="weui-tabbar__item">
+        <i class="fa fa-user-circle weui-tabbar__icon" aria-hidden="true" ></i>
+        <p class="weui-tabbar__label">个人中心</p>
+    </a>
+</div>
+<style type="text/css">
+    body{
+        background-color: #f7f5f3;
+    }
+    .weui-tabbar.nav{
+        position: fixed;
+        bottom: 0px;
+    }
+    .weui-tab__panel{
+        padding-bottom: 150px;
+    }
+    .field .error{
+        color: red;
+    }
+</style>
+</body>
+</html>
+
+
+
