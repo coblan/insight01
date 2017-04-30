@@ -12,7 +12,7 @@ DATABASES = {
         'NAME': 'insight01',
         'ENGINE': 'django.db.backends.mysql',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'he123811',
         'HOST': '127.0.0.1', 
         'PORT': '3306',        
       },
