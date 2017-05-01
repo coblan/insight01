@@ -35,6 +35,13 @@ class WorkFormPage(FormPage):
 
 class WorkTable(ModelTable):
     model=Work
+    def dict_row(self, inst):
+        rt_dc={}
+        if inst.desp_img:
+            rt_dc['desp_img']='<img src="%s" width="30"/>'%inst.desp_img
+        if inst.index:
+            rt_dc['index']=unicode(inst.index)
+        return rt_dc
 
 class WorkTablePage(TablePage):
     tableCls=WorkTable
@@ -80,7 +87,7 @@ class WorkRecordFormPage(FormPage):
 
 
 class WorkRecordFilter(RowFilter):
-    names=['status']
+    names=['status','work','ex_span']
     range_fields=[{'name':'create_time','type':'date'}]
     model=WorkRecord 
 
@@ -91,13 +98,19 @@ class WorkRecordTable(ModelTable):
     def inn_filter(self, query):
         query =super(WorkRecordTable,self).inn_filter(query)
         return query.order_by('-id')
+    
     def dict_row(self,inst):
+        dc={}
         if  inst.work:
-            return {
-                'work_desp_img':inst.work.desp_img
-            }
-        else:
-            return {}
+            dc.update({
+                'work_desp_img': inst.work.desp_img,
+                'work':'<a href="/pc/work.edit?pk=%s">%s</a>'%(inst.work.pk,unicode(inst.work)),
+            })
+        dc.update({
+            'emp':unicode(inst.emp),
+            'desp_img':'<img src="%s" width="20"/>'%inst.desp_img,            
+        })
+        return dc
 
 class WorkRecordTablePage(TablePage):
     tableCls=WorkRecordTable

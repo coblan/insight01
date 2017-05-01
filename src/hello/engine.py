@@ -52,6 +52,8 @@ class WxEngine(BaseEngine):
         {'label':'提意见','url':page('commentself.wx'),'visible':can_touch(Comment),'icon':fa('fa-pencil-square-o fa-2x')},
         {'label':'管理意见','url':page('comment.wx'),'visible':and_list([Comment,'comment.all']),'icon':fa('fa-pencil-square fa-2x')},
         
+        {'label':'统计','url':page('static'),'visible':can_touch(Comment),'icon':fa('fa-pencil-square-o fa-2x')},
+        
     ]
 
 WxEngine.add_pages(page_dc)

@@ -7,6 +7,7 @@ from django.contrib import admin
 from helpers.director.shortcut import ModelTable,TablePage,page_dc,ModelFields,FormPage,model_dc,permit_list,has_permit
 from .models import Comment
 from django.db.models import Q
+from . import static
 # Register your models here.
 
 class CommentTable(ModelTable):
@@ -68,6 +69,7 @@ class CommentselfFormPage(FormPage):
     template='hello/comment_self_form.html'
 
 
+
 model_dc[Comment]={'fields':CommentForm}
 
 permit_list.append(Comment)
@@ -82,5 +84,6 @@ page_dc.update({
     'comment.wx.edit':CommentFormPage,
     'commentself.wx':CommentselfPage,
     'commentself.wx.edit':CommentselfFormPage
-    
 })
+
+

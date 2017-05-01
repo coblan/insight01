@@ -34,7 +34,7 @@
                 crt_name:'',
                 selected:[],
                 cut_list:[],
-
+                root:{pk:null,name:'root'},
             },
             mixins:[field_fun],
 //            watch:{
@@ -44,7 +44,7 @@
 //                }
 //            },
             mounted:function(){
-                this.dir_data()
+                this.dir_data(this.root)
                 this.kw={heads:[],row:{}}
 
             },
@@ -75,25 +75,19 @@
                         self.dir_data(self.par)
                     })
                 },
-                get_dir_pk:function(dir){
-                    if(dir){return dir.pk}
-                    else{return null}
-                },
+//                get_dir_pk:function(dir){
+//                    if(dir){return dir.pk}
+//                    else{return null}
+//                },
                 dir_data:function(par){
                     var self=this
-                    if(par){
+                    if(par.pk){
                         this.kw.heads=dir_heads
                         this.kw.row=par
-//                        var kw={
-//                            heads:dir_heads,
-//                            row:par,
-//
-//                        }
-//                        this.kw=kw
                     }
                     this.selected=[]
 
-                    var url=ajax_url+ex.template('?_op=dir_data:par:{par}',{par:this.get_dir_pk(par)})
+                    var url=ajax_url+ex.template('?_op=dir_data:par:{par}',{par:par.pk})
                     ex.get(url,function(resp){
                         self.dirs=resp.dir_data.dirs
                         self.items=resp.dir_data.items
@@ -200,9 +194,9 @@
 
             <!--<com-dir :dirs="dirs" :items="items" :parents="parents" :par="par" :selected="selected" @dir_click="dir_data($event)" @item_click="swith_item($event)"></com-dir>-->
             <ol class="breadcrumb">
-                <li ><a href="javacript:void(0);" @click="dir_data()">root</a></li>
-                <li v-for="dir in parents" ><a href="javacript:void(0);" v-text="dir.name" @click="dir_data(dir)" ></a></li>
-                <li v-if="par"><a href="javacript:;" v-text="par.name" class="active"></a></li>
+                <li ><a href="javacript:;" @click="dir_data(root)">root</a></li>
+                <li v-for="dir in parents" ><a href="javacript:;" v-text="dir.name" @click="dir_data(dir)" ></a></li>
+                <li v-if="par.pk"><a href="javacript:;" v-text="par.name" class="active"></a></li>
             </ol>
 
 
