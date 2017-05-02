@@ -10,10 +10,10 @@ from django.core.exceptions import PermissionDenied
 def get_global():
     return globals()
 
-def dir_data(pk):
-    index = Index.objects.get(pk=pk)
-    index.childs.all()
-    return{'stat':'sg'}
+# def dir_data(pk):
+    # index = Index.objects.get(pk=pk)
+    # index.childs.all()
+    # return{'stat':'sg'}
 
 def dir_data(par):
     if par:
@@ -47,7 +47,6 @@ def dir_create(user,par=None):
         i = Index.objects.create()
     else:
         i = Index.objects.create( par_id=par)
-       
     return to_dict(i)
 
 def item_create(par):
