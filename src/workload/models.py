@@ -24,7 +24,7 @@ WORK_STATUS=(
 )
 
 class Work(models.Model):
-    index =models.ForeignKey(Index,verbose_name='目录',blank=True,null=True)
+    par =models.ForeignKey(Index,verbose_name='目录',blank=True,null=True)
     name= models.CharField('名称',max_length=100,default='new work',validators=[has_str])
     span = models.FloatField('工时',default=0,help_text='单位(小时)')
     status=models.CharField('状态',max_length=20,choices=WORK_STATUS,default='waiting')

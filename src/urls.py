@@ -22,7 +22,7 @@ from helpers.director import login_url
 from employee import views as emp_views
 from helpers.face import urls as face_urls
 from hello import views as hello_view
-
+from workload import views as workload_view
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'pc/([\w\.]+)/?$',PcEngine.as_view(),name=PcEngine.url_name),
@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^my_info/?$',emp_views.my_info),
     url(r'^d/',include(director_urls)),
     url(r'^face/', include(face_urls)),
+    url(r'^dir_mana',workload_view.dir_man),
     
     
 ]

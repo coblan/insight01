@@ -43,11 +43,11 @@
 //                    this.search()
 //                }
 //            },
-            mounted:function(){
-                this.dir_data(this.root)
-                this.kw={heads:[],row:{}}
-
-            },
+//            mounted:function(){
+//                this.dir_data(this.root)
+//                this.kw={heads:[],row:{}}
+//
+//            },
             computed:{
                 par_pk:function(){
                     if(this.par){return this.par.pk}
@@ -215,7 +215,7 @@
                 <!--</ul>-->
             <!--</div>-->
 
-            <com-catalog :url=""></com-catalog>
+            <com-catalog url="/dir_mana" :root="{pk:null,name:'root'}"></com-catalog>
 
         </div>
         <div class="flex-v">
@@ -256,8 +256,43 @@
 <script type="application/javascript">
     Vue.component('com-catalog',{
         template:'#com-catalog',
-        props:['url'],
+        props:['url','root'],
+        data:function(){
+          return {
+              selected:[],
+              dirs:[],
+              items:[],
+              org_parents:[],
+          }
+        },
+        mounted:function(){
+          this.dir_data(this.root)
+        },
+        computed:{
+            parents:function(){
+                if(!this.root.pk){
+                    return this.org_parents
+                }else{
+                    var root_obj = ex.findone(this.org_parents,{pk:root.pk})
+                    var idx= this.org_parents.indexOf(root_obj)
+                    return this.org_parents.slice(idx)
+                }
 
+            }
+        },
+        methods:{
+            dir_data:function(par){
+                var self=this
+                this.selected=[]
+
+                var url=this.url+ex.template('?_op=dir_data:par:{par}',{par:par.pk})
+                ex.get(url,function(resp){
+                    self.dirs=resp.dir_data.dirs
+                    self.items=resp.dir_data.items
+                    self.org_parents=resp.dir_data.parents
+                })
+            },
+        }
 
     })
 </script>
@@ -267,7 +302,7 @@
         <ol class="breadcrumb">
             <li ><a href="javacript:;" @click="dir_data(root)">root</a></li>
             <li v-for="dir in parents" ><a href="javacript:;" v-text="dir.name" @click="dir_data(dir)" ></a></li>
-            <li v-if="par.pk"><a href="javacript:;" v-text="par.name" class="active"></a></li>
+            <!--<li v-if="par.pk"><a href="javacript:;" v-text="par.name" class="active"></a></li>-->
         </ol>
 
 
