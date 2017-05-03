@@ -1,7 +1,7 @@
 # encoding:utf-8
 
 from helpers.director.shortcut import ModelPermit
-from helpers.director.db_tools import to_dict,model_to_name
+from helpers.director.db_tools import to_dict,model_to_name,from_dict
 from .models import Work,Index
 from django.core.exceptions import PermissionDenied
 

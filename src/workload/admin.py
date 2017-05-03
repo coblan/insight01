@@ -17,7 +17,7 @@ class IndexForm(ModelFields):
 class WorkForm(ModelFields):
     class Meta:
         model=Work
-        exclude=['index']
+        exclude=['par']
     def get_heads(self):
         heads= super(WorkForm,self).get_heads()
         for head in heads:
@@ -39,8 +39,8 @@ class WorkTable(ModelTable):
         rt_dc={}
         if inst.desp_img:
             rt_dc['desp_img']='<img src="%s" width="30"/>'%inst.desp_img
-        if inst.index:
-            rt_dc['index']=unicode(inst.index)
+        if inst.par:
+            rt_dc['par']=unicode(inst.par)
         return rt_dc
 
 class WorkTablePage(TablePage):
