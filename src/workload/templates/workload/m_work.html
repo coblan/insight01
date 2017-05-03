@@ -4,6 +4,7 @@
 
 {% block page_content %}
 <script src='{% static "js/table.pack.js" %}'></script>
+<script src='{% static "js/ex_inputs.pack.js" %}'></script>
 <script type="text/javascript">
 
     bus=new Vue()
@@ -23,16 +24,18 @@
     item_heads= heads
     dir_heads={{ dir_heads | jsonify }}
 
-    var par_pk=ex.parseSearch().par
-    var par ={pk:par_pk}
+//    var par_pk=ex.parseSearch().par
+//    var par ={view:par_pk}
 
     ln.history_handle({
-        init:{par:par},
+        init:{crt_view:'main'},
         handler:function(state){
-            if(state.par) {
-                table.dir_data(state.par)
-            }else if(state.op){
-                table['_'+state.op](state.arg)  // 目前好像只有edit
+            if(state.crt_view) {
+                table.crt_view = state.crt_view
+//                table.dir_data(state.par)
+            }
+            if (state.op) {
+                table[state.op](state.arg)
             }
         }
     })
@@ -45,22 +48,24 @@
         table=new Vue({
             el:'#there',
             data:{
-                parents:[],
-                par:par,
-                dirs:[],
-                items:[],
+//                parents:[],
+//                par:par,
+//                dirs:[],
+//                items:[],
                 crt_view:'main',
                 crt_name:'',
-                selected:[],
-                cut_list:[],
+//                selected:[],
+//                cut_list:[],
 
                 show_menu:false,
 
-                ln:ln,
+//                ln:ln,
                 work_editable:work_editable,
                 dir_editable:dir_editable,
                 dir_can_add:dir_can_add,
                 work_can_add:work_can_add,
+
+                state:{},
 
             },
             mixins:[field_fun],
@@ -71,149 +76,155 @@
 //                }
 //            },
             mounted:function(){
-                this.dir_data(this.par)
-                this.kw={heads:[],row:{}}
+//                this.dir_data(this.par)
+//                this.kw={heads:[],row:{}}
+                this.$refs.catalog.dir_data()
 
             },
-            computed:{
-                par_pk:function(){
-                    if(this.par){return this.par.pk}
-                    else{return null}
-                },
-                can_cut:function(){
-                    if(this.selected.length>0 ){
-                        return true
-                    }
-                },
-                can_paste:function(){
-                    return this.cut_list.length>0
-                },
-                has_select:function(){
-                    return this.selected.length==1
-                }
-
-            },
+//            computed:{
+//                par_pk:function(){
+//                    if(this.par){return this.par.pk}
+//                    else{return null}
+//                },
+//                can_cut:function(){
+//                    if(this.selected.length>0 ){
+//                        return true
+//                    }
+//                },
+//                can_paste:function(){
+//                    return this.cut_list.length>0
+//                },
+//                has_select:function(){
+//                    return this.selected.length==1
+//                }
+//
+//            },
 //            watch:{
 //                par:function(v){
 //                    this.dir_data(par)
 //                }
 //            },
             methods:{
+                set_state:function(state){
+                    for(var k in state){
+                        Vue.set(this.state,k,state[k])
+                    }
+                },
                 after_sub:function(){
-                    history.back()
+                    location=document.referrer
                 },
-                set_par:function(par){
-//                    history.pushState({par:par},'',ex.appendSearch({par:par.pk}))
-                    ln.pushState({par:par})
-//                    this.dir_data(par)
-                },
-                cut:function(){
-                    this.cut_list=this.selected.slice()
-                },
-                paste:function(){
-                    var self=this
-                    var post_data=[{fun:'items_paste',rows:this.cut_list,par:this.par_pk}]
-                    self.cut_list=[]
-                    ex.post(ajax_url,JSON.stringify(post_data),function(resp){
-                        self.dir_data(self.par)
-                    })
-                },
-                get_dir_pk:function(dir){
-                    if(dir){return dir.pk}
-                    else{return null}
-                },
-                dir_data:function(par){
-                    var self=this
-                    this.crt_view='main'
-                    this.par=par
-                    if(par && par.pk){
-                        this.kw.heads=dir_heads
-                        this.kw.row=par
-                    }else{
-                        this.kw.heads=[]
-                    }
-                    this.selected=[]
-
-                    var url=ajax_url+ex.template('?_op=dir_data:par:{par}',{par:this.get_dir_pk(par)})
-                    ex.get(url,function(resp){
-                        self.dirs=resp.dir_data.dirs
-                        self.items=resp.dir_data.items
-                        self.parents=resp.dir_data.parents
-                        var par = self.parents.pop()
-                        if(par){
-                            self.par=par
-                        }
-                    })
-                },
-                dir_create:function(){
-                    var self=this
-                    show_upload()
-                    var url=ajax_url+ex.template('?_op=dir_create:par:{par}',{par:this.par_pk})
-                    ex.get(url,function(resp){
-                        self.dirs.push(resp.dir_create)
-                        hide_upload(200)
-
-                        self.edit(resp.dir_create)
-                    })
-                },
-                item_create:function(){
-                    var self=this
-                    var url=ajax_url+ex.template('?_op=item_create:par:{par}',{par:this.par_pk})
-                    ex.get(url,function(resp){
-                        self.items.push(resp.item_create)
-
-                        self.edit(resp.item_create)
-                    })
-
-                },
-                item_del:function(){
-                    var self=this
-                    show_upload()
-                    var obj={}
-                    ex.each(this.selected,function(item){
-                        if(!obj[item._class]){
-                            obj[item._class]=item.pk
-                        }else{
-                            obj[item._class]+=':'+item.pk
-                        }
-                    })
-                    var del_str=''
-                    for(var k in obj){
-                        del_str +=k+':'+obj[k]+','
-                    }
-                    location=engine_url+'/del_rows?rows='+del_str
-
-                },
-                item_save:function(){
-                    var self=this
-                    show_upload()
-                    var post_data=[{fun:'save',row:this.kw.row}]
-                    ex.post('',JSON.stringify(post_data),function(resp){
-                        if(resp.save.errors){
-                            self.kw.errors=resp.save.errors
-                        }else{
-                            self.kw.errors={}
-                            self.crt_view='main'
-                            history.back()
-                            self.selected=[]
-                        }
-                        hide_upload(200)
-
-                    })
-                },
+//                set_par:function(par){
+////                    history.pushState({par:par},'',ex.appendSearch({par:par.pk}))
+//                    ln.pushState({par:par})
+////                    this.dir_data(par)
+//                },
+//                cut:function(){
+//                    this.cut_list=this.selected.slice()
+//                },
+//                paste:function(){
+//                    var self=this
+//                    var post_data=[{fun:'items_paste',rows:this.cut_list,par:this.par_pk}]
+//                    self.cut_list=[]
+//                    ex.post(ajax_url,JSON.stringify(post_data),function(resp){
+//                        self.dir_data(self.par)
+//                    })
+//                },
+//                get_dir_pk:function(dir){
+//                    if(dir){return dir.pk}
+//                    else{return null}
+//                },
+//                dir_data:function(par){
+//                    var self=this
+//                    this.crt_view='main'
+//                    this.par=par
+//                    if(par && par.pk){
+//                        this.kw.heads=dir_heads
+//                        this.kw.row=par
+//                    }else{
+//                        this.kw.heads=[]
+//                    }
+//                    this.selected=[]
+//
+//                    var url=ajax_url+ex.template('?_op=dir_data:par:{par}',{par:this.get_dir_pk(par)})
+//                    ex.get(url,function(resp){
+//                        self.dirs=resp.dir_data.dirs
+//                        self.items=resp.dir_data.items
+//                        self.parents=resp.dir_data.parents
+//                        var par = self.parents.pop()
+//                        if(par){
+//                            self.par=par
+//                        }
+//                    })
+//                },
+//                dir_create:function(){
+//                    var self=this
+//                    show_upload()
+//                    var url=ajax_url+ex.template('?_op=dir_create:par:{par}',{par:this.par_pk})
+//                    ex.get(url,function(resp){
+//                        self.dirs.push(resp.dir_create)
+//                        hide_upload(200)
+//
+//                        self.edit(resp.dir_create)
+//                    })
+//                },
+//                item_create:function(){
+//                    var self=this
+//                    var url=ajax_url+ex.template('?_op=item_create:par:{par}',{par:this.par_pk})
+//                    ex.get(url,function(resp){
+//                        self.items.push(resp.item_create)
+//
+//                        self.edit(resp.item_create)
+//                    })
+//
+//                },
+//                item_del:function(){
+//                    var self=this
+//                    show_upload()
+//                    var obj={}
+//                    ex.each(this.selected,function(item){
+//                        if(!obj[item._class]){
+//                            obj[item._class]=item.pk
+//                        }else{
+//                            obj[item._class]+=':'+item.pk
+//                        }
+//                    })
+//                    var del_str=''
+//                    for(var k in obj){
+//                        del_str +=k+':'+obj[k]+','
+//                    }
+//                    location=engine_url+'/del_rows?rows='+del_str
+//
+//                },
+//                item_save:function(){
+//                    var self=this
+//                    show_upload()
+//                    var post_data=[{fun:'save',row:this.kw.row}]
+//                    ex.post('',JSON.stringify(post_data),function(resp){
+//                        if(resp.save.errors){
+//                            self.kw.errors=resp.save.errors
+//                        }else{
+//                            self.kw.errors={}
+//                            self.crt_view='main'
+//                            history.back()
+//                            self.selected=[]
+//                        }
+//                        hide_upload(200)
+//
+//                    })
+//                },
 //                swith_item:function(item){
 //                    Vue.set(this.kw,'heads',item_heads)
 //                    Vue.set(this.kw,'row',item)
 //                },
                 edit:function(item){
-                    ln.pushState({op:'edit',arg:item})
+                    ln.pushState({op:'edit_aa',arg:item,crt_view:'editor'})
                 },
-                _edit:function(item){
-                    this.crt_view='editor'
-                    if(ex.isin(item,this.items)){
-                        this.kw.heads=item_heads
-                    }else{
+                edit_aa:function(item){
+//                    this.crt_view='editor'
+                    if(item._class=='workload.index'){
                         this.kw.heads=dir_heads
+                    }else{
+                        this.kw.heads=item_heads
                     }
                     this.kw.row=item
                 }
@@ -232,53 +243,58 @@
     </div>
 
     <div class="flex" v-show="crt_view=='main'">
-        <div style="width: 100vw; ">
-            <div class="flex">
-                <ol class="breadcrumb flex-grow" style="font-size: 1.5em;margin-bottom: 5px;">
-                    <li ><a  @click="set_par({pk:null})">root</a></li>
-                    <li v-for="dir in parents" ><a  v-text="dir.name" @click="set_par(dir)" ></a></li>
-                    <li v-if="par"><a  v-text="par.name" class="active"></a></li>
-                </ol>
-                <div style="text-align: right;padding: 0.5em 1em;">
-                    <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
-                </div>
+        <div style="width: 100vw;" class="catalog">
+
+            <com-catalog ref="catalog" url="/dir_mana" :root="{pk:null,name:'root'}" @dirclick="on_dirclick($event)"
+                         @itemclick="on_itemclick($event)" @state="set_state($event)" :editable="true">
+
+
+
+            <div slot="head_end" style="text-align: right;padding: 0.5em 1em;">
+                <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
             </div>
 
-            <div class="weui-cells" style="margin-top: 0" >
-                <div class="weui-cell weui-cell_access" v-for="dir in dirs" >
-                    <div class="weui-cell__hd" style="padding-right: 20px">
-                        <input v-if="dir_editable" type="checkbox" :value="dir" v-model="selected" />
-                        <i class="fa fa-folder fa-2x" aria-hidden="true"></i>
-                    </div>
-                    <div class="weui-cell__bd" @click="set_par(dir)">
-                        <span v-text="dir.name" ></span>
-                        <div class="weui-cell__ft"></div>
-                    </div>
-                </div>
 
-                <div class="weui-cell" v-for="item in items" >
-                    <div class="weui-cell__hd" style="padding-right: 20px">
-                        <input v-if="work_editable" type="checkbox" :value="item" v-model="selected" />
-                        <i class="fa fa-file-o fa-2x" aria-hidden="true"></i>
-                    </div>
-                    <div class="weui-cell__bd" @click="edit(item)">
-                        <span v-text="item.name"> </span>
-                        <div class="weui-cell__ft"></div>
-                    </div>
-                </div>
-            </div>
+                <i slot="dir_icon" class="fa fa-folder fa-2x" aria-hidden="true"></i>
+
+                <i slot="item_icon" class="fa fa-file-o fa-2x" aria-hidden="true"></i>
+
+            <!--<div class="weui-cells" style="margin-top: 0" >-->
+                <!--<div class="weui-cell weui-cell_access" v-for="dir in dirs" >-->
+                    <!--<div class="weui-cell__hd" style="padding-right: 20px">-->
+                        <!--<input v-if="dir_editable" type="checkbox" :value="dir" v-model="selected" />-->
+                        <!--<i class="fa fa-folder fa-2x" aria-hidden="true"></i>-->
+                    <!--</div>-->
+                    <!--<div class="weui-cell__bd" @click="set_par(dir)">-->
+                        <!--<span v-text="dir.name" ></span>-->
+                        <!--<div class="weui-cell__ft"></div>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <!--<div class="weui-cell" v-for="item in items" >-->
+                    <!--<div class="weui-cell__hd" style="padding-right: 20px">-->
+                        <!--<input v-if="work_editable" type="checkbox" :value="item" v-model="selected" />-->
+                        <!--<i class="fa fa-file-o fa-2x" aria-hidden="true"></i>-->
+                    <!--</div>-->
+                    <!--<div class="weui-cell__bd" @click="edit(item)">-->
+                        <!--<span v-text="item.name"> </span>-->
+                        <!--<div class="weui-cell__ft"></div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            </com-catalog>
 
         </div>
 
         <modal v-show="show_menu" @click.native="show_menu=false">
             <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
-                <div class="weui-actionsheet__cell" @click="edit(selected[0]);show_menu=false" v-show="has_select">编辑</div>
+                <div class="weui-actionsheet__cell" @click="edit($refs.catalog.selected[0]);show_menu=false" v-show="state.has_select">编辑</div>
 
-                <div class="weui-actionsheet__cell" @click="dir_create();show_menu=false" v-if="dir_can_add">新建目录</div>
-                <div class="weui-actionsheet__cell" @click="item_create();show_menu=false" v-if="work_can_add">新建工时</div>
-                <div class="weui-actionsheet__cell" @click="item_del();show_menu=false" v-show="selected.length>0">删除选中项</div>
-                <div class="weui-actionsheet__cell" @click="cut();show_menu=false" v-show="can_cut">剪切</div>
-                <div class="weui-actionsheet__cell" @click="paste();show_menu=false" v-show="can_paste">粘贴</div>
+                <div class="weui-actionsheet__cell" @click="$refs.catalog.dir_create();show_menu=false" v-if="dir_can_add">新建目录</div>
+                <div class="weui-actionsheet__cell" @click="$refs.catalog.item_create();show_menu=false" v-if="work_can_add">新建工时</div>
+                <div class="weui-actionsheet__cell" @click="$refs.catalog.item_del();show_menu=false" v-show="state.has_select">删除选中项</div>
+                <div class="weui-actionsheet__cell" @click="$refs.catalog.cut();show_menu=false" v-show="state.can_cut">剪切</div>
+                <div class="weui-actionsheet__cell" @click="$refs.catalog.paste();show_menu=false" v-show="state.can_paste">粘贴</div>
             </div>
             <div class="weui-actionsheet__cell">
                 <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
@@ -306,6 +322,46 @@
 
 body{
     background-color: #faf6fa;
+}
+    .catalog .breadcrumb{
+        font-size: 1.5em;
+    }
+    .catalog .bd{
+        background-color: white;
+    }
+    .catalog .bd li{
+
+        padding: 10px 15px;
+        position: relative;
+        font-size: 1.3em;
+    }
+    .catalog .bd li:before{
+        content: ' ';
+        border-bottom: 1px solid #f3f0ed;
+        position: absolute;
+        left: 15px;
+        top:0;
+        right:0;
+        bottom: 0;
+        /*color: red;*/
+        height: 1px;
+    }
+.catalog .bd li.dir:after{
+    content: " ";
+    display: inline-block;
+    height: 6px;
+    width: 6px;
+    border-width: 2px 2px 0 0;
+    border-color: #c8c8cd;
+    border-style: solid;
+    -webkit-transform: matrix(.71,.71,-.71,.71,0,0);
+    transform: matrix(.71,.71,-.71,.71,0,0);
+    position: relative;
+    top: -2px;
+    position: absolute;
+    top: 50%;
+    margin-top: -4px;
+    right: 6px;
 }
 </style>
 

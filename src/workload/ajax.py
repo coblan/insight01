@@ -37,7 +37,7 @@ def dir_data(par):
         this_dir=Index.objects.get(id=par)
         items=[to_dict(item) for item in this_dir.work_set.all()]
     else:
-        items=[to_dict(item) for item in Work.objects.filter(index=None)]
+        items=[to_dict(item) for item in Work.objects.filter(par=None)]
     return {'dirs':rows,'parents':parents,'items':items}
 
 def dir_create(user,par=None):
