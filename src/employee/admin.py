@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
-from helpers.director.shortcut import FormPage,TablePage,ModelFields,ModelTable,page_dc,model_dc,permit_list
+from helpers.director.shortcut import FormPage,TablePage,ModelFields,ModelTable,page_dc,model_dc,permit_list,TabGroup
 from helpers.director.db_tools import to_dict
 from django.contrib import admin
 from .models import EmployeeModel,BasicInfo
@@ -113,4 +113,17 @@ page_dc.update({
     'employee.edit':EmployeeFormPage,
     'employee.wx':EmployeeTablePageWX,
     'employee.wx.edit':EmployeeFormPageWX,
+})
+
+
+class EmployeeItem(FormPage):
+    template=''
+    fieldsCls=EmployeeFields
+    
+
+class EmpGroup(TabGroup):
+    tabs=[{'name':'emp','label':'EMPLOYEE','page_cls':EmployeeItem}]
+
+page_dc.update({
+    'employee.edit':EmpGroup,
 })
