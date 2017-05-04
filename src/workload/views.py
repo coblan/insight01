@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from helpers.director.port import jsonpost
-from work_dir import DirMan
+from helpers.common.dir_man import DirMan
 from .models import Work,Index
 import inspect
 # Create your views here.

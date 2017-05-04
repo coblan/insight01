@@ -69,41 +69,10 @@
 
             },
             mixins:[field_fun],
-//            watch:{
-//                'row_sort.sort_str':function (v) {
-//                    this.search_args._sort=v
-//                    this.search()
-//                }
-//            },
             mounted:function(){
-//                this.dir_data(this.par)
-//                this.kw={heads:[],row:{}}
                 this.$refs.catalog.dir_data()
-
             },
-//            computed:{
-//                par_pk:function(){
-//                    if(this.par){return this.par.pk}
-//                    else{return null}
-//                },
-//                can_cut:function(){
-//                    if(this.selected.length>0 ){
-//                        return true
-//                    }
-//                },
-//                can_paste:function(){
-//                    return this.cut_list.length>0
-//                },
-//                has_select:function(){
-//                    return this.selected.length==1
-//                }
-//
-//            },
-//            watch:{
-//                par:function(v){
-//                    this.dir_data(par)
-//                }
-//            },
+
             methods:{
                 set_state:function(state){
                     for(var k in state){
@@ -113,109 +82,26 @@
                 after_sub:function(){
                     location=document.referrer
                 },
-//                set_par:function(par){
-////                    history.pushState({par:par},'',ex.appendSearch({par:par.pk}))
-//                    ln.pushState({par:par})
-////                    this.dir_data(par)
-//                },
-//                cut:function(){
-//                    this.cut_list=this.selected.slice()
-//                },
-//                paste:function(){
-//                    var self=this
-//                    var post_data=[{fun:'items_paste',rows:this.cut_list,par:this.par_pk}]
-//                    self.cut_list=[]
-//                    ex.post(ajax_url,JSON.stringify(post_data),function(resp){
-//                        self.dir_data(self.par)
-//                    })
-//                },
-//                get_dir_pk:function(dir){
-//                    if(dir){return dir.pk}
-//                    else{return null}
-//                },
-//                dir_data:function(par){
-//                    var self=this
-//                    this.crt_view='main'
-//                    this.par=par
-//                    if(par && par.pk){
-//                        this.kw.heads=dir_heads
-//                        this.kw.row=par
-//                    }else{
-//                        this.kw.heads=[]
-//                    }
-//                    this.selected=[]
-//
-//                    var url=ajax_url+ex.template('?_op=dir_data:par:{par}',{par:this.get_dir_pk(par)})
-//                    ex.get(url,function(resp){
-//                        self.dirs=resp.dir_data.dirs
-//                        self.items=resp.dir_data.items
-//                        self.parents=resp.dir_data.parents
-//                        var par = self.parents.pop()
-//                        if(par){
-//                            self.par=par
-//                        }
-//                    })
-//                },
-//                dir_create:function(){
-//                    var self=this
-//                    show_upload()
-//                    var url=ajax_url+ex.template('?_op=dir_create:par:{par}',{par:this.par_pk})
-//                    ex.get(url,function(resp){
-//                        self.dirs.push(resp.dir_create)
-//                        hide_upload(200)
-//
-//                        self.edit(resp.dir_create)
-//                    })
-//                },
-//                item_create:function(){
-//                    var self=this
-//                    var url=ajax_url+ex.template('?_op=item_create:par:{par}',{par:this.par_pk})
-//                    ex.get(url,function(resp){
-//                        self.items.push(resp.item_create)
-//
-//                        self.edit(resp.item_create)
-//                    })
-//
-//                },
-//                item_del:function(){
-//                    var self=this
-//                    show_upload()
-//                    var obj={}
-//                    ex.each(this.selected,function(item){
-//                        if(!obj[item._class]){
-//                            obj[item._class]=item.pk
-//                        }else{
-//                            obj[item._class]+=':'+item.pk
-//                        }
-//                    })
-//                    var del_str=''
-//                    for(var k in obj){
-//                        del_str +=k+':'+obj[k]+','
-//                    }
-//                    location=engine_url+'/del_rows?rows='+del_str
-//
-//                },
-//                item_save:function(){
-//                    var self=this
-//                    show_upload()
-//                    var post_data=[{fun:'save',row:this.kw.row}]
-//                    ex.post('',JSON.stringify(post_data),function(resp){
-//                        if(resp.save.errors){
-//                            self.kw.errors=resp.save.errors
-//                        }else{
-//                            self.kw.errors={}
+
+                item_save:function(){
+                    var self=this
+                    show_upload()
+                    var post_data=[{fun:'save',row:this.kw.row}]
+                    ex.post('',JSON.stringify(post_data),function(resp){
+                        if(resp.save.errors){
+                            self.kw.errors=resp.save.errors
+                        }else{
+                            self.kw.errors={}
 //                            self.crt_view='main'
-//                            history.back()
+                            self.$refs.catalog.selected=[]
+                            history.back()
 //                            self.selected=[]
-//                        }
-//                        hide_upload(200)
-//
-//                    })
-//                },
-//                swith_item:function(item){
-//                    Vue.set(this.kw,'heads',item_heads)
-//                    Vue.set(this.kw,'row',item)
-//                },
+                        }
+                        hide_upload(200)
+
+                    })
+                },
+
                 edit:function(item){
                     ln.pushState({op:'edit_aa',arg:item,crt_view:'editor'})
                 },
@@ -243,9 +129,9 @@
     </div>
 
     <div class="flex" v-show="crt_view=='main'">
-        <div style="width: 100vw;" class="catalog">
+        <div style="width: 100vw;" >
 
-            <com-catalog ref="catalog" url="/dir_mana" :root="{pk:null,name:'root'}" @dirclick="on_dirclick($event)"
+            <com-catalog class="mobile" ref="catalog" url="/dir_mana" :root="{pk:null,name:'root'}" @dirclick="on_dirclick($event)"
                          @itemclick="on_itemclick($event)" @state="set_state($event)" :editable="true">
 
 
@@ -254,34 +140,10 @@
                 <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
             </div>
 
-
                 <i slot="dir_icon" class="fa fa-folder fa-2x" aria-hidden="true"></i>
 
                 <i slot="item_icon" class="fa fa-file-o fa-2x" aria-hidden="true"></i>
 
-            <!--<div class="weui-cells" style="margin-top: 0" >-->
-                <!--<div class="weui-cell weui-cell_access" v-for="dir in dirs" >-->
-                    <!--<div class="weui-cell__hd" style="padding-right: 20px">-->
-                        <!--<input v-if="dir_editable" type="checkbox" :value="dir" v-model="selected" />-->
-                        <!--<i class="fa fa-folder fa-2x" aria-hidden="true"></i>-->
-                    <!--</div>-->
-                    <!--<div class="weui-cell__bd" @click="set_par(dir)">-->
-                        <!--<span v-text="dir.name" ></span>-->
-                        <!--<div class="weui-cell__ft"></div>-->
-                    <!--</div>-->
-                <!--</div>-->
-
-                <!--<div class="weui-cell" v-for="item in items" >-->
-                    <!--<div class="weui-cell__hd" style="padding-right: 20px">-->
-                        <!--<input v-if="work_editable" type="checkbox" :value="item" v-model="selected" />-->
-                        <!--<i class="fa fa-file-o fa-2x" aria-hidden="true"></i>-->
-                    <!--</div>-->
-                    <!--<div class="weui-cell__bd" @click="edit(item)">-->
-                        <!--<span v-text="item.name"> </span>-->
-                        <!--<div class="weui-cell__ft"></div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
             </com-catalog>
 
         </div>
@@ -323,46 +185,7 @@
 body{
     background-color: #faf6fa;
 }
-    .catalog .breadcrumb{
-        font-size: 1.5em;
-    }
-    .catalog .bd{
-        background-color: white;
-    }
-    .catalog .bd li{
 
-        padding: 10px 15px;
-        position: relative;
-        font-size: 1.3em;
-    }
-    .catalog .bd li:before{
-        content: ' ';
-        border-bottom: 1px solid #f3f0ed;
-        position: absolute;
-        left: 15px;
-        top:0;
-        right:0;
-        bottom: 0;
-        /*color: red;*/
-        height: 1px;
-    }
-.catalog .bd li.dir:after{
-    content: " ";
-    display: inline-block;
-    height: 6px;
-    width: 6px;
-    border-width: 2px 2px 0 0;
-    border-color: #c8c8cd;
-    border-style: solid;
-    -webkit-transform: matrix(.71,.71,-.71,.71,0,0);
-    transform: matrix(.71,.71,-.71,.71,0,0);
-    position: relative;
-    top: -2px;
-    position: absolute;
-    top: 50%;
-    margin-top: -4px;
-    right: 6px;
-}
 </style>
 
 
