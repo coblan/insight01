@@ -87,11 +87,11 @@ class EmployeeFormPage(FormPage):
 class EmployeeTable(ModelTable):
     model=EmployeeModel
     
-    def get_rows(self):
-        """
-        """
-        query=self.get_query()
-        return [to_dict(x, include=self.permited_fields(),filt_attr=lambda row:{'user':unicode(row),'head':row.baseinfo.head}) for x in query]     
+    # def get_rows(self):
+        # """
+        # """
+        # query=self.get_query()
+        # return [to_dict(x, include=self.permited_fields(),filt_attr=lambda row:{'user':unicode(row),'head':row.baseinfo.head}) for x in query]     
 
 class EmployeeTablePage(TablePage):
     tableCls=EmployeeTable
@@ -119,10 +119,45 @@ page_dc.update({
 class EmployeeItem(FormPage):
     template=''
     fieldsCls=EmployeeFields
-    
+
+class BaseinfoItem(FormPage):
+    template=''
+    fieldsCls=BasicInfoFields
+    def __init__(self, request):
+        self.request=request
+        pk= self.request.GET.get('pk')
+        emp=EmployeeModel.objects.get(pk=pk)
+        base,c = BasicInfo.objects.get_or_create(employeemodel__id=pk)
+        if c:
+            emp.baseinfo=base
+            emp.save()
+        self.fields=self.fieldsCls(instance= base,crt_user=request.user)
+        self.ctx=self.fields.get_context()
+
+from helpers.director.admin import UserFields,User,UserFormPage
+class UserTab(UserFormPage):
+    template='authuser/user_form_tab.html'
+    fieldsCls=UserFields
+    def __init__(self, request):
+        self.request=request
+        pk= self.request.GET.get('pk')
+        emp=EmployeeModel.objects.get(pk=pk)
+        user,c=User.objects.get_or_create(employeemodel__id=pk)
+        if c:
+            emp.user=user
+            emp.save()
+        self.fields=self.fieldsCls(instance= user,crt_user=request.user)
+        self.ctx=self.fields.get_context()        
 
 class EmpGroup(TabGroup):
-    tabs=[{'name':'emp','label':'EMPLOYEE','page_cls':EmployeeItem}]
+    tabs=[{'name':'emp','label':'EMPLOYEE','page_cls':EmployeeItem},
+          {'name':'baseinfo','label':'BASEINFO','page_cls':BaseinfoItem},
+          {'name':'user','label':'ACCOUNT','page_cls':UserTab}]
+    def get_tabs(self):
+        if not self.request.GET.get('pk'):
+            return self.tabs[0:1]
+        else:
+            return self.tabs
 
 page_dc.update({
     'employee.edit':EmpGroup,

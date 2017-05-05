@@ -12,8 +12,8 @@ class EmployeeModel(models.Model):
    
     def __init__(self,*args,**kw):
         super(EmployeeModel,self).__init__(*args,**kw)
-        if not self.baseinfo:
-            self.baseinfo=BasicInfo()
+        # if not self.baseinfo:
+            # self.baseinfo=BasicInfo()
        
     def __unicode__(self):
         if self.baseinfo:
