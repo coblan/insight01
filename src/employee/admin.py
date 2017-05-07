@@ -8,41 +8,51 @@ from django.contrib import admin
 from .models import EmployeeModel,BasicInfo
 from django.contrib.auth.models import User
 from django.db.models import Q
+from helpers.common.employee import employee_admin
+from helpers.common import human
 # Register your models here.
 
 
 
-class BasicInfoFields(ModelFields):
+#class BasicInfoFields(ModelFields):
     
-    class Meta:
-        model=BasicInfo
-        exclude=[]
+    #class Meta:
+        #model=BasicInfo
+        #exclude=[]
     
-    def get_heads(self):
-        heads=super(BasicInfoFields,self).get_heads()
-        for head in heads:
-            if head.get('name')=='head':
-                head['type']='picture'
-                head['config']={
-                'crop':True,
-                'aspectRatio': 1,
-                'size':{'width':250,'height':250}
-            }
-        return heads
+    #def get_heads(self):
+        #heads=super(BasicInfoFields,self).get_heads()
+        #for head in heads:
+            #if head.get('name')=='head':
+                #head['type']='picture'
+                #head['config']={
+                #'crop':True,
+                #'aspectRatio': 1,
+                #'size':{'width':250,'height':250}
+            #}
+        #return heads
 
-class EmployeeFields(ModelFields):
+#class EmployeeFields(ModelFields):
     
-    class Meta:
-        model=EmployeeModel
-        exclude=[]
+    #class Meta:
+        #model=EmployeeModel
+        #exclude=[]
     
-    def get_options(self):
-        options= super(EmployeeFields,self).get_options()
-        users = list(User.objects.filter(employeemodel=None))
-        if self.instance.user:
-            users.append(self.instance.user)
-        options['user']=[{'value':user.pk,'label':unicode(user)}for user in users]
-        return options
+    #def dict_options(self):
+        #options={}
+        #users = list(User.objects.filter(employeemodel=None))
+        #if self.instance.user:
+            #users.append(self.instance.user)
+        #options['user']=[{'value':user.pk,'label':unicode(user)}for user in users]
+        #return options   
+    
+    #def get_options(self):
+        #options= super(EmployeeFields,self).get_options()
+        #users = list(User.objects.filter(employeemodel=None))
+        #if self.instance.user:
+            #users.append(self.instance.user)
+        #options['user']=[{'value':user.pk,'label':unicode(user)}for user in users]
+        #return options
     
     #def get_heads(self):
         #heads = super(EmployeeFields,self).get_heads()
@@ -52,113 +62,82 @@ class EmployeeFields(ModelFields):
         #return heads
     
 
-class EmployeeFormPage(FormPage):
-    fieldsCls=EmployeeFields
-    template='director/fieldset.html'
-    def __init__(self, request):
-        self.request=request
-        self.pk=request.GET.get('pk')
+#class EmployeeFormPage(FormPage):
+    #fieldsCls=EmployeeFields
+    #template='director/fieldset.html'
+    #def __init__(self, request):
+        #self.request=request
+        #self.pk=request.GET.get('pk')
         
-        if self.pk:
-            emp = EmployeeModel.objects.get(pk=self.pk)
-        else:
-            emp=EmployeeModel()
+        #if self.pk:
+            #emp = EmployeeModel.objects.get(pk=self.pk)
+        #else:
+            #emp=EmployeeModel()
             
-        empf=EmployeeFields(instance=emp,crt_user=request.user)
+        #empf=EmployeeFields(instance=emp,crt_user=request.user)
         
-        baseinfo = emp.baseinfo or BasicInfo()
-        basf = BasicInfoFields(instance=baseinfo,crt_user=request.user)
-        self.ctx={
-            'fieldset':{
-                'employee':empf.get_context(),
-                'baseinfo':basf.get_context(),
-            },
-            'delset':['employee','baseinfo'],
-            'namelist':[{'label':'账户信息','fields':['employee.user']},
-                        {'label':'基本信息','fields':['baseinfo.name','baseinfo.age','baseinfo.head']}],
-            'save_step':[{'save':'baseinfo'},
-                        {'assign':'baseinfo','obj':'employee','value':'baseinfo'},
-                        {'save':'employee'},]
-        }
+        #baseinfo = emp.baseinfo or BasicInfo()
+        #basf = BasicInfoFields(instance=baseinfo,crt_user=request.user)
+        #self.ctx={
+            #'fieldset':{
+                #'employee':empf.get_context(),
+                #'baseinfo':basf.get_context(),
+            #},
+            #'delset':['employee','baseinfo'],
+            #'namelist':[{'label':'账户信息','fields':['employee.user']},
+                        #{'label':'基本信息','fields':['baseinfo.name','baseinfo.age','baseinfo.head']}],
+            #'save_step':[{'save':'baseinfo'},
+                        #{'assign':'baseinfo','obj':'employee','value':'baseinfo'},
+                        #{'save':'employee'},]
+        #}
         
         
     
 
-class EmployeeTable(ModelTable):
-    model=EmployeeModel
+#class EmployeeTable(ModelTable):
+    #model=EmployeeModel
+    ##exclude=['baseinfo']
     
+    #def dict_row(self, inst):
+        #dc={
+            #'user':unicode(inst.user),
+            #'baseinfo':unicode(inst.baseinfo)
+        #}
+        #return dc
     # def get_rows(self):
         # """
         # """
         # query=self.get_query()
         # return [to_dict(x, include=self.permited_fields(),filt_attr=lambda row:{'user':unicode(row),'head':row.baseinfo.head}) for x in query]     
 
-class EmployeeTablePage(TablePage):
-    tableCls=EmployeeTable
+#class EmployeeTablePage(TablePage):
+    #tableCls=EmployeeTable
 
-class EmployeeTablePageWX(EmployeeTablePage):
-    template='employee/m_emp_table.html'
+#class EmployeeTablePageWX(EmployeeTablePage):
+    #template='employee/m_emp_table.html'
 
-class EmployeeFormPageWX(EmployeeFormPage):
-    template='wx/fieldset.html'
+#class EmployeeFormPageWX(EmployeeFormPage):
+    #template='wx/fieldset.html'
  
-model_dc[BasicInfo]={'fields':BasicInfoFields}
-model_dc[EmployeeModel]={'fields':EmployeeFields}
+
+emp_admin = employee_admin(BasicInfo, EmployeeModel)
+
+model_dc[BasicInfo]={'fields': emp_admin['BasicInfoFields']}
+model_dc[EmployeeModel]={'fields':emp_admin[ 'EmployeeFields']}
 
 permit_list.append(EmployeeModel)
 permit_list.append(BasicInfo)
 
-page_dc.update({
-    'employee':EmployeeTablePage,
-    'employee.edit':EmployeeFormPage,
-    'employee.wx':EmployeeTablePageWX,
-    'employee.wx.edit':EmployeeFormPageWX,
-})
+page_dc.update(emp_admin['engine_dict'])
+
+#page_dc.update({
+    #'employee':EmployeeTablePage,
+    #'employee.edit':EmployeeFormPage,
+    #'employee.wx':EmployeeTablePageWX,
+    #'employee.wx.edit':EmployeeFormPageWX,
+#})
 
 
-class EmployeeItem(FormPage):
-    template=''
-    fieldsCls=EmployeeFields
-
-class BaseinfoItem(FormPage):
-    template=''
-    fieldsCls=BasicInfoFields
-    def __init__(self, request):
-        self.request=request
-        pk= self.request.GET.get('pk')
-        emp=EmployeeModel.objects.get(pk=pk)
-        base,c = BasicInfo.objects.get_or_create(employeemodel__id=pk)
-        if c:
-            emp.baseinfo=base
-            emp.save()
-        self.fields=self.fieldsCls(instance= base,crt_user=request.user)
-        self.ctx=self.fields.get_context()
-
-from helpers.director.admin import UserFields,User,UserFormPage
-class UserTab(UserFormPage):
-    template='authuser/user_form_tab.html'
-    fieldsCls=UserFields
-    def __init__(self, request):
-        self.request=request
-        pk= self.request.GET.get('pk')
-        emp=EmployeeModel.objects.get(pk=pk)
-        user,c=User.objects.get_or_create(employeemodel__id=pk)
-        if c:
-            emp.user=user
-            emp.save()
-        self.fields=self.fieldsCls(instance= user,crt_user=request.user)
-        self.ctx=self.fields.get_context()        
-
-class EmpGroup(TabGroup):
-    tabs=[{'name':'emp','label':'EMPLOYEE','page_cls':EmployeeItem},
-          {'name':'baseinfo','label':'BASEINFO','page_cls':BaseinfoItem},
-          {'name':'user','label':'ACCOUNT','page_cls':UserTab}]
-    def get_tabs(self):
-        if not self.request.GET.get('pk'):
-            return self.tabs[0:1]
-        else:
-            return self.tabs
-
-page_dc.update({
-    'employee.edit':EmpGroup,
-})
+#page_dc.update({
+    #'employee.edit':emp_admin['EmpGroup'],
+#})

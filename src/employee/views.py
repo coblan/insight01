@@ -2,13 +2,14 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from helpers.director.db_tools import model_to_head,to_dict
 from .models import EmployeeModel,BasicInfo
-from .admin import BasicInfoFields
+from .admin import emp_admin
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
 @login_required
 def my_info(request):
+    BasicInfoFields=emp_admin['BasicInfoFields']
     user= request.user
     ctx={}
     emp= EmployeeModel.objects.filter(user=request.user).first()
