@@ -7,6 +7,7 @@ from employee.models import EmployeeModel,BasicInfo
 from workload.models import Work,WorkRecord
 from hello.models import Comment
 from .pages import WXHome
+from helpers.director.models import KVModel
 
 
 class PcEngine(BaseEngine):
@@ -31,6 +32,7 @@ class PcEngine(BaseEngine):
                     ]
          },
         {'label':'留言','url':page('comment'),'icon':fa('fa-home')},
+        {'label':'设置','url':page('kv'),'icon':fa('fa-home'),'visible':can_touch(KVModel)},
         #{'label':'Page Admin','url':page('webpage'),'icon':fa('fa-home'),'visible':can_touch(WebPage)},
     
     ]    
