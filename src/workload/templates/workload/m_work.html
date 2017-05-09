@@ -66,6 +66,7 @@
                 work_can_add:work_can_add,
 
                 state:{},
+                ex:ex,
 
             },
             mixins:[field_fun],
@@ -113,7 +114,8 @@
                         this.kw.heads=item_heads
                     }
                     this.kw.row=item
-                }
+                },
+
 
             },
 
@@ -135,14 +137,29 @@
                          @itemclick="on_itemclick($event)" @state="set_state($event)" :editable="true">
 
 
+            <template scope="box" slot="check_sel">
+                <com-check-box :value="box.value" v-model="box.selected" @change="box.set_sel($event)"></com-check-box>
+            </template>
+
 
             <div slot="head_end" style="text-align: right;padding: 0.5em 1em;">
                 <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
             </div>
 
-                <i slot="dir_icon" class="fa fa-folder fa-2x" aria-hidden="true"></i>
+            <template scope="dir_icon">
+                <i class="fa fa-folder fa-2x" aria-hidden="true"></i>
+            </template>
 
-                <i slot="item_icon" class="fa fa-file-o fa-2x" aria-hidden="true"></i>
+            <template scope="box" slot="item_icon">
+                <i  class="fa fa-file-o fa-2x" aria-hidden="true"></i>
+            </template>
+
+            <template slot="btn-panel" scope="box">
+                <span style="color: #0092F2;margin-right: 2em;padding: 0.5em;">
+                    <i v-if="ex.isin(box.item,box.selected)" @click="edit(box.item)"  class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                </span>
+
+            </template>
 
             </com-catalog>
 
