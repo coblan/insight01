@@ -1,0 +1,333 @@
+{% extends "wx/base.html" %}
+{% load static %}
+{% load jsonify %}
+
+
+{% block page_content %}
+<!--<link href="https://cdn.bootcss.com/element-ui/1.2.9/theme-default/index.css" rel="stylesheet">-->
+<!--<script src="https://cdn.bootcss.com/element-ui/1.2.9/index.js"></script>-->
+
+<script src="https://cdn.bootcss.com/echarts/3.5.4/echarts.min.js"></script>
+
+<script type="text/javascript">
+
+
+
+
+    $(function(){
+
+        crt_view = search_args.crt_view || 'table'
+        crt_page={{ crt_page | jsonify }}
+
+    table= new Vue({
+        el:'#there',
+        data:{
+
+            crt_index:0,
+
+            pages:[crt_page],
+            release_add:false,
+        },
+        mixins:[table_fun],
+
+        computed:{
+        },
+        watch:{
+
+        },
+        methods:{
+            get_static:function(month){
+                var self=this
+                var post_data=[{fun:'get_static',start:this.start,end:this.end}]
+                ex.post(ajax_url,JSON.stringify(post_data),function(resp){
+                    self.items=resp.get_static.items
+
+                })
+            },
+            add_left:function(v){
+                var left = $('.page').offset().left
+                console.log(left)
+                $('.page').removeClass('slide')
+                this.pages.splice(0,0,v)
+                Vue.nextTick(function(){
+                    var width =screenWidth()
+                    moveXto($('.page'),left-width+'px')
+                    setTimeout(function(){
+                        $('.page').addClass('slide')
+//
+                        moveXto($('.page'),'0px')
+                    },200)
+                })
+            },
+            add_right:function(v,ary){
+                ary.push(v)
+                var self=this
+                Vue.nextTick(function(){
+                    self.slide_to(ary.length-1)
+                })
+            },
+            go_right:function(){
+                this.crt_index+=1
+                if(this.pages.length<=this.crt_index){
+                    var max_month=this.pages[this.pages.length-1].month
+                    this.add_right({month:max_month+1},this.pages)
+                }else{
+                    this.slide_to(this.crt_index)
+                }
+            },
+            go_left:function(){
+                if(this.crt_index==0){
+                    var last_month= this.pages[0].month-1
+                    this.add_left({month:last_month})
+                }else{
+                    this.crt_index -=1
+                    this.slide_to(this.crt_index)
+                }
+            },
+            slide_to:function(index){
+                $('.page').addClass('slide')
+//                $('.page').css('left', -1*index*100 +'vw')
+                moveXto($('.page'),-1*index*100 +'vw')
+            },
+            get_data_month:function(){
+                var month=this.pages[this.crt_index].month
+                return month%12
+            },
+
+        }
+    })
+    })
+    function moveXto(ele,x_px){
+        ele.css('transform', ex.template('translateX({x})',{x:x_px}))
+    }
+    function screenWidth(){
+        return $('.item').width()
+    }
+
+    left =0
+    start=0
+    count=0
+    end=0
+
+    $(document).on('touchstart',function(){
+        $('.page').removeClass('slide')
+        $('.page').addClass('short')
+        left = $('.page').offset().left
+        start = event.touches[0].screenX
+        end=start
+        console.log('touch start')
+
+    })
+
+    $(document).on('touchmove',function(event){
+        count+=1
+        var new_end=event.touches[0].screenX
+        var delta_end=new_end-end
+        end=new_end
+
+        if(count%5==0){
+            var  delta= end-start
+            if(Math.abs(delta)>50){
+                table.release_add=true
+            }else{
+                table.release_add=false
+            }
+            moveXto($('.page'),left +delta+3*delta_end+'px')
+        }
+
+    })
+    $(document).on('touchend',function(event){
+        $('.page').removeClass('short')
+        var end = event.changedTouches[0].screenX
+        var delta= end-start
+        if(delta > 50){
+            table.go_left()
+        }else if(delta <-50){
+            table.go_right()
+        }else{
+            $('.page').addClass('slide')
+            moveXto($('.page'),left+'px')
+        }
+
+        table.release_add=false
+    })
+
+
+    Vue.component('com-bar',{
+        template:'#com-bar',
+        props:['page'],
+
+        mounted:function(){
+            var self=this
+            if(!this.page.content){
+                Vue.nextTick(function(){
+                    self.init_data()
+                })
+            }else{
+                this.draw()
+            }
+        },
+
+        computed:{
+            item_count:function(){
+                if(this.page.content) {
+                    return this.page.content.length
+                }else{
+                    return 0
+                }
+            }
+        },
+        methods:{
+            init_data:function(){
+
+                var page=this.page
+                var self=this
+                var month=parseInt( page.month/12)+'-'+page.month%12
+                var post_data=[{fun:'get_static',month:month}]
+                ex.post(ajax_url,JSON.stringify(post_data),function(resp){
+                    setTimeout(function(){
+                        Vue.set(page,'content',resp.get_static.items)
+                        Vue.nextTick(function(){
+                            self.draw()
+                        })
+                    },3000)
+
+
+                })
+            },
+            draw:function(){
+                var ele=$(this.$el).find('.char-wrap')
+                var myChart = echarts.init(ele[0]);
+
+                var emps=ex.map(this.page.content,function(item){
+                    return item.emp
+                })
+                var worktime=ex.map(this.page.content,function(item){
+                    return item.count
+                })
+                // 指定图表的配置项和数据
+                var option = {
+                    title: {
+                        text: '工时统计'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['工时']
+                    },
+                    xAxis: {
+
+                    },
+                    yAxis: {
+                        data: emps //["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+                    },
+                    series: [{
+                        name: '销量',
+                        type: 'bar',
+                        data: worktime//[5, 20, 36, 10, 10, 20]
+                    }]
+                };
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+            },
+        }
+    })
+
+
+</script>
+
+
+
+
+<div id="there">
+
+    <div style="text-align: center;">
+
+    </div>
+
+
+
+    <div  v-cloak>
+
+        <div class="flex flex-ac head" style="">
+            <span @click="go_left()">
+                <i class="fa fa-angle-left" aria-hidden="true"></i>
+            </span>
+
+            <div class="flex-grow" style="text-align: center;">
+                <span v-text="get_data_month()"></span><span>月</span>
+            </div>
+            <span @click="go_right()">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+            </span>
+
+        </div>
+
+        <div style="overflow: hidden;">
+            <div class="flex page slide" >
+                <!--<div class="relase-add left" v-if="release_add"><span>释放加载</span></div>-->
+                <div class="item" v-for="page in pages" :key="page.month">
+                    <com-bar :page="page"></com-bar>
+                </div>
+                <!--<div class="relase-add right" v-if="release_add"><span>释放加载</span></div>-->
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<template id="com-bar">
+    <div>
+        <div v-if="!page.content" class="flex flex-vh-center" style="height: 60vh;">
+            <i class="fa fa-spinner" aria-hidden="true"></i>
+        </div>
+        <div class="char-wrap" :style="{height:8+4*item_count+'em'}">
+        </div>
+    </div>
+</template>
+
+<style type="text/css">
+
+    .head{
+        background-color: #0092F2;
+        color: white;
+        font-size: 2em;
+        height: 4em;
+    }
+    .head i{
+        padding: 0 2em;
+    }
+    .page{
+        flex-wrap:nowrap;
+        position: relative;
+        left: 0;
+
+    }
+    .page .item{
+        width: 100vw;
+        flex-shrink: 0;
+    }
+    .slide{
+        transition: all 0.5s ease;
+    }
+    .short{
+        transition: all 0.1s ease;
+    }
+    .char-wrap{
+        width: 100vw;
+
+    }
+    .relase-add{
+        position: relative;
+        top:30vh;
+    }
+    .relase-add.left{
+        left: -10vw;
+    }
+    .relase-add.right{
+        right:-10vw;
+    }
+</style>
+
+{% endblock %}

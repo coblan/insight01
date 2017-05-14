@@ -51,8 +51,8 @@ class WxEngine(BaseEngine):
          'visible':and_list([WorkRecord,lambda user: not user.is_anonymous() and user.employeemodel_set.exists()]),},
         {'label':'工作审核','url':page('workrecord.wx'),'visible':and_list(['workrecord.check_all',WorkRecord]),'icon':fa('fa-eye fa-2x')},
         
-        {'label':'提意见','url':page('commentself.wx'),'visible':can_touch(Comment),'icon':fa('fa-pencil-square-o fa-2x')},
-        {'label':'管理意见','url':page('comment.wx'),'visible':and_list([Comment,'comment.all']),'icon':fa('fa-pencil-square fa-2x')},
+        {'label':'意见','url':page('commentself.wx'),'visible':can_touch(Comment),'icon':fa('fa-pencil-square-o fa-2x')},
+        #{'label':'管理意见','url':page('comment.wx'),'visible':and_list([Comment,'comment.all']),'icon':fa('fa-pencil-square fa-2x')},
         
         {'label':'统计','url':page('static'),'visible':can_touch(Comment),'icon':fa('fa-pencil-square-o fa-2x')},
         

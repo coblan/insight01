@@ -25,8 +25,8 @@
     <script src="{% static 'js/uis_mb.pack.js' %}"></script>
     <script src="{% static 'js/fields_mb.pack.js' %}"></script>
     <script src="{% static 'js/table_mb.pack.js' %}"></script>
-    <link href="https://cdn.bootcss.com/element-ui/1.2.9/theme-default/index.css" rel="stylesheet">
-    <script src="https://cdn.bootcss.com/element-ui/1.2.9/index.js"></script>
+    <!--<link href="https://cdn.bootcss.com/element-ui/1.2.9/theme-default/index.css" rel="stylesheet">-->
+    <!--<script src="https://cdn.bootcss.com/element-ui/1.2.9/index.js"></script>-->
 
     {% include 'director/reverse.html' %}
 
@@ -81,10 +81,10 @@
     <div class="weui-tab__panel content">
         {% block page_content %}
         <div id="there" >
-        <div>
-            <date  v-model='start' placeholder="开始(必填)"></date>
-            <date  v-model='end' placeholder="结束(必填)"></date>
-        </div>
+            <div>
+                <date  v-model='start' placeholder="开始(必填)"></date>
+                <date  v-model='end' placeholder="结束(必填)"></date>
+            </div>
             <div class="weui-btn-area">
                 <a class="weui-btn weui-btn_primary" href="javascript:"
                    @click="get_static()" style="width: 50vw;">获取数据</a>
@@ -92,20 +92,20 @@
 
 
 
-                <el-table
-                        :data="items"
-                        style="width: 100%">
-                    <el-table-column
-                            prop="emp"
-                            label="员工"
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            prop="count"
-                            label="工时"
-                            >
-                    </el-table-column>
-                </el-table>
+            <el-table
+                    :data="items"
+                    style="width: 100%">
+                <el-table-column
+                        prop="emp"
+                        label="员工"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="count"
+                        label="工时"
+                        >
+                </el-table-column>
+            </el-table>
 
         </div>
 

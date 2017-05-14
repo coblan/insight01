@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
-from helpers.director.db_tools import to_dict
+from helpers.director.db_tools import to_dict,sim_dict
 from django.contrib import admin
 from helpers.director.shortcut import ModelTable,TablePage,page_dc,ModelFields,FormPage,model_dc,permit_list,has_permit
 from .models import Comment
@@ -27,7 +27,7 @@ class CommentForm(ModelFields):
         # 初始化的时候加上emp，因为不能让员工有修改emp属性的权限
         if not self.instance.emp and self.crt_user.employeemodel_set.first():
             self.instance.emp=self.crt_user.employeemodel_set.first()
-            self.instance.save()
+            #self.instance.save()
     
     def can_access(self):
         """
@@ -48,11 +48,18 @@ class CommentFormPage(FormPage):
 
 class Commentself(ModelTable):
     model=Comment
+
+    def get_context(self):
+        ctx=super(Commentself,self).get_context()
+        ctx['can_reply']= 'rep_content' in self.permit.changeable_fields()
+        return ctx
     
-    def get_rows(self):
-        query=self.get_query()
-        return [to_dict(x, include=self.permited_fields(),filt_attr=lambda inst: {'emp':unicode(inst.emp)}) for x in query] 
-    
+    def dict_row(self, inst):
+        dc={'emp':unicode(inst.emp)}
+        if inst.emp.baseinfo:
+            dc['emp_info']=sim_dict(inst.emp.baseinfo)
+        return dc      
+
     def inn_filter(self,query):
         if self.kw.get('comment_range','all')=='all':
             query=query.filter(Q(emp__user=self.crt_user) | Q(pub_type='public'))

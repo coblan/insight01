@@ -62,6 +62,8 @@ class WorkRecordForm(ModelFields):
                 'aspectRatio': 1,
                 'size':{'width':250,'height':250}
             }
+            elif head['name']=='finish_time':
+                head['type']='date'            
         return heads  
     
     def clean(self):
@@ -131,6 +133,7 @@ class WRselfForm(ModelFields):
     def get_row(self):
        
         #if not self.instance.pk:
+        # 员工创建新workrecord时，自动添加上
         self.instance.emp= self.crt_user.employeemodel_set.first()
             #self.instance.save()
         return super(WRselfForm,self).get_row()
@@ -145,6 +148,8 @@ class WRselfForm(ModelFields):
                 'aspectRatio': 1,
                 'size':{'width':250,'height':250}
             }
+            elif head['name']=='finish_time':
+                head['type']='date'
         if self.instance.status!='waiting':
             for head in heads:
                 head['readonly']=True
@@ -166,6 +171,9 @@ class WRselfTable(ModelTable):
 class WRselfTablePage(TablePage):
     tableCls=WRselfTable
     template='workload/m_workself.html'
+    def get_label(self):
+        emp=self.request.user.employeemodel_set.first()
+        return '%s的工作提交记录'%emp.baseinfo.name
 
 
         

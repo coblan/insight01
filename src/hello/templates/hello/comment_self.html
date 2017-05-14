@@ -4,8 +4,8 @@
 
 
 {% block page_content %}
-<link href="https://cdn.bootcss.com/element-ui/1.2.9/theme-default/index.css" rel="stylesheet">
-<script src="https://cdn.bootcss.com/element-ui/1.2.9/index.js"></script>
+<!--<link href="https://cdn.bootcss.com/element-ui/1.2.9/theme-default/index.css" rel="stylesheet">-->
+<!--<script src="https://cdn.bootcss.com/element-ui/1.2.9/index.js"></script>-->
 
 <script type="text/javascript">
 
@@ -18,26 +18,28 @@
 //        search_args=ex.parseSearch()
         search_args.comment_range=search_args.comment_range|| 'all'
         crt_view = search_args.crt_view || 'table'
-
+        can_reply ={{ can_reply | jsonify }}
         var table= new Vue({
             el:'#there',
             data:{
 //                    menu:menu,
 //                    rows:rows,
                 crt_view:crt_view,
+                comment_range:search_args.comment_range,
+                can_reply:can_reply,
             },
             mixins:[table_fun],
             mounted:function(){
 
             },
             computed:{
-                comment_range:function(){
-                    var map_obj={
-                        'all':'全部',
-                        'only_self':'只看自己'
-                    }
-                    return map_obj[search_args.comment_range]
-                }
+//                comment_range:function(){
+//                    var map_obj={
+//                        'all':'全部',
+//                        'only_self':'只看自己'
+//                    }
+//                    return map_obj[search_args.comment_range]
+//                }
             },
             methods:{
                 goto:function(url){
@@ -58,6 +60,12 @@
                     search_args._page=1
                     location=ex.appendSearch(engine_url+'/'+page_name,search_args)
 
+                },
+                get_edit_link:function(pk){
+                    return engine_url+'/comment.wx.edit?pk='+pk
+                },
+                txt_to_html:function(v){
+                    return v.replace(/\n/g,'<br/>');
                 }
 
             }
@@ -79,60 +87,44 @@
     <!--</div>-->
 
 
-    <div v-show="crt_view=='table'">
+    <div v-show="crt_view=='table'" v-cloak>
 
         <div class="flex">
-            <div class="flex-grow" style="text-align: center;">
-                <el-radio-group v-model="comment_range">
-                    <el-radio-button label="只看自己" @click.native="update_search('only_self')" ></el-radio-button>
-                    <el-radio-button label="全部" @click.native="update_search('all')" ></el-radio-button>
-                </el-radio-group>
+
+            <div class="flex-grow" style="text-align: center;margin-top: 1em;">
+                <div class="btn-group" role="group" aria-label="..." >
+                    <a type="button" :class="['btn btn-default',{'btn-info':comment_range=='only_self'}]"  href="javascript:;" @click="update_search('only_self')">只看自己</a>
+                    <a type="button" :class="['btn btn-default',{'btn-info':comment_range=='all'}]"  href="javascript:;" @click="update_search('all')" >全部</a>
+                </div>
             </div>
+
+
             <div style="text-align: right;padding: 0.5em 1em;">
                 <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
             </div>
         </div>
 
-        <div v-for="row in rows" class="comment-row">
+        <div v-for="row in rows" class="flex comment-row">
             <div class="head">
-                <el-button size="mini"><i class="fa fa-user" aria-hidden="true"></i></el-button>
-                <span v-text="row.emp" style="padding-left: 1em;"></span>
+                <img :src="row.emp_info.head" alt="" style="width: 2em;border-radius: 1em;"/>
             </div>
-            <div class="bd">
-                <p v-text="row.content"></p>
+            <div class="bd flex-grow">
+                <div class="flex flex-ac">
+                    <span class="name flex-grow" v-text="row.emp"></span>
+                    <a v-if="can_reply" class="edit-btn"  :href="get_edit_link(row.pk)">
+                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                </div>
+                <p v-html="txt_to_html(row.content)"></p>
+                <div class="rep" v-if="row.rep_content">
+                    <div class="reply name">管理员答复:</div>
+                    <p class="content" v-html="txt_to_html(row.rep_content)"></p>
+                </div>
             </div>
-            <div class="rep">
-                <span>答复:</span>
-                <p v-text="row.rep_content"></p>
-            </div>
+
         </div>
 
-        <!--<div class="weui-cells__title">列表项</div>-->
-        <!--<div class="weui-cells">-->
-            <!--<a class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows">-->
-                <!--<div class="weui-cell__hd" style="padding-right: 20px">-->
-                    <!--<input type="checkbox" :value="row.pk" v-model="selected" />-->
-                <!--</div>-->
-                <!--<div class="weui-cell__bd" @click="ge_edit(row.pk)">-->
-                    <!--<p v-text="row._label"></p>-->
-                <!--</div>-->
-                <!--<div class="weui-cell__ft">-->
-                <!--</div>-->
-            <!--</a>-->
-        <!--</div>-->
     </div>
 
-    <!--<div v-show="crt_view=='search'">-->
-
-        <!--<com-filter :row_filters="row_filters" :search_args="search_args" :search_tip='search_tip'></com-filter>-->
-
-        <!--<div class="weui-btn-area">-->
-            <!--<a class="weui-btn weui-btn_primary" href="javascript:" @click='search()' style="width: 50%;">-->
-                <!--<i class="fa fa-search" aria-hidden="true"></i>-->
-            <!--</a>-->
-        <!--</div>-->
-
-    <!--</div>-->
 
     <modal v-show="show_menu" @click.native="show_menu=false">
         <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
@@ -149,20 +141,49 @@
 
 <style type="text/css">
     .comment-row{
-        background-color: white;
+        /*background-color: white;*/
         padding: 10px;
-        margin-bottom: 15px;
+        margin-bottom: 2em;
     }
     .comment-row .head{
-        border-bottom: 1px dashed #ebebeb;
+        width: 3em;
+        flex-shrink: 0;
+    }
+    .comment-row .name{
+        color: #807d7d;
+        /*font-size: 1.3em;*/
+        padding-left: 0.7em;
     }
     .comment-row .bd{
-        padding: 1em 0;
+
+    }
+    .comment-row .rep .reply{
+        border-left: 2px solid #06881a;
+        padding-left:0.7em ;
     }
     .comment-row .rep{
-        border-left: 2px solid #c4c4c4;
-        padding: 10px 10px 5px 20px;
+        border-top: 1px solid #dddadf;
+        padding-top: 0.7em;
     }
+    .comment-row .rep .content{
+        padding-left:0.7em ;
+    }
+    .comment-row .edit-btn{
+        padding: 0em 0.3em;
+        margin-right: 1em;
+        font-size: 1.5em;
+    }
+    .comment-row .edit-btn:hover{
+        background-color: #dce0f4;
+        border-radius: 0.3em;
+    }
+    [v-cloak] {
+        display: none;
+    }
+    /*.comment-row pre{*/
+        /*background-color: transparent;*/
+        /*border: none;*/
+    /*}*/
 </style>
 
 {% endblock %}

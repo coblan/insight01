@@ -42,6 +42,7 @@ class WorkRecord(models.Model):
     status=models.CharField('状态',max_length=20,choices=WORK_STATUS,default='waiting')
     short=models.CharField('简短描述',max_length=300,blank=True)
     detail=models.TextField(verbose_name='详细',blank=True)
+    finish_time=models.CharField('完成时间',max_length=20,blank=True)
     create_time=models.DateTimeField(verbose_name='创建时间',auto_now=True)
     desp_img=models.CharField('描述图片',max_length=300,blank=True)
     count=models.IntegerField(verbose_name='数量',default=1,help_text='整数')
@@ -49,7 +50,7 @@ class WorkRecord(models.Model):
     
     def __unicode__(self):
         if self.work:
-            return '%(work)s_%(emp)s | %(create_time)s'%{'work':self.work,'emp':self.emp,'create_time':timezone.localtime( self.create_time).strftime('%Y-%m-%d %H:%M:%S')}
+            return '%(work)s_%(emp)s | %(finish_time)s'%{'work':self.work,'emp':self.emp,'finish_time':self.finish_time}
         else:
             return 'unnamed workrecord'
     

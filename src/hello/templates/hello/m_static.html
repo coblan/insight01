@@ -1,0 +1,380 @@
+{% extends "wx/base.html" %}
+{% load static %}
+{% load jsonify %}
+
+
+{% block page_content %}
+<!--<link href="https://cdn.bootcss.com/element-ui/1.2.9/theme-default/index.css" rel="stylesheet">-->
+<!--<script src="https://cdn.bootcss.com/element-ui/1.2.9/index.js"></script>-->
+
+<script src="https://cdn.bootcss.com/echarts/3.5.4/echarts.min.js"></script>
+<!--<script src="{% static 'js/lib/iscroll.js' %}"></script>-->
+
+<script type="text/javascript">
+
+
+
+
+    $(function(){
+
+        crt_view = search_args.crt_view || 'table'
+        crt_page={{ crt_page | jsonify }}
+
+    table= new Vue({
+        el:'#there',
+        data:{
+
+            crt_index:0,
+            crt_page:crt_page,
+            month_data:crt_page.month,
+        },
+        mixins:[table_fun],
+
+        computed:{
+        },
+        watch:{
+            month_data:function(v){
+                location=ex.appendSearch({month:this.month_data})
+            }
+        },
+        methods:{
+            goto_this_month:function(){
+                location = ex.appendSearch({month:''})
+            },
+            goto_last_month:function(){
+                var ls = this.month_data.split('-')
+                if(ls[1]==1){
+                    ls[0] -=1
+                    ls[1]=12
+                }else{
+                    ls[1]-=1
+                }
+                location=ex.appendSearch({month:ls[0]+'-'+ls[1]})
+            }
+//            get_static:function(month){
+//                var self=this
+//                var post_data=[{fun:'get_static',start:this.start,end:this.end}]
+//                ex.post(ajax_url,JSON.stringify(post_data),function(resp){
+//                    self.items=resp.get_static.items
+//
+//                })
+//            },
+//            add_left:function(v){
+//                this.pages.splice(0,0,v)
+//                $('.page').removeClass('slide')
+//                Vue.nextTick(function(){
+////                    $('.page').css('left','-100vw')
+//                    moveXto($('.page'),'-100vw')
+//                    setTimeout(function(){
+//                        $('.page').addClass('slide')
+////                        $('.page').css('left','0')
+//                        moveXto($('.page'),0)
+//                    },0)
+//                })
+//            },
+//            add_right:function(v,ary){
+//                ary.push(v)
+//                var self=this
+//                Vue.nextTick(function(){
+//                    self.slide_to(ary.length-1)
+//                })
+//            },
+//            go_right:function(){
+//               this.crt_index+=1
+//                if(this.pages.length<=this.crt_index){
+//                    var max_month=this.pages[this.pages.length-1].month
+//                    this.add_right({month:max_month+1},this.pages)
+//                }else{
+//                    this.slide_to(this.crt_index)
+//                }
+//            },
+//            go_left:function(){
+//                if(this.crt_index==0){
+//                    var last_month= this.pages[0].month-1
+//                    this.add_left({month:last_month})
+//                }else{
+//                    this.crt_index -=1
+//                   this.slide_to(this.crt_index)
+//                }
+//            },
+//            slide_to:function(index){
+//                $('.page').addClass('slide')
+//                moveXto($('.page'),-1*index*100 +'vw')
+//            },
+//            get_data_month:function(){
+//                var month=this.pages[this.crt_index].month
+//                return month%12
+//            },
+
+
+        }
+    })
+
+//    myScroll = new IScroll('#wrapper',{ scrollX: true, scrollY: false, mouseWheel: true,snap: 'li' });
+
+
+    })
+//    document.addEventListener('touchmove', function (e) { e.preventDefault(); })
+
+//    function moveXto(ele,x_px){
+//        ele.css('transform', ex.template('translateX({x})',{x:x_px}))
+//    }
+//
+//    left =0
+//    start=0
+//    count=0
+//    end=0
+//
+//    $(document).on('touchstart',function(){
+//        $('.page').removeClass('slide')
+//        $('.page').addClass('short')
+//        left = $('.page').offset().left
+//        start = event.touches[0].screenX
+//        end=start
+//        console.log('touch start')
+//
+//    })
+//
+//    $(document).on('touchmove',function(event){
+//        count+=1
+//        var new_end=event.touches[0].screenX
+//        var delta_end=new_end-end
+//        end=new_end
+//
+//        if(count%5==0){
+//            var  delta= end-start
+//            moveXto($('.page'),left +delta+3*delta_end+'px')
+//        }
+//
+//        console.log(delta)
+////        console.log($('.page').offset().left)
+////        if(delta>0 && $(this).scrollLeft()==0){
+////
+////        }
+//    })
+//    $(document).on('touchend',function(event){
+//        $('.page').removeClass('short')
+//        var end = event.changedTouches[0].screenX
+//        var delta= end-start
+//        if(delta > 100 && $(this).scrollLeft()==0){
+//            table.go_left()
+////            moveXto($('.page'),0)
+////            $('.page').css('left',0)
+//        }else if(delta <-100){
+//            table.go_right()
+//        }else{
+//            $('.page').addClass('slide')
+////            $('.page').css('left',left)
+//            moveXto($('.page'),left+'px')
+//        }
+//        console.log( 'end---'+delta)
+//    })
+
+
+
+    Vue.component('com-bar',{
+        template:'#com-bar',
+        props:['page'],
+//        data:function(){
+//            if(!this.page.content){
+//                this.page.content=[]
+//            }
+//          return {
+//              item_count:this.page.content.length
+//          }
+//        },
+
+        mounted:function(){
+            if(!this.page.content){
+                this.init_data()
+            }else{
+                this.draw()
+            }
+        },
+
+        computed:{
+            item_count:function(){
+              if(this.page.content) {
+                  return this.page.content.length
+              }else{
+                  return 0
+              }
+          }
+        },
+        methods:{
+            init_data:function(){
+
+                var page=this.page
+                var self=this
+//                show_upload()
+                var month=parseInt( page.month/12)+'-'+page.month%12
+                var post_data=[{fun:'get_static',month:month}]
+                ex.post(ajax_url,JSON.stringify(post_data),function(resp){
+                    setTimeout(function(){
+                        Vue.set(page,'content',resp.get_static.items)
+                        Vue.nextTick(function(){
+                            self.draw()
+//                            setTimeout(function(){
+//                                myScroll.refresh()
+//                            },200)
+                        })
+                    },3000)
+
+
+                })
+            },
+            draw:function(){
+                var ele=$(this.$el).find('.char-wrap')
+                var myChart = echarts.init(ele[0]);
+
+                var emps=ex.map(this.page.content,function(item){
+                    return item.emp
+                })
+                var worktime=ex.map(this.page.content,function(item){
+                    return item.count
+                })
+                // 指定图表的配置项和数据
+                var option = {
+                    title: {
+                        text: '工时统计'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['工时']
+                    },
+                    xAxis: {
+
+                    },
+                    yAxis: {
+                        data: emps //["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+                    },
+                    series: [{
+                        name: '销量',
+                        type: 'bar',
+                        data: worktime//[5, 20, 36, 10, 10, 20]
+                    }]
+                };
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+            },
+        }
+    })
+
+
+</script>
+
+
+
+
+<div id="there">
+
+    <div style="text-align: center;">
+
+    </div>
+
+
+
+    <div  v-cloak>
+
+        <div class="flex head flex-ac" style="position:relative;">
+            <!--<span @click="go_left()">-->
+                <!--<i class="fa fa-angle-left" aria-hidden="true"></i>-->
+            <!--</span>-->
+            <div class="month-btn">
+                <span @click="goto_last_month()">上月</span>
+            </div>
+           <!--<span class="month">-->
+               <!--<span v-text="get_data_month()"></span><span>月</span>-->
+            <div class="flex-grow">
+                <span class="month" v-text="month_data"></span>
+                <date class="month" set="month" v-model="month_data" style="opacity: 0;top:1.3em;"></date>
+            </div>
+
+           <!--</span>-->
+            <!--<span @click="go_right()">-->
+                <!--<i class="fa fa-angle-right" aria-hidden="true"></i>-->
+            <!--</span>-->
+            <div class="month-btn">
+                <span @click="goto_this_month()">本月</span>
+            </div>
+        </div>
+
+
+
+        <div >
+            <com-bar :page="crt_page"></com-bar>
+            <!--<div  id='wrapper'>-->
+                <!--<ul class="flex page">-->
+                    <!--<li class="item" v-for="page in pages" :key="page.month">-->
+                        <!--<com-bar :page="page"></com-bar>-->
+                    <!--</li>-->
+                <!--</ul>-->
+
+
+            <!--</div>-->
+        </div>
+    </div>
+
+</div>
+
+<template id="com-bar">
+    <div style="margin-top: 3em;">
+        <!--<div v-if="!page.content">-->
+            <!--<i class="fa fa-spinner" aria-hidden="true"></i>-->
+        <!--</div>-->
+        <div class="char-wrap" :style="{height:8+4*item_count+'em'}">
+
+        </div>
+    </div>
+</template>
+
+<style type="text/css">
+.input-group-addon{
+    display: none;
+}
+.month-btn{
+    padding: 1em;
+}
+.month-btn:hover{
+    background-color: #4aa4f2;
+    border-radius: 2px;
+}
+.head{
+    background-color: #0092F2;
+    color: white;
+    height: 9em ;
+    vertical-align: middle;
+    text-align: center;
+
+}
+.head .month{
+    font-size: 2.5em;
+    position: absolute;
+    top:1em;
+    left:30vw;
+    width: 40vw;
+}
+    .head i{
+        padding: 0 2em;
+    }
+    .page{
+        flex-wrap:nowrap;
+        position: absolute;
+        left: 0;
+    }
+    .page .item{
+        width: 100vw;
+        flex-shrink: 0;
+    }
+    .slide{
+        transition: all 0.5s ease;
+    }
+
+    .char-wrap{
+        width: 100vw;
+
+    }
+</style>
+
+{% endblock %}

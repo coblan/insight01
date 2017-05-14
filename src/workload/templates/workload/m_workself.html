@@ -28,7 +28,8 @@
 //                    menu:menu,
 //                    rows:rows,
                 crt_view:crt_view,
-                ln:ln
+                ln:ln,
+                page_label:page_label
             },
             mixins:[table_fun],
             mounted:function(){
@@ -87,7 +88,7 @@
 
 
 
-        <div class="weui-cells__title">列表项</div>
+        <div class="weui-cells__title" v-text="page_label"></div>
         <div class="weui-cells">
             <a class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
                :style="{backgroundColor:get_color(row),color:'#fff'}">
