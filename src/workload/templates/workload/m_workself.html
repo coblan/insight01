@@ -5,7 +5,25 @@
 
 {% block page_content %}
 
+
 <script type="text/javascript">
+
+    function isPassive() {
+        var supportsPassiveOption = false;
+        try {
+            addEventListener("test", null, Object.defineProperty({}, 'passive', {
+                get: function () {
+                    supportsPassiveOption = true;
+                }
+            }));
+        } catch(e) {}
+        return supportsPassiveOption;
+    }
+
+    document.addEventListener('touchmove', function (e) { e.preventDefault(); }, isPassive() ? {
+        capture: false,
+        passive: false
+    } : false);
 
 
     ln.history_handle({
@@ -17,7 +35,64 @@
         }
     })
 
+    function moveYto(ele,y){
+        ele.css('transform', ex.template('translateY({y})',{y:y}))
+    }
 
+    scroll={
+        init:function(wraper,inn){
+            this.wraper=wraper
+            this.inn=inn
+            this.maxY=Math.min(this.wraper.height()-this.inn.height(),0)
+            this.addEvent()
+        },
+        addEvent:function(){
+            var self=this
+            self.count=0
+            $(document).on('touchstart',function(event){
+                self.inn.removeClass('slide')
+                self.inn.addClass('short')
+                self._start_top = self.inn.position().top
+                self._start_pos = event.touches[0].screenY
+                self._end_pos=self._start_pos
+                console.log('top' + self._start_top)
+            })
+
+            $(document).on('touchmove',function(event){
+                self.count+=1
+                if(self.count%5==0){
+                    var new_end=event.touches[0].screenY
+                    self._velocity=new_end-self._end_pos
+                    self._end_pos=new_end
+                    self._delta= self._end_pos- self._start_pos
+                    console.log('ve'+self._velocity)
+                    moveYto(self.inn,self._start_top +self._delta+self._velocity+'px')
+                }
+
+            })
+            $(document).on('touchend',function(event){
+                self.inn.removeClass('short')
+                self.inn.addClass('slide')
+                if(Math.abs(self._velocity)>15){
+                    var end_pos=self._start_top +self._delta+self._velocity*10
+                    moveYto(self.inn,+end_pos+'px')
+                }else{
+                    var end_pos=self._start_top +self._delta
+                }
+
+                setTimeout(function(){
+                    console.log(self.maxY+'|---|'+end_pos)
+                    if(self.maxY>end_pos){
+                        moveYto(self.inn,self.maxY+'px')
+                    }else if(end_pos>0){
+                        moveYto(self.inn,0)
+                    }
+                })
+                self._end_pos = event.changedTouches[0].screenY
+//                var delta= self._end_pos-start
+            })
+        }
+    }
     $(function(){
 
         crt_view = 'main'
@@ -34,6 +109,33 @@
             mixins:[table_fun],
             mounted:function(){
 
+                Vue.nextTick(function(){
+                    scroll.init($('#scroll-wrapper'),$('.scroll-inn'))
+//                    myScroll = new IScroll('#scroll-wrapper',{
+//                        probeType:1
+//                    });
+//
+//                    myScroll.on('scrollStart',function(){
+//                        console.log('ee mi to fo')
+//                    })
+//                    myScroll.on('scrollEnd',function(){
+//                        console.log(this.y)
+//                        console.log(this.maxScrollY)
+//                        console.log('in end'+last_move)
+//                    })
+//                    myScroll.on('scroll',function(){
+//
+//                        if(Math.abs(this.maxScrollY)+50 <Math.abs(this.y)){
+//                            $('.scroll-inn').addClass('release-update')
+//                        }else{
+//                            $('.scroll-inn').removeClass('release-update')
+//                        }
+//                        last_move=this.y
+////                        console.log('scroll' + this.y)
+////                        console.log(this.maxScrollY)
+//                    })
+
+                })
             },
             methods:{
                 goto:function(url){
@@ -69,6 +171,11 @@
     .ff{
         color: #828fb2;
     }
+    #scroll-wrapper{
+        position: relative;
+        width: 100vw;
+        overflow: hidden;
+    }
 </style>
 
 
@@ -77,7 +184,7 @@
 
     <!--<button @click="switch_to('search')">过滤   v-show="crt_view=='table'"   </button>-->
 
-    <div >
+    <div class="flex-v" style="height: 100vh;padding-bottom: 5em;">
 
         <div class="flex">
             <div class="flex-grow"></div>
@@ -86,19 +193,46 @@
             </div>
         </div>
 
-
-
         <div class="weui-cells__title" v-text="page_label"></div>
-        <div class="weui-cells">
-            <a class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
-               :style="{backgroundColor:get_color(row),color:'#fff'}">
-                <div class="weui-cell__bd" @click="ge_edit(row.pk)">
-                    <p v-text="row._label"></p>
-                </div>
-                <div class="weui-cell__ft">
-                </div>
-            </a>
+        <div id="scroll-wrapper" class="flex-grow">
+            <ul class="scroll-inn" style="position:relative;width: 100%;">
+
+                <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
+                    :style="{backgroundColor:get_color(row),color:'#fff'}">
+                    <div class="weui-cell__bd" @click="ge_edit(row.pk)">
+                        <p v-text="row._label"></p>
+                    </div>
+                    <div class="weui-cell__ft">
+                    </div>
+                </li>
+                <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
+                    :style="{backgroundColor:get_color(row),color:'#fff'}">
+                    <div class="weui-cell__bd" @click="ge_edit(row.pk)">
+                        <p v-text="row._label"></p>
+                    </div>
+                    <div class="weui-cell__ft">
+                    </div>
+                </li>
+                <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
+                    :style="{backgroundColor:get_color(row),color:'#fff'}">
+                    <div class="weui-cell__bd" @click="ge_edit(row.pk)">
+                        <p v-text="row._label"></p>
+                    </div>
+                    <div class="weui-cell__ft">
+                    </div>
+                </li>
+                <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
+                    :style="{backgroundColor:get_color(row),color:'#fff'}">
+                    <div class="weui-cell__bd" @click="ge_edit(row.pk)">
+                        <p v-text="row._label"></p>
+                    </div>
+                    <div class="weui-cell__ft">
+                    </div>
+                </li>
+
+            </ul>
         </div>
+
     </div>
 <transition name="slide">
     <div v-show="crt_view=='search'" class="slide-win">
@@ -132,7 +266,20 @@
 </div>
 
 <style type="text/css">
+    .release-update:after{
+        content: '释放更新';
+        display: block;
+        position: absolute;
+        bottom:-4em;
+        left: 40vw;
+    }
 
+    .slide{
+        transition: all 0.5s ease;
+    }
+    .short{
+        transition: all 0.1s ease;
+    }
 </style>
 
 {% endblock %}

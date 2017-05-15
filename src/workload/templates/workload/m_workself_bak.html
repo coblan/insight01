@@ -1,0 +1,206 @@
+{% extends "wx/base.html" %}
+{% load static %}
+{% load jsonify %}
+
+
+{% block page_content %}
+
+
+<script type="text/javascript">
+
+    function isPassive() {
+        var supportsPassiveOption = false;
+        try {
+            addEventListener("test", null, Object.defineProperty({}, 'passive', {
+                get: function () {
+                    supportsPassiveOption = true;
+                }
+            }));
+        } catch(e) {}
+        return supportsPassiveOption;
+    }
+
+    document.addEventListener('touchmove', function (e) { e.preventDefault(); }, isPassive() ? {
+        capture: false,
+        passive: false
+    } : false);
+
+
+    ln.history_handle({
+        init:{crt_view:'main'},
+        handler:function(state){
+            if(state.crt_view) {
+                table.crt_view = state.crt_view
+            }
+        }
+    })
+
+    myScroll=''
+    last_move=0
+    $(function(){
+
+        crt_view = 'main'
+
+        table= new Vue({
+            el:'#there',
+            data:{
+//                    menu:menu,
+//                    rows:rows,
+                crt_view:crt_view,
+                ln:ln,
+                page_label:page_label
+            },
+            mixins:[table_fun],
+            mounted:function(){
+
+                Vue.nextTick(function(){
+                    myScroll = new IScroll('#scroll-wrapper',{
+                        probeType:1
+                    });
+
+                    myScroll.on('scrollStart',function(){
+                        console.log('ee mi to fo')
+                    })
+                    myScroll.on('scrollEnd',function(){
+                        console.log(this.y)
+                        console.log(this.maxScrollY)
+                        console.log('in end'+last_move)
+                    })
+                    myScroll.on('scroll',function(){
+
+                        if(Math.abs(this.maxScrollY)+50 <Math.abs(this.y)){
+                            $('.scroll-inn').addClass('release-update')
+                        }else{
+                            $('.scroll-inn').removeClass('release-update')
+                        }
+                        last_move=this.y
+//                        console.log('scroll' + this.y)
+//                        console.log(this.maxScrollY)
+                    })
+
+                })
+            },
+            methods:{
+                goto:function(url){
+                    location=url
+                },
+                ge_edit:function(pk){
+                    location= ex.template('{engine_url}/{page_name}.edit?pk={pk}',{engine_url:engine_url,page_name:page_name,pk:pk})
+                },
+                switch_to:function(name){
+                    history.pushState({view:name},'',ex.appendSearch({crt_view:name}))
+                    this.crt_view=name
+                },
+//                back:function(){
+//                    history.back()
+//                },
+
+                get_color:function(row){
+                    if(row.status=='waiting'){
+                        return '#828fb2'
+                    }else if(row.status=='pass'){
+                        return '#88b288'
+                    }else if(row.status=='reject'){
+                        return '#b25d64'
+                    }
+                }
+
+            }
+        })
+    })
+</script>
+
+<style>
+    .ff{
+        color: #828fb2;
+    }
+    #scroll-wrapper{
+        position: relative;
+        width: 100vw;
+        overflow: hidden;
+    }
+</style>
+
+
+<div id="there" v-cloak>
+
+
+    <!--<button @click="switch_to('search')">过滤   v-show="crt_view=='table'"   </button>-->
+
+    <div class="flex-v" style="height: 100vh;padding-bottom: 5em;">
+
+        <div class="flex">
+            <div class="flex-grow"></div>
+            <div style="text-align: right;padding: 0.5em 1em;">
+                <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
+            </div>
+        </div>
+
+        <div class="weui-cells__title" v-text="page_label"></div>
+        <div id="scroll-wrapper" class="flex-grow">
+            <ul class="scroll-inn" style="position:absolute;width: 100%;">
+
+                <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
+                    :style="{backgroundColor:get_color(row),color:'#fff'}">
+                    <div class="weui-cell__bd" @click="ge_edit(row.pk)">
+                        <p v-text="row._label"></p>
+                    </div>
+                    <div class="weui-cell__ft">
+                    </div>
+                </li>
+                <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
+                    :style="{backgroundColor:get_color(row),color:'#fff'}">
+                    <div class="weui-cell__bd" @click="ge_edit(row.pk)">
+                        <p v-text="row._label"></p>
+                    </div>
+                    <div class="weui-cell__ft">
+                    </div>
+                </li>
+
+
+            </ul>
+        </div>
+
+    </div>
+    <transition name="slide">
+        <div v-show="crt_view=='search'" class="slide-win">
+
+            <com-filter :row_filters="row_filters" :search_args="search_args" :search_tip='search_tip'></com-filter>
+
+            <div class="weui-btn-area">
+                <a class="weui-btn weui-btn_primary" href="javascript:" @click='search()' style="width: 50%;">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </a>
+            </div>
+
+        </div>
+    </transition>
+
+    <transition name="fade">
+        <modal v-show="show_menu" @click.native="show_menu=false">
+            <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
+
+                <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新建</div>
+                <div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>
+                <div class="weui-actionsheet__cell" @click="ln.pushState({crt_view:'search'});show_menu=false" v-if="can_search">排序过滤</div>
+            </div>
+            <div class="weui-actionsheet__cell">
+                <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
+            </div>
+        </modal>
+    </transition>
+
+
+</div>
+
+<style type="text/css">
+    .release-update:after{
+        content: '释放更新';
+        display: block;
+        position: absolute;
+        bottom:-4em;
+        left: 40vw;
+    }
+</style>
+
+{% endblock %}
