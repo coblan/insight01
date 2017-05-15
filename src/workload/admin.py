@@ -170,7 +170,7 @@ class WRselfTable(ModelTable):
 
 class WRselfTablePage(TablePage):
     tableCls=WRselfTable
-    template='workload/m_workself.html'
+    template='workload/m_workself_bak.html'
     def get_label(self):
         emp=self.request.user.employeemodel_set.first()
         return '%s的工作提交记录'%emp.baseinfo.name

@@ -54,29 +54,29 @@
             mounted:function(){
 
                 Vue.nextTick(function(){
-//                    myScroll = new IScroll('#scroll-wrapper',{
-//                        probeType:1,
-//                        click:true,
-//                    });
-//
-//                    myScroll.on('scrollStart',function(){
-//                        console.log('ee mi to fo')
-//                    })
-//                    myScroll.on('scrollEnd',function(){
-//                        console.log(this.y)
+                    myScroll = new IScroll('#scroll-wrapper',{
+                        probeType:1,
+                        click:true,
+                    });
+
+                    myScroll.on('scrollStart',function(){
+                        console.log('ee mi to fo')
+                    })
+                    myScroll.on('scrollEnd',function(){
+                        console.log(this.y)
+                        console.log(this.maxScrollY)
+                        console.log('in end'+last_move)
+                    })
+                    myScroll.on('scroll',function(){
+                        if(Math.abs(this.maxScrollY)+50 <Math.abs(this.y)){
+                            $('.scroll-inn').addClass('release-update')
+                        }else{
+                            $('.scroll-inn').removeClass('release-update')
+                        }
+                        last_move=this.y
+//                        console.log('scroll' + this.y)
 //                        console.log(this.maxScrollY)
-//                        console.log('in end'+last_move)
-//                    })
-//                    myScroll.on('scroll',function(){
-//                        if(Math.abs(this.maxScrollY)+50 <Math.abs(this.y)){
-//                            $('.scroll-inn').addClass('release-update')
-//                        }else{
-//                            $('.scroll-inn').removeClass('release-update')
-//                        }
-//                        last_move=this.y
-////                        console.log('scroll' + this.y)
-////                        console.log(this.maxScrollY)
-//                    })
+                    })
 
                 })
             },
@@ -110,50 +110,10 @@
     })
 
     Vue.component('scroll-wraper',{
-        template:'<div class="scroll-wrapper"><div class="scroller"> <div v-if="up_out_border" v-text="up_text" class="_up_text"></div><slot></slot> <div v-if="down_out_border" v-text="down_text" class="_down_text">sss</div></div></div>',
-        props:['up_text','down_text'],
-        data:function(){
-          return {
-              up_out_border:false,
-              down_out_border:false,
-
-          }
-        },
-        mounted:function(){
-            var self=this
-           this.scroll = new IScroll(this.$el,{
-                probeType:1,
-                click:true,
-
-            });
-            this.scroll.on('scrollStart',function(){
-
-            })
-            this.scroll.on('scrollEnd',function(){
-                if(self.up_out_border){
-                    self.$emit('up_out_border')
-                }else if(self.down_out_border){
-                    self.$emit('down_out_border')
-                }
-                self.up_out_border=false
-                self.down_out_border=false
-
-            })
-            this.scroll.on('scroll',function(){
-                self.up_out_border=false
-                self.down_out_border=false
-
-                if(this.maxScrollY-30>this.y){
-                    self.down_out_border=true
-                }else if(this.y>30){
-                    self.up_out_border=true
-                }
-            })
-        },
+        template:'<div><slot></slot></div>',
+        props:[],
         methods:{
-            refresh:function(){
-                this.scroll.refresh()
-            }
+
         }
     })
 </script>
@@ -162,29 +122,12 @@
     .ff{
         color: #828fb2;
     }
-    .scroll-wrapper{
+    #scroll-wrapper{
         position: absolute;
         width: 100vw;
         overflow: hidden;
         bottom: 5em;
         top:6em;
-    }
-    .scroller{
-        width:100%;
-        position:absolute;
-        min-height: 101%;
-    }
-    ._up_text{
-        position: absolute;
-        top:-2em;
-        text-align: center;
-        width: 100%;;
-    }
-    ._down_text{
-        position: relative;
-        bottom:-1.2em;
-        text-align: center;
-        width: 100%;;
     }
 </style>
 
@@ -204,9 +147,9 @@
         </div>
 
         <div class="weui-cells__title" v-text="page_label"></div>
-        <!--<div id="scroll-wrapper" class="">-->
-        <scroll-wraper  down_text="上滑刷新" up_text="下拉刷新">
-            <ul >
+        <div id="scroll-wrapper" class="">
+
+            <ul class="scroll-inn" style="width:100%;position:absolute;min-height: 101%;">
                 <li class="weui-cell weui-cell_access"  v-for="row in rows"
                     :style="{backgroundColor:get_color(row),color:'#fff'}">
                     <div class="weui-cell__bd" @click="ge_edit(row.pk)">
@@ -223,12 +166,12 @@
                     <div class="weui-cell__ft">
                     </div>
                 </li>
+
+
             </ul>
 
-        </scroll-wraper>
 
-
-        <!--</div>-->
+        </div>
 
     </div>
     <transition name="slide">
