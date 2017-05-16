@@ -109,83 +109,13 @@
         })
     })
 
-    Vue.component('scroll-wraper',{
-        template:'<div class="scroll-wrapper"><div class="scroller"> <div v-if="up_out_border" v-text="up_text" class="_up_text"></div><slot></slot> <div v-if="down_out_border" v-text="down_text" class="_down_text">sss</div></div></div>',
-        props:['up_text','down_text'],
-        data:function(){
-          return {
-              up_out_border:false,
-              down_out_border:false,
-
-          }
-        },
-        mounted:function(){
-            var self=this
-           this.scroll = new IScroll(this.$el,{
-                probeType:1,
-                click:true,
-
-            });
-            this.scroll.on('scrollStart',function(){
-
-            })
-            this.scroll.on('scrollEnd',function(){
-                if(self.up_out_border){
-                    self.$emit('up_out_border')
-                }else if(self.down_out_border){
-                    self.$emit('down_out_border')
-                }
-                self.up_out_border=false
-                self.down_out_border=false
-
-            })
-            this.scroll.on('scroll',function(){
-                self.up_out_border=false
-                self.down_out_border=false
-
-                if(this.maxScrollY-30>this.y){
-                    self.down_out_border=true
-                }else if(this.y>30){
-                    self.up_out_border=true
-                }
-            })
-        },
-        methods:{
-            refresh:function(){
-                this.scroll.refresh()
-            }
-        }
-    })
 </script>
 
 <style>
     .ff{
         color: #828fb2;
     }
-    .scroll-wrapper{
-        position: absolute;
-        width: 100vw;
-        overflow: hidden;
-        bottom: 5em;
-        top:6em;
-    }
-    .scroller{
-        width:100%;
-        position:absolute;
-        min-height: 101%;
-    }
-    ._up_text{
-        position: absolute;
-        top:-2em;
-        text-align: center;
-        width: 100%;;
-    }
-    ._down_text{
-        position: relative;
-        bottom:-1.2em;
-        text-align: center;
-        width: 100%;;
-    }
+
 </style>
 
 
@@ -205,7 +135,7 @@
 
         <div class="weui-cells__title" v-text="page_label"></div>
         <!--<div id="scroll-wrapper" class="">-->
-        <scroll-wraper  down_text="上滑刷新" up_text="下拉刷新">
+        <scroll-wraper  down_text="上滑加载" up_text="" :ref="scroller">
             <ul >
                 <li class="weui-cell weui-cell_access"  v-for="row in rows"
                     :style="{backgroundColor:get_color(row),color:'#fff'}">
