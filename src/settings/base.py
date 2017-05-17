@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'helpers.director',
-    #'helpers.common',
+    'helpers.wechat',
     'employee',
     'workload',
     'hello'
