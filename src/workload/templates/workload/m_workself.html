@@ -182,8 +182,6 @@
 <div id="there" v-cloak>
 
 
-    <!--<button @click="switch_to('search')">过滤   v-show="crt_view=='table'"   </button>-->
-
     <div class="flex-v" style="height: 100vh;padding-bottom: 5em;">
 
         <div class="flex">
@@ -197,30 +195,6 @@
         <div id="scroll-wrapper" class="flex-grow">
             <ul class="scroll-inn" style="position:relative;width: 100%;">
 
-                <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
-                    :style="{backgroundColor:get_color(row),color:'#fff'}">
-                    <div class="weui-cell__bd" @click="ge_edit(row.pk)">
-                        <p v-text="row._label"></p>
-                    </div>
-                    <div class="weui-cell__ft">
-                    </div>
-                </li>
-                <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
-                    :style="{backgroundColor:get_color(row),color:'#fff'}">
-                    <div class="weui-cell__bd" @click="ge_edit(row.pk)">
-                        <p v-text="row._label"></p>
-                    </div>
-                    <div class="weui-cell__ft">
-                    </div>
-                </li>
-                <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
-                    :style="{backgroundColor:get_color(row),color:'#fff'}">
-                    <div class="weui-cell__bd" @click="ge_edit(row.pk)">
-                        <p v-text="row._label"></p>
-                    </div>
-                    <div class="weui-cell__ft">
-                    </div>
-                </li>
                 <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
                     :style="{backgroundColor:get_color(row),color:'#fff'}">
                     <div class="weui-cell__bd" @click="ge_edit(row.pk)">
