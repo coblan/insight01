@@ -35,8 +35,64 @@
         }
     })
 
-    myScroll=''
-    last_move=0
+    function moveYto(ele,y){
+        ele.css('transform', ex.template('translateY({y})',{y:y}))
+    }
+
+    scroll={
+        init:function(wraper,inn){
+            this.wraper=wraper
+            this.inn=inn
+            this.maxY=Math.min(this.wraper.height()-this.inn.height(),0)
+            this.addEvent()
+        },
+        addEvent:function(){
+            var self=this
+            self.count=0
+            $(document).on('touchstart',function(event){
+                self.inn.removeClass('slide')
+                self.inn.addClass('short')
+                self._start_top = self.inn.position().top
+                self._start_pos = event.touches[0].screenY
+                self._end_pos=self._start_pos
+                console.log('top' + self._start_top)
+            })
+
+            $(document).on('touchmove',function(event){
+                self.count+=1
+                if(self.count%5==0){
+                    var new_end=event.touches[0].screenY
+                    self._velocity=new_end-self._end_pos
+                    self._end_pos=new_end
+                    self._delta= self._end_pos- self._start_pos
+                    console.log('ve'+self._velocity)
+                    moveYto(self.inn,self._start_top +self._delta+self._velocity+'px')
+                }
+
+            })
+            $(document).on('touchend',function(event){
+                self.inn.removeClass('short')
+                self.inn.addClass('slide')
+                if(Math.abs(self._velocity)>15){
+                    var end_pos=self._start_top +self._delta+self._velocity*10
+                    moveYto(self.inn,+end_pos+'px')
+                }else{
+                    var end_pos=self._start_top +self._delta
+                }
+
+                setTimeout(function(){
+                    console.log(self.maxY+'|---|'+end_pos)
+                    if(self.maxY>end_pos){
+                        moveYto(self.inn,self.maxY+'px')
+                    }else if(end_pos>0){
+                        moveYto(self.inn,0)
+                    }
+                })
+                self._end_pos = event.changedTouches[0].screenY
+//                var delta= self._end_pos-start
+            })
+        }
+    }
     $(function(){
 
         crt_view = 'main'
@@ -54,9 +110,9 @@
             mounted:function(){
 
                 Vue.nextTick(function(){
+                    scroll.init($('#scroll-wrapper'),$('.scroll-inn'))
 //                    myScroll = new IScroll('#scroll-wrapper',{
-//                        probeType:1,
-//                        click:true,
+//                        probeType:1
 //                    });
 //
 //                    myScroll.on('scrollStart',function(){
@@ -68,6 +124,7 @@
 //                        console.log('in end'+last_move)
 //                    })
 //                    myScroll.on('scroll',function(){
+//
 //                        if(Math.abs(this.maxScrollY)+50 <Math.abs(this.y)){
 //                            $('.scroll-inn').addClass('release-update')
 //                        }else{
@@ -108,23 +165,24 @@
             }
         })
     })
-
 </script>
 
 <style>
     .ff{
         color: #828fb2;
     }
-
+    #scroll-wrapper{
+        position: relative;
+        width: 100vw;
+        overflow: hidden;
+    }
 </style>
 
 
 <div id="there" v-cloak>
 
 
-    <!--<button @click="switch_to('search')">过滤   v-show="crt_view=='table'"   </button>-->
-
-    <div class="" style="height: 100vh;position: relative;">
+    <div class="flex-v" style="height: 100vh;padding-bottom: 5em;">
 
         <div class="flex">
             <div class="flex-grow"></div>
@@ -134,17 +192,9 @@
         </div>
 
         <div class="weui-cells__title" v-text="page_label"></div>
-        <!--<div id="scroll-wrapper" class="">-->
-        <scroll-wraper  down_text="上滑加载" up_text="" :ref="scroller">
-            <ul >
-                <li class="weui-cell weui-cell_access"  v-for="row in rows"
-                    :style="{backgroundColor:get_color(row),color:'#fff'}">
-                    <div class="weui-cell__bd" @click="ge_edit(row.pk)">
-                        <p v-text="row._label"></p>
-                    </div>
-                    <div class="weui-cell__ft">
-                    </div>
-                </li>
+        <div id="scroll-wrapper" class="flex-grow">
+            <ul class="scroll-inn" style="position:relative;width: 100%;">
+
                 <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
                     :style="{backgroundColor:get_color(row),color:'#fff'}">
                     <div class="weui-cell__bd" @click="ge_edit(row.pk)">
@@ -153,41 +203,38 @@
                     <div class="weui-cell__ft">
                     </div>
                 </li>
+
             </ul>
-
-        </scroll-wraper>
-
-
-        <!--</div>-->
+        </div>
 
     </div>
-    <transition name="slide">
-        <div v-show="crt_view=='search'" class="slide-win">
+<transition name="slide">
+    <div v-show="crt_view=='search'" class="slide-win">
 
-            <com-filter :row_filters="row_filters" :search_args="search_args" :search_tip='search_tip'></com-filter>
+        <com-filter :row_filters="row_filters" :search_args="search_args" :search_tip='search_tip'></com-filter>
 
-            <div class="weui-btn-area">
-                <a class="weui-btn weui-btn_primary" href="javascript:" @click='search()' style="width: 50%;">
-                    <i class="fa fa-search" aria-hidden="true"></i>
-                </a>
-            </div>
-
+        <div class="weui-btn-area">
+            <a class="weui-btn weui-btn_primary" href="javascript:" @click='search()' style="width: 50%;">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </a>
         </div>
-    </transition>
 
-    <transition name="fade">
-        <modal v-show="show_menu" @click.native="show_menu=false">
-            <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
+    </div>
+</transition>
 
-                <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新建</div>
-                <div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>
-                <div class="weui-actionsheet__cell" @click="ln.pushState({crt_view:'search'});show_menu=false" v-if="can_search">排序过滤</div>
-            </div>
-            <div class="weui-actionsheet__cell">
-                <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
-            </div>
-        </modal>
-    </transition>
+<transition name="fade">
+    <modal v-show="show_menu" @click.native="show_menu=false">
+        <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
+
+            <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新建</div>
+            <div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>
+            <div class="weui-actionsheet__cell" @click="ln.pushState({crt_view:'search'});show_menu=false" v-if="can_search">排序过滤</div>
+        </div>
+        <div class="weui-actionsheet__cell">
+            <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
+        </div>
+    </modal>
+</transition>
 
 
 </div>
@@ -199,6 +246,13 @@
         position: absolute;
         bottom:-4em;
         left: 40vw;
+    }
+
+    .slide{
+        transition: all 0.5s ease;
+    }
+    .short{
+        transition: all 0.1s ease;
     }
 </style>
 

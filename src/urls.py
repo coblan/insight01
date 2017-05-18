@@ -24,6 +24,7 @@ from helpers.face import urls as face_urls
 from hello import views as hello_view
 from workload import views as workload_view
 from helpers.wechat import urls as wechat_url
+from helpers.director import views as director_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -37,6 +38,9 @@ urlpatterns = [
     url(r'^d/',include(director_urls)),
     url(r'^face/', include(face_urls)),
     url(r'^dir_mana',workload_view.dir_man),
+    
+    url(r'^_ajax/(?P<app>\w+)?/?$',director_views.ajax_views,name='ajax_url'),
+    url(r'^_ajax/?$',director_views.ajax_views),    
     url(r'^_wechat/',include(wechat_url))
     
 ]

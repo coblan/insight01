@@ -8,23 +8,6 @@
 
 <script type="text/javascript">
 
-    function isPassive() {
-        var supportsPassiveOption = false;
-        try {
-            addEventListener("test", null, Object.defineProperty({}, 'passive', {
-                get: function () {
-                    supportsPassiveOption = true;
-                }
-            }));
-        } catch(e) {}
-        return supportsPassiveOption;
-    }
-
-    document.addEventListener('touchmove', function (e) { e.preventDefault(); }, isPassive() ? {
-        capture: false,
-        passive: false
-    } : false);
-
 
     ln.history_handle({
         init:{crt_view:'main'},
@@ -35,64 +18,8 @@
         }
     })
 
-    function moveYto(ele,y){
-        ele.css('transform', ex.template('translateY({y})',{y:y}))
-    }
-
-    scroll={
-        init:function(wraper,inn){
-            this.wraper=wraper
-            this.inn=inn
-            this.maxY=Math.min(this.wraper.height()-this.inn.height(),0)
-            this.addEvent()
-        },
-        addEvent:function(){
-            var self=this
-            self.count=0
-            $(document).on('touchstart',function(event){
-                self.inn.removeClass('slide')
-                self.inn.addClass('short')
-                self._start_top = self.inn.position().top
-                self._start_pos = event.touches[0].screenY
-                self._end_pos=self._start_pos
-                console.log('top' + self._start_top)
-            })
-
-            $(document).on('touchmove',function(event){
-                self.count+=1
-                if(self.count%5==0){
-                    var new_end=event.touches[0].screenY
-                    self._velocity=new_end-self._end_pos
-                    self._end_pos=new_end
-                    self._delta= self._end_pos- self._start_pos
-                    console.log('ve'+self._velocity)
-                    moveYto(self.inn,self._start_top +self._delta+self._velocity+'px')
-                }
-
-            })
-            $(document).on('touchend',function(event){
-                self.inn.removeClass('short')
-                self.inn.addClass('slide')
-                if(Math.abs(self._velocity)>15){
-                    var end_pos=self._start_top +self._delta+self._velocity*10
-                    moveYto(self.inn,+end_pos+'px')
-                }else{
-                    var end_pos=self._start_top +self._delta
-                }
-
-                setTimeout(function(){
-                    console.log(self.maxY+'|---|'+end_pos)
-                    if(self.maxY>end_pos){
-                        moveYto(self.inn,self.maxY+'px')
-                    }else if(end_pos>0){
-                        moveYto(self.inn,0)
-                    }
-                })
-                self._end_pos = event.changedTouches[0].screenY
-//                var delta= self._end_pos-start
-            })
-        }
-    }
+    myScroll=''
+    last_move=0
     $(function(){
 
         crt_view = 'main'
@@ -106,35 +33,11 @@
                 ln:ln,
                 page_label:page_label
             },
-            mixins:[table_fun],
+            mixins:[table_fun,scroll_loader],
             mounted:function(){
-
+                var self=this
                 Vue.nextTick(function(){
-                    scroll.init($('#scroll-wrapper'),$('.scroll-inn'))
-//                    myScroll = new IScroll('#scroll-wrapper',{
-//                        probeType:1
-//                    });
-//
-//                    myScroll.on('scrollStart',function(){
-//                        console.log('ee mi to fo')
-//                    })
-//                    myScroll.on('scrollEnd',function(){
-//                        console.log(this.y)
-//                        console.log(this.maxScrollY)
-//                        console.log('in end'+last_move)
-//                    })
-//                    myScroll.on('scroll',function(){
-//
-//                        if(Math.abs(this.maxScrollY)+50 <Math.abs(this.y)){
-//                            $('.scroll-inn').addClass('release-update')
-//                        }else{
-//                            $('.scroll-inn').removeClass('release-update')
-//                        }
-//                        last_move=this.y
-////                        console.log('scroll' + this.y)
-////                        console.log(this.maxScrollY)
-//                    })
-
+                    self.$refs.scroller.refresh()
                 })
             },
             methods:{
@@ -148,9 +51,6 @@
                     history.pushState({view:name},'',ex.appendSearch({crt_view:name}))
                     this.crt_view=name
                 },
-//                back:function(){
-//                    history.back()
-//                },
 
                 get_color:function(row){
                     if(row.status=='waiting'){
@@ -160,21 +60,41 @@
                     }else if(row.status=='reject'){
                         return '#b25d64'
                     }
+                },
+                get_row_img:function(row){
+                    return  row.desp_img || row.work_desp_img || '/static/image/default_image.png'
                 }
 
             }
         })
     })
+
 </script>
 
 <style>
-    .ff{
-        color: #828fb2;
-    }
-    #scroll-wrapper{
-        position: relative;
+    /*.ff{*/
+        /*color: #828fb2;*/
+    /*}*/
+    /*.item{*/
+        /*margin:2em 1em;*/
+        /*display: flex;*/
+        /*justify-content: space-between;*/
+        /*align-items: center;*/
+    /*}*/
+    .item-table{
         width: 100vw;
-        overflow: hidden;
+    }
+    .item-table td{
+        padding:1em 0.3em;
+        min-width: 2em;
+        text-align: center;
+    }
+    tr:nth-child(odd){background-color: #ffffff;}
+    td:nth-child(1){
+        padding-left: 0.5em;
+    }
+    .item-table img{
+        box-shadow:0 0 10px rgba(38, 67, 201, 0.5);
     }
 </style>
 
@@ -182,7 +102,9 @@
 <div id="there" v-cloak>
 
 
-    <div class="flex-v" style="height: 100vh;padding-bottom: 5em;">
+    <!--<button @click="switch_to('search')">过滤   v-show="crt_view=='table'"   </button>-->
+
+    <div class="" style="height: 100vh;position: relative;">
 
         <div class="flex">
             <div class="flex-grow"></div>
@@ -192,49 +114,77 @@
         </div>
 
         <div class="weui-cells__title" v-text="page_label"></div>
-        <div id="scroll-wrapper" class="flex-grow">
-            <ul class="scroll-inn" style="position:relative;width: 100%;">
+        <!--<div id="scroll-wrapper" class="">-->
+        <scroll-wraper  ref="scroller" :down_text='get_down_text()' @down_out_border="load_next_page()">
+            <!--<ul >-->
+                <!--<li class="weui-cell weui-cell_access"  v-for="row in rows"-->
+                    <!--:style="{backgroundColor:get_color(row),color:'#fff'}">-->
+                    <!--<div class="weui-cell__bd" @click="ge_edit(row.pk)">-->
+                        <!--<p v-text="row._label"></p>-->
+                    <!--</div>-->
+                    <!--<div class="weui-cell__ft">-->
+                    <!--</div>-->
+                <!--</li>-->
+            <!--</ul>-->
+            <table class="item-table">
+                <tr v-for="row in rows" @click="ge_edit(row.pk)">
+                    <td><img style="width: 3em;height: 3em" :src="get_row_img(row)" alt=""/></td>
+                    <td><span v-text="row.work"></span></td>
+                    <td> <i v-if="row.status=='pass'" class="fa fa-circle" aria-hidden="true" style="color: #04be02"></i>
+                        <i v-if="row.status=='waiting'" class="fa fa-telegram" aria-hidden="true" style="color: #074bb6"></i>
+                        <i v-if="row.status=='reject'" class="fa fa-info-circle" aria-hidden="true" style="color: red"></i>
+                    </td>
+                    <td>
+                        <span v-text="row.create_time"></span>
+                    </td>
 
-                <li class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows"
-                    :style="{backgroundColor:get_color(row),color:'#fff'}">
-                    <div class="weui-cell__bd" @click="ge_edit(row.pk)">
-                        <p v-text="row._label"></p>
-                    </div>
-                    <div class="weui-cell__ft">
-                    </div>
-                </li>
+                </tr>
+            </table>
+            <!--<div v-for="row in rows" class="item">-->
+                <!--<div>-->
+                    <!--<img style="width: 3em;height: 3em" :src="get_row_img(row)" alt=""/>-->
+                <!--</div>-->
+                <!-- -->
+                <!--<span v-text="row.work"></span>-->
 
-            </ul>
-        </div>
+                <!--<i v-if="row.status=='pass'" class="fa fa-circle" aria-hidden="true" style="color: #04be02"></i>-->
+                <!--<i v-if="row.status=='waiting'" class="fa fa-telegram" aria-hidden="true" style="color: #8db6a9"></i>-->
+                <!--<i v-if="row.status=='reject'" class="fa fa-info-circle" aria-hidden="true" style="color: red"></i>-->
+                <!--<span v-text="row.create_time"></span>-->
+            <!--</div>-->
+
+        </scroll-wraper>
+
+
 
     </div>
-<transition name="slide">
-    <div v-show="crt_view=='search'" class="slide-win">
+    <transition name="slide">
+        <div v-show="crt_view=='search'" class="slide-win">
 
-        <com-filter :row_filters="row_filters" :search_args="search_args" :search_tip='search_tip'></com-filter>
+            <com-filter :row_filters="row_filters" :search_args="search_args" :search_tip='search_tip'></com-filter>
 
-        <div class="weui-btn-area">
-            <a class="weui-btn weui-btn_primary" href="javascript:" @click='search()' style="width: 50%;">
-                <i class="fa fa-search" aria-hidden="true"></i>
-            </a>
+            <div class="weui-btn-area">
+                <a class="weui-btn weui-btn_primary" href="javascript:" @click='search()' style="width: 50%;">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </a>
+            </div>
+
         </div>
+    </transition>
 
-    </div>
-</transition>
+    <transition name="fade">
+        <modal v-show="show_menu" @click.native="show_menu=false">
+            <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
 
-<transition name="fade">
-    <modal v-show="show_menu" @click.native="show_menu=false">
-        <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
-
-            <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新建</div>
-            <div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>
-            <div class="weui-actionsheet__cell" @click="ln.pushState({crt_view:'search'});show_menu=false" v-if="can_search">排序过滤</div>
-        </div>
-        <div class="weui-actionsheet__cell">
-            <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
-        </div>
-    </modal>
-</transition>
+                <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新建</div>
+                <div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>
+                <div class="weui-actionsheet__cell" @click="ln.pushState({crt_view:'search'});show_menu=false" v-if="can_search">排序过滤</div>
+            </div>
+            <div class="weui-actionsheet__cell">
+                <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
+            </div>
+        </modal>
+    </transition>
 
 
 </div>
@@ -246,13 +196,6 @@
         position: absolute;
         bottom:-4em;
         left: 40vw;
-    }
-
-    .slide{
-        transition: all 0.5s ease;
-    }
-    .short{
-        transition: all 0.1s ease;
     }
 </style>
 

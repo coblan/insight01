@@ -44,6 +44,7 @@
     dir_editable={{ dir_editable | jsonify}}
     dir_can_add={{ dir_can_add | jsonify }}
     work_can_add={{ work_can_add | jsonify }}
+
     $(function () {
         table=new Vue({
             el:'#there',
@@ -68,6 +69,7 @@
                 state:{},
                 ex:ex,
 
+
             },
             mixins:[field_fun],
             mounted:function(){
@@ -88,7 +90,7 @@
                     var self=this
                     show_upload()
                     var post_data=[{fun:'save',row:this.kw.row}]
-                    ex.post('',JSON.stringify(post_data),function(resp){
+                    ex.post('/_ajax',JSON.stringify(post_data),function(resp){
                         if(resp.save.errors){
                             self.kw.errors=resp.save.errors
                         }else{
@@ -113,6 +115,7 @@
                     }else{
                         this.kw.heads=item_heads
                     }
+
                     this.kw.row=item
                 },
 
@@ -134,7 +137,7 @@
         <div style="width: 100vw;" >
 
             <com-catalog class="mobile" ref="catalog" url="/dir_mana" :root="{pk:null,name:'root'}" @dirclick="on_dirclick($event)"
-                         @itemclick="on_itemclick($event)" @state="set_state($event)" :editable="true">
+                          @state="set_state($event)" :editable="true">
 
 
             <template scope="box" slot="check_sel">
@@ -191,7 +194,7 @@
             <div class="form-pad" >
                 <field  v-for='head in kw.heads' :key="head.name" :name='head.name' :kw='kw'></field>
             </div>
-            <div style="margin-top: 20px;">
+            <div style="margin: 3em 0 6em 0;">
                 <a href="javascript:;" class="weui-btn weui-btn_primary" style="width: 59vw;" @click="item_save()">保存修改</a>
             </div>
 

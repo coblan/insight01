@@ -150,7 +150,7 @@ class WRselfForm(ModelFields):
             }
             elif head['name']=='finish_time':
                 head['type']='date'
-        if self.instance.status!='waiting':
+        if self.instance.status =='pass':
             for head in heads:
                 head['readonly']=True
                 
@@ -167,10 +167,15 @@ class WRselfTable(ModelTable):
     def inn_filter(self, query):
         query =super(WRselfTable,self).inn_filter(query)
         return query.filter(emp__user=self.crt_user).order_by('-id')
+    def dict_row(self, inst):
+        return {
+            'work': unicode(inst.work),
+            'work_desp_img':inst.work.desp_img
+        }
 
 class WRselfTablePage(TablePage):
     tableCls=WRselfTable
-    template='workload/m_workself_bak.html'
+    template='workload/m_workself.html'
     def get_label(self):
         emp=self.request.user.employeemodel_set.first()
         return '%s的工作提交记录'%emp.baseinfo.name

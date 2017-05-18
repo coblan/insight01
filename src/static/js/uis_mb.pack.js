@@ -73,81 +73,29 @@
 "use strict";
 
 
-var _modal = __webpack_require__(4);
+var _modal = __webpack_require__(9);
 
 var a = _interopRequireWildcard(_modal);
 
-var _scroll = __webpack_require__(3);
+var _scroll = __webpack_require__(7);
 
 var scroll = _interopRequireWildcard(_scroll);
 
+var _scroll_load = __webpack_require__(8);
+
+var scroll_load = _interopRequireWildcard(_scroll_load);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-__webpack_require__(7);
 __webpack_require__(6);
-
 __webpack_require__(5);
 
-__webpack_require__(11);
+__webpack_require__(3);
+
+__webpack_require__(4);
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function() {
-	var list = [];
-
-	// return the list of modules as css string
-	list.toString = function toString() {
-		var result = [];
-		for(var i = 0; i < this.length; i++) {
-			var item = this[i];
-			if(item[2]) {
-				result.push("@media " + item[2] + "{" + item[1] + "}");
-			} else {
-				result.push(item[1]);
-			}
-		}
-		return result.join("");
-	};
-
-	// import a list of modules into the list
-	list.i = function(modules, mediaQuery) {
-		if(typeof modules === "string")
-			modules = [[null, modules, ""]];
-		var alreadyImportedModules = {};
-		for(var i = 0; i < this.length; i++) {
-			var id = this[i][0];
-			if(typeof id === "number")
-				alreadyImportedModules[id] = true;
-		}
-		for(i = 0; i < modules.length; i++) {
-			var item = modules[i];
-			// skip already imported module
-			// this implementation is not 100% perfect for weird media query combinations
-			//  when a module is imported multiple times with different media queries.
-			//  I hope this will never occur (Hey this way we have smaller bundles)
-			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-				if(mediaQuery && !item[2]) {
-					item[2] = mediaQuery;
-				} else if(mediaQuery) {
-					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-				}
-				list.push(item);
-			}
-		}
-	};
-	return list;
-};
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports) {
 
 /*
@@ -399,7 +347,167 @@ function updateLink(linkElement, obj) {
 
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function() {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		var result = [];
+		for(var i = 0; i < this.length; i++) {
+			var item = this[i];
+			if(item[2]) {
+				result.push("@media " + item[2] + "{" + item[1] + "}");
+			} else {
+				result.push(item[1]);
+			}
+		}
+		return result.join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+
+/***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(10);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!./../../../node_modules/.0.26.1@css-loader/index.js!./../../../node_modules/.1.3.3@postcss-loader/index.js??ref--1-2!./../../../node_modules/.6.0.0@sass-loader/lib/loader.js!./ui.scss", function() {
+			var newContent = require("!!./../../../node_modules/.0.26.1@css-loader/index.js!./../../../node_modules/.1.3.3@postcss-loader/index.js??ref--1-2!./../../../node_modules/.6.0.0@sass-loader/lib/loader.js!./ui.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(11);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!./../../../node_modules/.0.26.1@css-loader/index.js!./../../../node_modules/.1.3.3@postcss-loader/index.js??ref--1-2!./../../../node_modules/.6.0.0@sass-loader/lib/loader.js!./scroll.scss", function() {
+			var newContent = require("!!./../../../node_modules/.0.26.1@css-loader/index.js!./../../../node_modules/.1.3.3@postcss-loader/index.js??ref--1-2!./../../../node_modules/.6.0.0@sass-loader/lib/loader.js!./scroll.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(12);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!./../../../node_modules/.0.26.1@css-loader/index.js!./../../../node_modules/.1.3.3@postcss-loader/index.js??ref--1-2!./../../../node_modules/.6.0.0@sass-loader/lib/loader.js!./adapt.scss", function() {
+			var newContent = require("!!./../../../node_modules/.0.26.1@css-loader/index.js!./../../../node_modules/.1.3.3@postcss-loader/index.js??ref--1-2!./../../../node_modules/.6.0.0@sass-loader/lib/loader.js!./adapt.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(13);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!./../../../node_modules/.0.26.1@css-loader/index.js!./../../../node_modules/.1.3.3@postcss-loader/index.js??ref--1-2!./../../../node_modules/.6.0.0@sass-loader/lib/loader.js!./flex.scss", function() {
+			var newContent = require("!!./../../../node_modules/.0.26.1@css-loader/index.js!./../../../node_modules/.1.3.3@postcss-loader/index.js??ref--1-2!./../../../node_modules/.6.0.0@sass-loader/lib/loader.js!./flex.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -421,41 +529,126 @@ var scrop_wraper = {
     },
     mounted: function mounted() {
         var self = this;
-        this.scroll = new IScroll(this.$el, {
-            probeType: 1,
-            click: true
-        });
-        this.scroll.on('scrollStart', function () {});
-        this.scroll.on('scrollEnd', function () {
-            if (self.up_out_border) {
-                self.$emit('up_out_border');
-            } else if (self.down_out_border) {
-                self.$emit('down_out_border');
-            }
-            self.up_out_border = false;
-            self.down_out_border = false;
-        });
-        this.scroll.on('scroll', function () {
-            self.up_out_border = false;
-            self.down_out_border = false;
+        ex.load_js('/static/lib/iscroll_probe.js', function () {
 
-            if (this.maxScrollY - 30 > this.y) {
-                self.down_out_border = true;
-            } else if (this.y > 30) {
-                self.up_out_border = true;
+            on_load_scroll();
+
+            self.scroll = new IScroll(self.$el, {
+                probeType: 1,
+                click: true
+            });
+            self.scroll.on('scrollStart', function () {});
+            self.scroll.on('scrollEnd', function () {
+                if (self.up_out_border) {
+                    self.$emit('up_out_border');
+                } else if (self.down_out_border) {
+                    self.$emit('down_out_border');
+                }
+                self.up_out_border = false;
+                self.down_out_border = false;
+            });
+            self.scroll.on('scroll', function () {
+                self.up_out_border = false;
+                self.down_out_border = false;
+
+                if (this.maxScrollY - 10 > this.y) {
+                    // �����������£�����ƽ��Щ����������ֵ����С�㡣
+                    self.down_out_border = true;
+                } else if (this.y > 30) {
+                    self.up_out_border = true;
+                }
+            });
+            if (self._need_refresh) {
+                self.scroll.refresh();
             }
         });
     },
     methods: {
         refresh: function refresh() {
-            this.scroll.refresh();
+            if (this.scroll) {
+                this.scroll.refresh();
+            } else {
+                this._need_refresh = true;
+            }
         }
     }
 };
 Vue.component('scroll-wraper', scrop_wraper);
 
+function isPassive() {
+    var supportsPassiveOption = false;
+    try {
+        addEventListener("test", null, Object.defineProperty({}, 'passive', {
+            get: function get() {
+                supportsPassiveOption = true;
+            }
+        }));
+    } catch (e) {}
+    return supportsPassiveOption;
+}
+
+function on_load_scroll() {
+    document.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+    }, isPassive() ? {
+        capture: false,
+        passive: false
+    } : false);
+}
+
 /***/ }),
-/* 4 */
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/*
+与vuejs组件的mixin : table_fun联合使用,自动加载后台的table数据
+
+mixin:[table_fun,scroll_loader]
+
+ <scroll-wraper ref="scroller" :down_text='get_down_text()' @down_out_border="load_next_page()"></scroll-wraper>
+
+* */
+
+var scroll_loader = {
+    computed: {
+        can_load_more: function can_load_more() {
+            var opt = this.row_pages.options;
+            var max_page = parseInt(opt[opt.length - 1]);
+            return this.crt_page < max_page;
+        }
+    },
+    methods: {
+        get_down_text: function get_down_text() {
+            if (this.can_load_more) {
+                return '释放加载';
+            } else {
+                return '没有更多数据了';
+            }
+        },
+        load_next_page: function load_next_page() {
+            if (!this.can_load_more) return;
+            this.crt_page += 1;
+            var self = this;
+            show_upload();
+            ex.get(ex.appendSearch({ '_page': this.crt_page }), function (resp) {
+                self.rows = self.rows.concat(resp.rows);
+
+                Vue.nextTick(function () {
+                    self.$refs.scroller.refresh();
+                });
+                hide_upload(200);
+            });
+        }
+    }
+};
+
+window.scroll_loader = scroll_loader;
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -472,102 +665,38 @@ Vue.component('modal', {
 });
 
 /***/ }),
-/* 5 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(8);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// add the styles to the DOM
-var update = __webpack_require__(2)(content, {});
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js??ref--1-2!./../../../node_modules/sass-loader/lib/loader.js!./ui.scss", function() {
-			var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js??ref--1-2!./../../../node_modules/sass-loader/lib/loader.js!./ui.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(9);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// add the styles to the DOM
-var update = __webpack_require__(2)(content, {});
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js??ref--1-2!./../../../node_modules/sass-loader/lib/loader.js!./adapt.scss", function() {
-			var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js??ref--1-2!./../../../node_modules/sass-loader/lib/loader.js!./adapt.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(10);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// add the styles to the DOM
-var update = __webpack_require__(2)(content, {});
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js??ref--1-2!./../../../node_modules/sass-loader/lib/loader.js!./flex.scss", function() {
-			var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js??ref--1-2!./../../../node_modules/sass-loader/lib/loader.js!./flex.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(1)();
+exports = module.exports = __webpack_require__(2)();
 // imports
 
 
 // module
-exports.push([module.i, ".slide-win {\n  position: fixed;\n  left: 0;\n  width: 100vw;\n  height: 100vh;\n  top: 0;\n  background-color: white; }\n\n.slide-enter-active, .slide-leave-active {\n  -webkit-transition: all .3s ease;\n  transition: all .3s ease; }\n\n.slide-enter, .slide-leave-to {\n  left: 100vw;\n  opacity: 0; }\n\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: all .3s ease;\n  transition: all .3s ease; }\n\n.fade-enter, .fade-leave-to {\n  /*top: 100px;*/\n  opacity: 0; }\n", ""]);
+exports.push([module.i, ".slide-win {\n  position: fixed;\n  left: 0;\n  width: 100vw;\n  height: 100vh;\n  top: 0;\n  background-color: white;\n  overflow: auto; }\n\n.slide-enter-active, .slide-leave-active {\n  -webkit-transition: all .3s ease;\n  transition: all .3s ease; }\n\n.slide-enter, .slide-leave-to {\n  left: 100vw;\n  opacity: 0; }\n\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: all .3s ease;\n  transition: all .3s ease; }\n\n.fade-enter, .fade-leave-to {\n  /*top: 100px;*/\n  opacity: 0; }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(1)();
+exports = module.exports = __webpack_require__(2)();
+// imports
+
+
+// module
+exports.push([module.i, ".scroll-wrapper {\n  position: absolute;\n  width: 100vw;\n  overflow: hidden;\n  bottom: 5em;\n  top: 6em; }\n  .scroll-wrapper .scroller {\n    width: 100%;\n    position: absolute;\n    min-height: 101%; }\n  .scroll-wrapper ._up_text {\n    position: absolute;\n    top: -2em;\n    text-align: center;\n    width: 100%; }\n  .scroll-wrapper ._down_text {\n    position: relative;\n    bottom: -1.2em;\n    text-align: center;\n    width: 100%; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)();
 // imports
 
 
@@ -578,55 +707,15 @@ exports.push([module.i, "template {\n  display: none; }\n", ""]);
 
 
 /***/ }),
-/* 10 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(1)();
+exports = module.exports = __webpack_require__(2)();
 // imports
 
 
 // module
 exports.push([module.i, ".flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex; }\n\n.flex-v {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column; }\n\n.flex-grow {\n  -webkit-box-flex: 10;\n      -ms-flex-positive: 10;\n          flex-grow: 10; }\n\n.flex-jc {\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center; }\n\n.flex-ac {\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center; }\n\n.flex-sb {\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between; }\n\n.flex-vh-center {\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center; }\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(12);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// add the styles to the DOM
-var update = __webpack_require__(2)(content, {});
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js??ref--1-2!./../../../node_modules/sass-loader/lib/loader.js!./scroll.scss", function() {
-			var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js??ref--1-2!./../../../node_modules/sass-loader/lib/loader.js!./scroll.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(1)();
-// imports
-
-
-// module
-exports.push([module.i, ".scroll-wrapper {\n  position: absolute;\n  width: 100vw;\n  overflow: hidden;\n  bottom: 5em;\n  top: 6em; }\n  .scroll-wrapper .scroller {\n    width: 100%;\n    position: absolute;\n    min-height: 101%; }\n  .scroll-wrapper ._up_text {\n    position: absolute;\n    top: -2em;\n    text-align: center;\n    width: 100%; }\n  .scroll-wrapper ._down_text {\n    position: relative;\n    bottom: -1.2em;\n    text-align: center;\n    width: 100%; }\n", ""]);
 
 // exports
 
