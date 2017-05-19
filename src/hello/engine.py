@@ -49,7 +49,7 @@ class WxEngine(BaseEngine):
         #{'label':'工时类型','url':page('work.wx'),'visible':can_touch(EmployeeModel),'icon':fa('fa-suitcase fa-2x')},
         {'label':'工作提交','url':page('wkself.wx'),'icon':fa('fa-hand-paper-o fa-2x'),\
          'visible':and_list([WorkRecord,lambda user: not user.is_anonymous() and user.employeemodel_set.exists()]),},
-        {'label':'工作审核','url':page('workrecord.wx'),'visible':and_list(['workrecord.check_all',WorkRecord]),'icon':fa('fa-eye fa-2x')},
+        {'label':'工作审核','url':page('workrecord.wx','?status=waiting'),'visible':and_list(['workrecord.check_all',WorkRecord]),'icon':fa('fa-eye fa-2x')},
         
         {'label':'意见','url':page('commentself.wx'),'visible':can_touch(Comment),'icon':fa('fa-pencil-square-o fa-2x')},
         #{'label':'管理意见','url':page('comment.wx'),'visible':and_list([Comment,'comment.all']),'icon':fa('fa-pencil-square fa-2x')},

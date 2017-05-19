@@ -136,8 +136,8 @@
     <div class="flex" >
         <div style="width: 100vw;" >
 
-            <com-catalog class="mobile" ref="catalog" url="/dir_mana" :root="{pk:null,name:'root'}" @dirclick="on_dirclick($event)"
-                          @state="set_state($event)" :editable="true">
+            <com-catalog class="mobile" ref="catalog" url="/dir_mana" :root="{pk:null,name:'root'}"
+                          @state_change="set_state($event)" :editable="true">
 
 
             <template scope="box" slot="check_sel">

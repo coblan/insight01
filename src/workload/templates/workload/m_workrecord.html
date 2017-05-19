@@ -7,6 +7,8 @@
 
 <script type="text/javascript">
 
+
+
     ln.history_handle({
         init:{crt_view:'main'},
         handler:function(state){
@@ -17,6 +19,7 @@
     })
 
 
+
     $(function(){
 
         crt_view = 'main'
@@ -24,14 +27,16 @@
         table= new Vue({
             el:'#there',
             data:{
-//                    menu:menu,
-//                    rows:rows,
                 crt_view:crt_view,
                 ln:ln,
+                page_label:page_label,
             },
-            mixins:[table_fun],
+            mixins:[table_fun,scroll_loader],
             mounted:function(){
-
+                var self=this
+                Vue.nextTick(function(){
+                    self.$refs.scroller.refresh()
+                })
             },
             methods:{
                 goto:function(url){
@@ -45,23 +50,42 @@
                     this.crt_view=name
                 },
                 back:function(){
-                    history.back()
+                    location = document.referrer
                 },
-
-                head_img:function(row){
-                    return row.desp_img || row.work_desp_img
+                get_row_img:function(row){
+                    return  row.desp_img || row.work_desp_img || '/static/image/default_image.png'
                 }
+
             }
         })
     })
 </script>
 
-
+<style>
+    .item-table{
+        width: 100vw;
+    }
+    .item-table td{
+        padding:1em 0.3em;
+        min-width: 2em;
+        text-align: center;
+    }
+    tr:nth-child(odd){background-color: #ffffff;}
+    td:nth-child(1){
+        padding-left: 0.5em;
+    }
+    .item-table img{
+        box-shadow:0 0 10px rgba(38, 67, 201, 0.5);
+    }
+</style>
 
 
 <div id="there" v-cloak>
 
-    <div>
+
+    <!--<button @click="switch_to('search')">过滤</button>-->
+
+    <div class="flex-v" style="min-height: 100vh;">
 
         <div class="flex">
             <div class="flex-grow"></div>
@@ -69,15 +93,38 @@
                 <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
             </div>
         </div>
+        <div class="weui-cells__title" v-text="page_label"></div>
+        <scroll-wraper class="flex-grow" style="margin-bottom: 6em;"  ref="scroller" :down_text='get_down_text()' @down_out_border="load_next_page()">
+            <table class="item-table">
+                <tr v-for="row in rows" @click="ge_edit(row.pk)">
+                    <td><img style="width: 3em;height: 3em" :src="get_row_img(row)" alt=""/></td>
+                    <td><span v-text="row.work"></span></td>
 
-        <div class="weui-cells__title">列表项</div>
-        <div v-for="row in rows">
-            <img :src="head_img(row)" alt="">
-        </div>
+                    <td> <i v-if="row.status=='pass'" class="fa fa-circle" aria-hidden="true" style="color: #04be02"></i>
+                        <i v-if="row.status=='waiting'" class="fa fa-telegram" aria-hidden="true" style="color: #074bb6"></i>
+                        <i v-if="row.status=='reject'" class="fa fa-info-circle" aria-hidden="true" style="color: red"></i>
+                    </td>
+                    <td><span v-text="row.emp"></span></td>
+                </tr>
 
+
+            </table>
+        </scroll-wraper>
+        <!--<div class="weui-cells">-->
+            <!--<a class="weui-cell weui-cell_access" href="javascript:;" v-for="row in rows">-->
+                <!--<div class="weui-cell__hd" style="padding: 0 1em 0 0.3em;">-->
+                    <!--<com-check-box v-model="selected" :value="row.pk"></com-check-box>-->
+                <!--</div>-->
+
+                <!--<div class="weui-cell__bd" @click="ge_edit(row.pk)">-->
+                    <!--<p v-text="row._label"></p>-->
+                    <!--<span v-text="row.work"></span>-->
+                <!--</div>-->
+                <!--<div class="weui-cell__ft">-->
+                <!--</div>-->
+            <!--</a>-->
+        <!--</div>-->
     </div>
-
-
 
     <transition name="slide">
         <div v-show="crt_view=='search'" class="slide-win">
@@ -92,17 +139,24 @@
 
         </div>
     </transition>
-    <modal v-show="show_menu" @click.native="show_menu=false">
-        <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
 
-            <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新建</div>
-            <div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>
-            <div class="weui-actionsheet__cell" @click="ln.pushState({crt_view:'search'});show_menu=false" v-if="can_search">排序过滤</div>
-        </div>
-        <div class="weui-actionsheet__cell">
-            <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
-        </div>
-    </modal>
+
+    <transition name="fade">
+        <modal v-show="show_menu" @click.native="show_menu=false">
+
+            <div class="weui-actionsheet__menu up-menu" @click.stop="" style="width: 80vw;">
+                <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新建</div>
+                <div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>
+                <div class="weui-actionsheet__cell" @click="ln.pushState({crt_view:'search'});show_menu=false" v-if="can_search">排序过滤</div>
+            </div>
+            <div class="weui-actionsheet__cell">
+                <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
+            </div>
+
+        </modal>
+    </transition>
+
+
 
 </div>
 

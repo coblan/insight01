@@ -182,7 +182,7 @@
             <!--</div>-->
 
             <com-catalog ref="catalog" url="/dir_mana" :root="{pk:null,name:'root'}" @dirclick="on_dirclick($event)"
-                    @itemclick="on_itemclick($event)" @state="set_state($event)" :editable="true"></com-catalog>
+                    @itemclick="on_itemclick($event)" @state_change="set_state($event)" :editable="true"></com-catalog>
 
         </div>
         <div class="flex-v">

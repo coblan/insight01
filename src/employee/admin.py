@@ -8,7 +8,7 @@ from django.contrib import admin
 from .models import EmployeeModel,BasicInfo
 from django.contrib.auth.models import User
 from django.db.models import Q
-from helpers.common.employee import get_admin
+from helpers.common import employee
 from helpers.common import human
 # Register your models here.
 
@@ -120,7 +120,7 @@ from helpers.common import human
     #template='wx/fieldset.html'
  
 
-emp_admin = get_admin(BasicInfo, EmployeeModel)
+emp_admin = employee.get_admin(BasicInfo, EmployeeModel)
 
 model_dc[BasicInfo]={'fields': emp_admin['BasicInfoFields']}
 model_dc[EmployeeModel]={'fields':emp_admin[ 'EmployeeFields']}

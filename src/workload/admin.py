@@ -106,19 +106,23 @@ class WorkRecordTable(ModelTable):
         if  inst.work:
             dc.update({
                 'work_desp_img': inst.work.desp_img,
-                'work':'<a href="/pc/work.edit?pk=%s">%s</a>'%(inst.work.pk,unicode(inst.work)),
+                'work':unicode(inst.work),
             })
         dc.update({
             'emp':unicode(inst.emp),
-            'desp_img':'<img src="%s" width="20"/>'%inst.desp_img,            
+            'desp_img':inst.desp_img,            
         })
         return dc
 
 class WorkRecordTablePage(TablePage):
     tableCls=WorkRecordTable
+    
+    def get_label(self):
+        return '工作审批列表'
 
 class WorkRecordTablePageWX(WorkRecordTablePage):
-    pass
+    template='workload/m_workrecord.html'
+
     #template='workload/m_workrecord.html'
 
 class WorkRecordFormPageWX(WorkRecordFormPage):

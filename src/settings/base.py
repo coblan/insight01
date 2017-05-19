@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'helpers.director',
     'helpers.wechat',
+    'helpers.common',
     'employee',
     'workload',
     'hello'
