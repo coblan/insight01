@@ -1,0 +1,189 @@
+{% extends "wx/base.html" %}
+{% load static %}
+{% load jsonify %}
+
+
+{% block page_content %}
+<!--<link href="https://cdn.bootcss.com/element-ui/1.2.9/theme-default/index.css" rel="stylesheet">-->
+<!--<script src="https://cdn.bootcss.com/element-ui/1.2.9/index.js"></script>-->
+
+<script type="text/javascript">
+
+
+
+
+    $(function(){
+
+//            history.pushState({view:'table'},'title')
+//        search_args=ex.parseSearch()
+        search_args.comment_range=search_args.comment_range|| 'all'
+        crt_view = search_args.crt_view || 'table'
+        can_reply ={{ can_reply | jsonify }}
+    var table= new Vue({
+        el:'#there',
+        data:{
+//                    menu:menu,
+//                    rows:rows,
+            crt_view:crt_view,
+            comment_range:search_args.comment_range,
+            can_reply:can_reply,
+        },
+        mixins:[table_fun],
+        mounted:function(){
+
+        },
+        computed:{
+//                comment_range:function(){
+//                    var map_obj={
+//                        'all':'全部',
+//                        'only_self':'只看自己'
+//                    }
+//                    return map_obj[search_args.comment_range]
+//                }
+        },
+        methods:{
+            goto:function(url){
+                location=url
+            },
+            ge_edit:function(pk){
+                location= ex.template('{engine_url}/{page_name}.edit?pk={pk}',{engine_url:engine_url,page_name:page_name,pk:pk})
+            },
+            switch_to:function(name){
+                history.pushState({view:name},'',ex.appendSearch({crt_view:name}))
+                this.crt_view=name
+            },
+            back:function(){
+                history.back()
+            },
+            update_search:function(args){
+                search_args.comment_range=args
+                search_args._page=1
+                location=ex.appendSearch(engine_url+'/'+page_name,search_args)
+
+            },
+            get_edit_link:function(pk){
+                return engine_url+'/comment.wx.edit?pk='+pk
+            },
+            txt_to_html:function(v){
+                return v.replace(/\n/g,'<br/>');
+            }
+
+        }
+    })
+    })
+</script>
+
+
+
+
+<div id="there">
+
+    <div style="text-align: center;">
+
+    </div>
+
+    <!--<div style="text-align: right;padding-right: 2em;">-->
+    <!--<el-button icon="plus"></el-button>-->
+    <!--</div>-->
+
+
+    <div v-show="crt_view=='table'" v-cloak>
+
+        <div class="flex">
+
+            <div class="flex-grow" style="text-align: center;margin-top: 1em;">
+                <div class="btn-group" role="group" aria-label="..." >
+                    <a type="button" :class="['btn btn-default',{'btn-info':comment_range=='only_self'}]"  href="javascript:;" @click="update_search('only_self')">只看自己</a>
+                    <a type="button" :class="['btn btn-default',{'btn-info':comment_range=='all'}]"  href="javascript:;" @click="update_search('all')" >全部</a>
+                </div>
+            </div>
+
+
+            <div style="text-align: right;padding: 0.5em 1em;">
+                <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
+            </div>
+        </div>
+
+        <div v-for="row in rows" class="flex comment-row">
+            <div class="head">
+                <img :src="row.emp_info.head" alt="" style="width: 2em;border-radius: 1em;"/>
+            </div>
+            <div class="bd flex-grow">
+                <div class="flex flex-ac">
+                    <span class="name flex-grow" v-text="row.emp"></span>
+                    <a v-if="can_reply" class="edit-btn"  :href="get_edit_link(row.pk)">
+                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                </div>
+                <p v-html="txt_to_html(row.content)"></p>
+                <div class="rep" v-if="row.rep_content">
+                    <div class="reply name">管理员答复:</div>
+                    <p class="content" v-html="txt_to_html(row.rep_content)"></p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <modal v-show="show_menu" @click.native="show_menu=false">
+        <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
+            <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新留言</div>
+            <!--<div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>-->
+            <!--<div class="weui-actionsheet__cell" @click="crt_view='search';show_menu=false" v-if="can_search">排序过滤</div>-->
+        </div>
+        <div class="weui-actionsheet__cell">
+            <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
+        </div>
+    </modal>
+
+</div>
+
+<style type="text/css">
+    .comment-row{
+        /*background-color: white;*/
+        padding: 10px;
+        margin-bottom: 2em;
+    }
+    .comment-row .head{
+        width: 3em;
+        flex-shrink: 0;
+    }
+    .comment-row .name{
+        color: #807d7d;
+        /*font-size: 1.3em;*/
+        padding-left: 0.7em;
+    }
+    .comment-row .bd{
+
+    }
+    .comment-row .rep .reply{
+        border-left: 2px solid #06881a;
+        padding-left:0.7em ;
+    }
+    .comment-row .rep{
+        border-top: 1px solid #dddadf;
+        padding-top: 0.7em;
+    }
+    .comment-row .rep .content{
+        padding-left:0.7em ;
+    }
+    .comment-row .edit-btn{
+        padding: 0em 0.3em;
+        margin-right: 1em;
+        font-size: 1.5em;
+    }
+    .comment-row .edit-btn:hover{
+        background-color: #dce0f4;
+        border-radius: 0.3em;
+    }
+    [v-cloak] {
+        display: none;
+    }
+    /*.comment-row pre{*/
+    /*background-color: transparent;*/
+    /*border: none;*/
+    /*}*/
+</style>
+
+{% endblock %}

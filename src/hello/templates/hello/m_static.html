@@ -51,124 +51,11 @@
                 }
                 location=ex.appendSearch({month:ls[0]+'-'+ls[1]})
             }
-//            get_static:function(month){
-//                var self=this
-//                var post_data=[{fun:'get_static',start:this.start,end:this.end}]
-//                ex.post(ajax_url,JSON.stringify(post_data),function(resp){
-//                    self.items=resp.get_static.items
-//
-//                })
-//            },
-//            add_left:function(v){
-//                this.pages.splice(0,0,v)
-//                $('.page').removeClass('slide')
-//                Vue.nextTick(function(){
-////                    $('.page').css('left','-100vw')
-//                    moveXto($('.page'),'-100vw')
-//                    setTimeout(function(){
-//                        $('.page').addClass('slide')
-////                        $('.page').css('left','0')
-//                        moveXto($('.page'),0)
-//                    },0)
-//                })
-//            },
-//            add_right:function(v,ary){
-//                ary.push(v)
-//                var self=this
-//                Vue.nextTick(function(){
-//                    self.slide_to(ary.length-1)
-//                })
-//            },
-//            go_right:function(){
-//               this.crt_index+=1
-//                if(this.pages.length<=this.crt_index){
-//                    var max_month=this.pages[this.pages.length-1].month
-//                    this.add_right({month:max_month+1},this.pages)
-//                }else{
-//                    this.slide_to(this.crt_index)
-//                }
-//            },
-//            go_left:function(){
-//                if(this.crt_index==0){
-//                    var last_month= this.pages[0].month-1
-//                    this.add_left({month:last_month})
-//                }else{
-//                    this.crt_index -=1
-//                   this.slide_to(this.crt_index)
-//                }
-//            },
-//            slide_to:function(index){
-//                $('.page').addClass('slide')
-//                moveXto($('.page'),-1*index*100 +'vw')
-//            },
-//            get_data_month:function(){
-//                var month=this.pages[this.crt_index].month
-//                return month%12
-//            },
-
-
         }
     })
 
-//    myScroll = new IScroll('#wrapper',{ scrollX: true, scrollY: false, mouseWheel: true,snap: 'li' });
-
-
     })
-//    document.addEventListener('touchmove', function (e) { e.preventDefault(); })
 
-//    function moveXto(ele,x_px){
-//        ele.css('transform', ex.template('translateX({x})',{x:x_px}))
-//    }
-//
-//    left =0
-//    start=0
-//    count=0
-//    end=0
-//
-//    $(document).on('touchstart',function(){
-//        $('.page').removeClass('slide')
-//        $('.page').addClass('short')
-//        left = $('.page').offset().left
-//        start = event.touches[0].screenX
-//        end=start
-//        console.log('touch start')
-//
-//    })
-//
-//    $(document).on('touchmove',function(event){
-//        count+=1
-//        var new_end=event.touches[0].screenX
-//        var delta_end=new_end-end
-//        end=new_end
-//
-//        if(count%5==0){
-//            var  delta= end-start
-//            moveXto($('.page'),left +delta+3*delta_end+'px')
-//        }
-//
-//        console.log(delta)
-////        console.log($('.page').offset().left)
-////        if(delta>0 && $(this).scrollLeft()==0){
-////
-////        }
-//    })
-//    $(document).on('touchend',function(event){
-//        $('.page').removeClass('short')
-//        var end = event.changedTouches[0].screenX
-//        var delta= end-start
-//        if(delta > 100 && $(this).scrollLeft()==0){
-//            table.go_left()
-////            moveXto($('.page'),0)
-////            $('.page').css('left',0)
-//        }else if(delta <-100){
-//            table.go_right()
-//        }else{
-//            $('.page').addClass('slide')
-////            $('.page').css('left',left)
-//            moveXto($('.page'),left+'px')
-//        }
-//        console.log( 'end---'+delta)
-//    })
 
 
 
@@ -288,7 +175,7 @@
                <!--<span v-text="get_data_month()"></span><span>月</span>-->
             <div class="flex-grow">
                 <span class="month" v-text="month_data"></span>
-                <date class="month" set="month" v-model="month_data" style="opacity: 0;top:1.3em;"></date>
+                <date class="month" set="month" v-model="month_data" style="opacity: 0;top:1.7em;"></date>
             </div>
 
            <!--</span>-->
@@ -334,7 +221,7 @@
     display: none;
 }
 .month-btn{
-    padding: 1em;
+    padding: 1.2em;
 }
 .month-btn:hover{
     background-color: #4aa4f2;
@@ -349,9 +236,9 @@
 
 }
 .head .month{
-    font-size: 2.5em;
+    font-size: 2em;
     position: absolute;
-    top:1em;
+    top:1.5em;
     left:30vw;
     width: 40vw;
 }

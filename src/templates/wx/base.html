@@ -5,45 +5,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
-    <title>work insight</title>
+    <title>{{ page_label | default:''}}</title>
 
-    <script type="application/javascript">
-        lib={
-            font_awesome:"{% static 'css/lib/font-awesome4.7.min.css' %}",
-        }
-    </script>
+    <script src="{% static 'lib/jquery3.2.1.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'lib/font-awesome4.7/font-awesome4.7.min.css' %}">
+    <script src="{% static 'lib/vue2.3.2.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'lib/bootstrap.min.css' %}">
 
+    <link rel="stylesheet" href="{% static 'lib/weui.min.css' %}">
 
-    <script src="{% static 'js/lib/jquery.min.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'css/lib/font-awesome4.7.min.css' %}">
-    <script src="{% static 'js/lib/vue.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'css/lib/bootstrap.min.css' %}">
-
-    <link rel="stylesheet" href="{% static 'css/lib/weui.min.css' %}">
-    <!--<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>-->
-    <!--<script src="https://cdn.bootcss.com/vue/2.1.6/vue.js"></script>-->
-
-    <!--<script src="https://cdn.bootcss.com/vue/2.3.2/vue.js"></script>-->
-    <!--<script src="{% static 'js/lib/bootstrap.min.js' %}"></script>-->
-
-
-    <!--<script src="https://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
-    <!--<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
-    <!--<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">-->
-
-    <!--<link href="https://cdn.bootcss.com/weui/1.1.1/style/weui.min.css" rel="stylesheet">-->
     <script src="{% static 'js/exfun.js' %}"></script>
     <script src="{% static 'js/weui.min.js' %}"></script>
     <script src="{% static 'js/uis_mb.pack.js' %}"></script>
     <script src="{% static 'js/fields_mb.pack.js' %}"></script>
     <script src="{% static 'js/table_mb.pack.js' %}"></script>
-
-    <!--<script src="{% static 'js/lib/iscroll.js' %}"></script>-->
-    <script src="https://cdn.bootcss.com/iScroll/5.2.0/iscroll-probe.min.js"></script>
-    <!--<link href="https://cdn.bootcss.com/element-ui/1.2.9/theme-default/index.css" rel="stylesheet">-->
-    <!--<script src="https://cdn.bootcss.com/element-ui/1.2.9/index.js"></script>-->
-
-    <!--<script src="../build/fields.pack.js"></script>-->
 
 
     {% include 'director/reverse.html' %}

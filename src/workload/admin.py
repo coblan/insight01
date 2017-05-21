@@ -211,6 +211,7 @@ class WorkIndexWX(WorkIndex):
 
 permit_list.append(WorkRecord)
 permit_list.append(Work)
+permit_list.append(Index)
 permit_list.append({'name':'workrecord','label':'工作SP','fields':[
     {'name':'check_all','label':'查看所有工作','type':'bool'},
 ]})

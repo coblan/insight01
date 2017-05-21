@@ -18,9 +18,10 @@
     logout_url='{% url "logout" %}'
     uid={{ user.id }}
 
-//    ex.each(base_heads,function(head){
-//        head.placeholder='请输入'+
-//    })
+    base_heads_readonly=ex.copy(base_heads)
+    ex.each(base_heads_readonly,function(head){
+        head.readonly=true
+    })
 
     $(function(){
         new Vue({
@@ -29,10 +30,10 @@
                 no_emp:no_emp,
                 username:username,
                 base_kw:{
-                    heads:base_heads,
+                    heads:base_heads_readonly,
                     row:base_row,
                 },
-
+                is_edit:false,
             },
 //            mixins:[field_fun],
             computed:{
@@ -40,7 +41,7 @@
                     return ex.appendSearch(chg,{uid:uid,next:encodeURIComponent(location.href)})
                 },
                 logout_url:function(){
-                    return ex.appendSearch(logout_url,{next:encodeURIComponent(location.href)})
+                    return ex.appendSearch(logout_url,{next:encodeURIComponent(root_page)})
                 },
             },
             mounted:function(){
@@ -48,47 +49,62 @@
             },
             methods:{
                 submit:function(){
+                    var self=this
+                    show_upload()
                     var post_data=[{fun:'save_self_info','base_info':this.base_kw.row}]
-                    ex.post("{% url 'ajax_url' app='employee' %}",JSON.stringify(post_data),function(resp){
+                    ex.post("/_ajax/employee",JSON.stringify(post_data),function(resp){
 //                        alert(resp)
                         if(!resp.save_self_info.msg){
-                            weui.toast('操作成功', 3000);
+//                            weui.toast('操作成功', 3000);
                         }
+                        hide_upload(500)
+                        setTimeout(function(){
+                            self.is_edit=false
+                            self.base_kw.heads=base_heads_readonly
+                        },600)
+
                     })
+                },
+                start_edit:function(){
+                    this.is_edit=true
+                    this.base_kw.heads=base_heads
                 }
             }
         })
     })
 </script>
+<style>
+    .field_input img{
+        width: 7em;
+    }
+</style>
 
 <div id="there" v-cloak>
 
-
     <div v-if="no_emp">
-        <h1>
+        <h2>
             你还不是员工，请告知管理员你申请的账号，等待转换为员工账号。
-        </h1>
+        </h2>
     </div>
 
 
     <div class="weui-cells__title">账号信息</div>
-    <div class="weui-cells">
 
 
-        <div class="weui-cell">
-            <div class="weui-cell__hd">
-                <span style="padding-right: 20px;">您的账号是</span>
-            </div>
-            <div class="weui-cell__bd">
-                <span v-text="username" ></span>
 
-            </div>
-            <div class="weui-cell__ft">
-                <a :href="logout_url" style="padding-left: 40px;padding-right: 20px;">退出登录</a>
-                <a :href="chg_url" style="padding-right: 20px;">修改密码</a>
-            </div>
+    <div class="form-pad">
+        <div style="font-size: 0.7em;float: right;">
+            <a :href="logout_url" style="padding-right: 2em;">退出登录</a>
+            <a :href="chg_url" style="padding-right: 1em;">修改密码</a>
         </div>
+
+        <div >
+            <span style="padding-right: 10px;">账号</span>
+            <span v-text="username" ></span>
+        </div>
+
     </div>
+
 
     <div v-if="!no_emp">
         <div class="weui-cells__title">个人信息</div>
@@ -101,8 +117,9 @@
 
 
 
-        <div class="weui-btn-area">
-            <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips" @click="submit()" style="width: 50vw;">保存修改</a>
+        <div style="text-align: center;padding: 3em 0 8em 0;" >
+            <a v-if="is_edit" type="button" class="btn btn-success btn-sm" href="javascript:"  @click="submit()" style="width: 16em;">确定</a>
+            <a v-if="!is_edit" type="button" class="btn btn-primary btn-sm" href="javascript:"  @click="start_edit()" style="width: 16em;">修改</a>
         </div>
     </div>
 

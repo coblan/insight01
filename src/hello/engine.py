@@ -8,7 +8,7 @@ from workload.models import Work,WorkRecord
 from hello.models import Comment
 from .pages import WXHome
 from helpers.director.models import KVModel
-
+from django.core.urlresolvers import reverse
 
 class PcEngine(BaseEngine):
     url_name='pc_engine'
@@ -42,6 +42,10 @@ PcEngine.add_pages(page_dc)
 class WxEngine(BaseEngine):
     url_name='wx_engine'
     prefer='wx'
+    
+    def __init__(self):
+        self.root_page= page('home.wx')
+        
     menu=[
         {'label':'home','url':page('home.wx'),'icon':fa('fa-home fa-2x')},
         {'label':'员工名册','url':page('employee.wx'),'visible':can_touch(EmployeeModel),'icon':fa('fa-users fa-2x')},
@@ -54,7 +58,8 @@ class WxEngine(BaseEngine):
         {'label':'意见','url':page('commentself.wx'),'visible':can_touch(Comment),'icon':fa('fa-pencil-square-o fa-2x')},
         #{'label':'管理意见','url':page('comment.wx'),'visible':and_list([Comment,'comment.all']),'icon':fa('fa-pencil-square fa-2x')},
         
-        {'label':'统计','url':page('static'),'visible':can_touch(Comment),'icon':fa('fa-bar-chart fa-2x')},
+        {'label':'统计','url':page('static'),'visible':can_touch(Comment),'icon':fa('fa-bar-chart fa-2x'),\
+         'visible':and_list( ['static.work'])},
         
     ]
 

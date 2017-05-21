@@ -4,6 +4,7 @@ from helpers.director.db_tools import model_to_head,to_dict
 from .models import EmployeeModel,BasicInfo
 from .admin import emp_admin
 from django.contrib.auth.decorators import login_required
+from helpers.director.engine import page
 # Create your views here.
 
 
@@ -19,4 +20,5 @@ def my_info(request):
         bf=BasicInfoFields(instance=emp.baseinfo,crt_user=user)
         ctx['base_heads']=bf.get_heads()
         ctx['base_row']=bf.get_row()
+        ctx['root_page']=page('home.wx')('wx_engine')
     return render(request,'employee/my_info.html',context=ctx)

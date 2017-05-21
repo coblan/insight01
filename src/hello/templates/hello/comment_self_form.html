@@ -4,14 +4,20 @@
 
 
 {% block page_content %}
-<link href="https://cdn.bootcss.com/element-ui/1.2.9/theme-default/index.css" rel="stylesheet">
-<script src="https://cdn.bootcss.com/element-ui/1.2.9/index.js"></script>
+
+<!--<link href="https://cdn.bootcss.com/element-ui/1.2.9/theme-default/index.css" rel="stylesheet">-->
+<!--<script src="https://cdn.bootcss.com/element-ui/1.2.9/index.js"></script>-->
 
 <script src="{% static 'js/fields_mb.pack.js' %}"></script>
 <script type="text/javascript">
 
     ln.readCache()
 
+    ex.each(heads,function(head){
+        if(head.name=='pub_type'){
+            head.type='radio'
+        }
+    })
     $(function(){
         new Vue({
             el:'#there',
@@ -48,40 +54,35 @@
 
 <div id="there">
 
-    <div style="text-align: center;padding: 2em;">
-        <el-button size="small"><i class="fa fa-user" aria-hidden="true"></i>
-        <span v-text="emp_name"></span></el-button>
+    <!--<div style="text-align: center;padding: 2em;">-->
+        <!--<el-button size="small"><i class="fa fa-user" aria-hidden="true"></i>-->
+        <!--<span v-text="emp_name"></span></el-button>-->
+    <!--</div>-->
+
+
+    <div class="form-pad">
+        <field v-for="head in kw.heads" :name="head.name" :kw="kw"></field>
     </div>
 
-    <el-form ref="form"  label-width="80px" class="el-form-pad">
-        <el-form-item label="发布类型">
-            <el-radio-group v-model="kw.row.pub_type">
-                <el-radio v-for="item in pub_options" :label="item.value"><span v-text="item.label"></span></el-radio>
-                <!--<el-radio label="线下场地免费"></el-radio>-->
-            </el-radio-group>
-        </el-form-item>
+    <!--<el-form ref="form"  label-width="80px" class="el-form-pad">-->
+        <!--<el-form-item label="发布类型">-->
+            <!--<el-radio-group v-model="kw.row.pub_type">-->
+                <!--<el-radio v-for="item in pub_options" :label="item.value"><span v-text="item.label"></span></el-radio>-->
 
-        <el-form-item label="留言">
-            <el-input
-                    type="textarea"
-                    :autosize="{ minRows: 2}"
-                    placeholder="请输入留言"
-                    v-model="kw.row.content">
-            </el-input>
-            </el-form-item>
-    </el-form>
+            <!--</el-radio-group>-->
+        <!--</el-form-item>-->
 
-
+        <!--<el-form-item label="留言">-->
+            <!--<el-input-->
+                    <!--type="textarea"-->
+                    <!--:autosize="{ minRows: 2}"-->
+                    <!--placeholder="请输入留言"-->
+                    <!--v-model="kw.row.content">-->
+            <!--</el-input>-->
+            <!--</el-form-item>-->
+    <!--</el-form>-->
 
 
-    <!--<div class="weui-cells__title">编辑内容</div>-->
-    <!--<div class="form-pad">-->
-        <!--<field v-for="head in kw.heads" :name="head.name" :kw="kw"></field>-->
-
-    <!--<div>-->
-
-ss
-    <input type="date"/>
 
 
     <div class="weui-btn-area">

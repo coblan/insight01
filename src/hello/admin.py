@@ -32,6 +32,7 @@ class CommentForm(ModelFields):
     def can_access(self):
         """
         superuser 不会调用该函数，所以这里不用考虑superuser
+        不允许修改另外的评论
         """
         access = super(CommentForm,self).can_access()
         if has_permit(self.crt_user,'comment.all'):
@@ -71,8 +72,21 @@ class CommentselfPage(TablePage):
     template='hello/comment_self.html'
     tableCls=Commentself
 
+class CommentSelfForm(CommentForm):
+    readonly=['emp']
+    class Meta:
+        model=Comment
+        fields=['emp','pub_type','content']
+    def get_row(self):
+        row=super(CommentSelfForm,self).get_row()
+        return row
+    
+
+
+        
+        
 class CommentselfFormPage(FormPage):
-    fieldsCls=CommentForm
+    fieldsCls=CommentSelfForm
     template='hello/comment_self_form.html'
 
 
@@ -94,3 +108,21 @@ page_dc.update({
 })
 
 
+from helpers.director.models import KVModel
+class KVForm(ModelFields):
+    class Meta:
+        model=KVModel
+        exclude=[]
+    
+    def dict_head(self, head):
+        if self.instance.key=='help_text':
+            if head['name']=='value':
+                head['type']='richtext'
+        return head
+
+class KVFormPage(FormPage):
+    fieldsCls=KVForm
+
+page_dc.update({
+    'kv.edit':KVFormPage
+})
