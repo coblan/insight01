@@ -27,18 +27,21 @@
 //    var par_pk=ex.parseSearch().par
 //    var par ={view:par_pk}
 
-    ln.history_handle({
-        init:{crt_view:'main'},
-        handler:function(state){
-            if(state.crt_view) {
-                table.crt_view = state.crt_view
-//                table.dir_data(state.par)
+
+    $(function(){
+        ln.history_handle({
+            init:{crt_view:'main'},
+            handler:function(state){
+                if(state.crt_view) {
+                    table.crt_view = state.crt_view
+                }
+                if (state.op) {
+                    table[state.op](state.arg)
+                }
             }
-            if (state.op) {
-                table[state.op](state.arg)
-            }
-        }
+        })
     })
+
 
     work_editable={{ work_editable | jsonify | default:'false' }}
     dir_editable={{ dir_editable | jsonify}}
@@ -213,22 +216,7 @@
 body{
     background-color: #faf6fa;
 }
-/*.slide-win{*/
-    /*position: fixed;*/
-    /*left: 0;*/
-    /*width: 100vw;*/
-    /*height: 100vh;*/
-    /*top:0;*/
-    /*background-color: white;*/
 
-/*}*/
-/*.slide-enter-active, .slide-leave-active {*/
-    /*transition: all .3s ease;*/
-/*}*/
-/*.slide-enter,.slide-leave-to {*/
-    /*left: 100vw;*/
-    /*opacity: 0;*/
-/*}*/
 
 </style>
 
