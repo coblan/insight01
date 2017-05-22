@@ -17,7 +17,7 @@ def my_info(request):
     if not emp:
         ctx['no_emp']=True
     else:
-        bf=BasicInfoFields(instance=emp.baseinfo,crt_user=user)
+        bf=BasicInfoFields(instance=emp.baseinfo,crt_user=user,nolimit=True)
         ctx['base_heads']=bf.get_heads()
         ctx['base_row']=bf.get_row()
         ctx['root_page']=page('home.wx')('wx_engine')
