@@ -101,37 +101,41 @@
     }
 </style>
 
+<script>
+    Vue.directive('tap', {
+        bind: function (el, binding) {
+            el.addEventListener('tap', function(){
+                binding.value.fun(binding.value.arg)
+            }, false);
+
+        }
+    })
+</script>
 
 <div id="there" v-cloak>
 
 
     <!--<button @click="switch_to('search')">过滤   v-show="crt_view=='table'"   </button>-->
+    <!--@click="show_menu=true"-->
 
     <div class="flex-v" style="height: 100vh;position: relative;">
 
         <div class="flex">
             <div class="flex-grow"></div>
-            <div style="text-align: right;padding: 0.5em 1em;">
-                <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
+            <div style="text-align: right;padding: 0.5em 1em;" @click="show_menu=true">
+                <i class="fa fa-align-justify fa-2x" aria-hidden="true" ></i>
             </div>
         </div>
 
         <div class="weui-cells__title" v-text="page_label"></div>
-        <!--<div id="scroll-wrapper" class="">-->
 
-        <scroll-wraper class="flex-grow"  ref="scroller" :down_text='get_down_text()' @down_out_border="load_next_page()" style="margin-bottom: 5em;">
-            <!--<ul >-->
-                <!--<li class="weui-cell weui-cell_access"  v-for="row in rows"-->
-                    <!--:style="{backgroundColor:get_color(row),color:'#fff'}">-->
-                    <!--<div class="weui-cell__bd" @click="ge_edit(row.pk)">-->
-                        <!--<p v-text="row._label"></p>-->
-                    <!--</div>-->
-                    <!--<div class="weui-cell__ft">-->
-                    <!--</div>-->
-                <!--</li>-->
-            <!--</ul>-->
+        <scroll-wraper class="flex-grow"  ref="scroller" :down_text='get_down_text()' @down_out_border="load_next_page()" >
+
+            <!--@click="ge_edit(row.pk)"-->
+            <!--v-tap="{fun:ge_edit,arg:row.pk}"-->
+
             <table class="item-table">
-                <tr v-for="row in rows" @click="ge_edit(row.pk)">
+                <tr v-for="row in rows" @tap="ge_edit(row.pk)">
                     <td><img style="width: 3em;height: 3em" :src="get_row_img(row)" alt=""/></td>
                     <td><span v-text="row.work"></span></td>
                     <td> <i v-if="row.status=='pass'" class="fa fa-circle" aria-hidden="true" style="color: #04be02"></i>

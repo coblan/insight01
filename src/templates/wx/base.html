@@ -56,7 +56,7 @@
 
 
 <div class="weui-tab">
-    <div class="weui-tab__panel content">
+    <div class="weui-tab__panel main-content">
         {% block page_content %}
 
         {% endblock %}
@@ -98,6 +98,14 @@
     [v-cloak] {
         display: none;
     }
+    .main-content{
+        min-height: 100vh;
+    }
+
+    .scroll-wrapper .scroller{
+        padding-bottom: 120px;
+       }
+
 </style>
 </body>
 

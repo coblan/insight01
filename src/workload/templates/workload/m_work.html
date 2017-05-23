@@ -5,6 +5,8 @@
 {% block page_content %}
 <script src='{% static "js/table.pack.js" %}'></script>
 <script src='{% static "js/ex_inputs.pack.js" %}'></script>
+
+
 <script type="text/javascript">
 
 
@@ -83,10 +85,12 @@
                 this.$refs.catalog.dir_data()
                 var self=this
                 Vue.nextTick(function(){
-                    self.$refs.scroller.refresh()
+                    setTimeout(function(){
+                        self.$refs.scroller.refresh()
+                    },200)
+
                 })
             },
-
             methods:{
                 set_state:function(state){
                     for(var k in state){
@@ -130,14 +134,22 @@
                     this.kw.row=item
                 },
 
-
-
             },
 
         })
     })
 
+//    $(function(){
+//        var height = $('.nav.footer').height()
+//        $('.scroll-wrapper .scroller').css('padding-bottom',height)
+//        setTimeout(function(){
+//            table.$refs.scroller.refresh()
+//        },200)
+//    })
 </script>
+
+
+
 <div id='there' v-cloak>
     <!--<path-nav :menu='menu' ></path-nav>-->
     <!--<div class='btn-panel flex flex-sb' style="padding-left:20px; ">-->
@@ -145,9 +157,9 @@
 
     <!--</div>-->
 
-    <div >
+    <div>
 
-            <scroll-wraper ref="scroller" style="width: 100vw;height: 100vh;margin-bottom: 6em;">
+            <scroll-wraper class="main-content" ref="scroller" style="width: 100vw;height:90vh;">
                 <com-catalog class="mobile" ref="catalog" url="/dir_mana" :root="{pk:null,name:'root'}"
                               @state_change="set_state($event)" :editable="true">
 
@@ -158,7 +170,7 @@
 
 
                 <div slot="head_end" style="text-align: right;padding: 0.5em 1em;">
-                    <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
+                    <i class="fa fa-align-justify fa-2x" aria-hidden="true" @tap="show_menu=true"></i>
                 </div>
 
                 <template scope="dir_icon">
@@ -171,7 +183,7 @@
 
                 <template slot="btn-panel" scope="box">
                     <span style="color: #0092F2;margin-right: 2em;padding: 0.1em;">
-                        <i v-if="ex.isin(box.item,box.selected)" @click="edit(box.item)"  class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        <i v-if="ex.isin(box.item,box.selected)" @tap="edit(box.item)"  class="fa fa-pencil-square-o" aria-hidden="true"></i>
                     </span>
 
                 </template>
@@ -179,10 +191,10 @@
                 </com-catalog>
             </scroll-wraper>
 
-
+        <!--@click.native="show_menu=false"-->
 
         <transition name="fade">
-            <modal v-show="show_menu" @click.native="show_menu=false">
+            <modal v-show="show_menu" >
                 <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
                     <div class="weui-actionsheet__cell" @click="edit($refs.catalog.selected[0]);show_menu=false" v-show="state.has_select">编辑</div>
 
@@ -203,7 +215,7 @@
 
     <transition name="slide">
         <div v-show="crt_view=='editor'" class="slide-win">
-            <scroll-wraper ref="editor_scroller" style="width:100%;height:100%;margin-bottom: 8em;">
+            <scroll-wraper ref="editor_scroller" style="width:100vw;height:90vh;">
 
                 <div class="weui-cells__title">编辑</div>
 
