@@ -9,14 +9,17 @@
 <script type="text/javascript">
 
 
-    ln.history_handle({
-        init:{crt_view:'main'},
-        handler:function(state){
-            if(state.crt_view) {
-                table.crt_view = state.crt_view
+    $(function(){
+        ln.history_handle({
+            init:{crt_view:'main'},
+            handler:function(state){
+                if(state.crt_view) {
+                    table.crt_view = state.crt_view
+                }
             }
-        }
+        })
     })
+
 
     myScroll=''
     last_move=0
