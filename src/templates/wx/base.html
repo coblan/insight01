@@ -49,7 +49,22 @@
             }
         })
 
+    $(function(){
+        $('.weui-tabbar.nav a').on('touchstart',function(){
+            $(this).addClass('fake-active')
+        })
+        $('.weui-tabbar.nav a').on('touchend',function(){
+            var self=this
+            setTimeout(function(){
+                $(self).removeClass('fake-active')
+            },500)
 
+        })
+        $('.weui-tabbar.nav a').on('click',function(){
+            $(this).addClass('fake-active')
+
+        })
+    })
     </script>
 </head>
 <body >
@@ -88,6 +103,10 @@
     .weui-tabbar.nav{
         position: fixed;
         bottom: 0px;
+    }
+    .nav .fake-active>i,.nav .fake-active>p{
+        color: green;
+
     }
     .weui-tab__panel{
         padding-bottom: 150px;
