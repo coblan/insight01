@@ -171,9 +171,14 @@
                     <!--@change="box.set_sel($event,box.value)"-->
                     <!--v-model='box.agg.selected'-->
 
-                    <div class="checkbox checkbox-success checkbox-inline">
-                        <input type="checkbox" class="styled"  value="box.value"  @change="box.toggle_check(box.value)" >
-                        <label></label>
+                    <!--<div class="checkbox checkbox-success checkbox-inline">-->
+                        <!--<input type="checkbox" class="styled"  value="box.value"  @change="box.toggle_check(box.value)" >-->
+                        <!--<label></label>-->
+                    <!--</div>-->
+                    <div @click="box.toggle_check(box.value)">
+                        <i v-if="ex.isin(box.value,box.selected)" class="fa fa-circle" aria-hidden="true"></i>
+                        <i v-else  class="fa fa-circle-o" aria-hidden="true"></i>
+
                     </div>
 
                 </template>
