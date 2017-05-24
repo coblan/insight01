@@ -76,11 +76,14 @@
         </div>
 
 
-        <div style="text-align: center;padding-top: 3em;">
-
-            <a type="button" class="btn btn-success btn-sm" href="javascript:"  @click="submit()" style="width: 16em;">确定</a>
-
+        <div v-btn-group:form>
+            <a state="success" @click="submit()">确定</a>
         </div>
+        <!--<div style="text-align: center;padding-top: 3em;">-->
+
+            <!--<a type="button" class="btn btn-success btn-sm" href="javascript:"  @click="submit()" style="width: 16em;">确定</a>-->
+
+        <!--</div>-->
 
     </div>
     <div v-show="crt_view=='dir'">

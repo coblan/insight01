@@ -38,7 +38,10 @@
                 if(state.crt_view) {
                     table.crt_view = state.crt_view
                     Vue.nextTick(function(){
-                        table.$refs.editor_scroller.refresh()
+                        setTimeout(function(){
+                            table.$refs.editor_scroller.refresh()
+                        },500)
+
                     })
                 }
                 if (state.op) {
@@ -87,7 +90,7 @@
                 Vue.nextTick(function(){
                     setTimeout(function(){
                         self.$refs.scroller.refresh()
-                    },200)
+                    },500)
 
                 })
             },
@@ -239,9 +242,16 @@
                     <field  v-for='head in kw.heads' :key="head.name" :name='head.name' :kw='kw'></field>
                 </div>
 
-                <div style="text-align: center;padding: 3em 0 8em 0;">
-                    <a type="button" class="btn btn-success btn-sm" href="javascript:"  @click="item_save()" style="width: 16em;">确定</a>
+                <div v-btn-group:form>
+                    <a state="success" @click="item_save()">确定</a>
                 </div>
+
+                <!--<com-form-btn-group :submit="item_save"></com-form-btn-group>-->
+
+                <!--<div style="text-align: center;padding: 3em 0 8em 0;">-->
+                    <!--<a type="button" class="btn btn-success btn-sm" href="javascript:"  @click="item_save()" style="width: 16em;">确定</a>-->
+                    <!--<a type="button" class="btn btn-success btn-sm" href="javascript:"  @click="item_save()" style="width: 16em;">取消</a>-->
+                <!--</div>-->
 
 
             </scroll-wraper>
