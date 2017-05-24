@@ -133,7 +133,9 @@
 
                     this.kw.row=item
                 },
-
+                show:function(v){
+                    alert(v)
+                }
             },
 
         })
@@ -165,7 +167,15 @@
 
 
                 <template scope="box" slot="check_sel">
-                    <com-check-box :value="box.value" v-model="box.selected" @change="box.set_sel($event)"></com-check-box>
+                    <!--<com-check-box :value="box.value"  @change="box.toggle_check(box.value)" ></com-check-box>-->
+                    <!--@change="box.set_sel($event,box.value)"-->
+                    <!--v-model='box.agg.selected'-->
+
+                    <div class="checkbox checkbox-success checkbox-inline">
+                        <input type="checkbox" class="styled"  value="box.value"  @change="box.toggle_check(box.value)" >
+                        <label></label>
+                    </div>
+
                 </template>
 
 
