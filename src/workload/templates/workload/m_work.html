@@ -178,14 +178,13 @@
                     <div @click="box.toggle_check(box.value)">
                         <i v-if="ex.isin(box.value,box.selected)" class="fa fa-circle" aria-hidden="true"></i>
                         <i v-else  class="fa fa-circle-o" aria-hidden="true"></i>
-
                     </div>
 
                 </template>
 
 
                 <div slot="head_end" style="text-align: right;padding: 0.5em 1em;">
-                    <i class="fa fa-align-justify fa-2x" aria-hidden="true" @tap="show_menu=true"></i>
+                    <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
                 </div>
 
                 <template scope="dir_icon">
@@ -198,7 +197,7 @@
 
                 <template slot="btn-panel" scope="box">
                     <span style="color: #0092F2;margin-right: 2em;padding: 0.1em;">
-                        <i v-if="ex.isin(box.item,box.selected)" @tap="edit(box.item)"  class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        <i v-if="ex.isin(box.item,box.selected)" @click="edit(box.item)"  class="fa fa-pencil-square-o" aria-hidden="true"></i>
                     </span>
 
                 </template>
