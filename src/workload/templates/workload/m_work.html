@@ -177,7 +177,7 @@
                     <!--</div>-->
 
                     <!--box.toggle_check(box.value)-->
-                    <div @click="show('jj')" style="overflow: hidden;background-color: yellow;">
+                    <div @click="show('jj');box.toggle_check(box.value)" style="overflow: hidden;background-color: yellow;">
                         <i  v-if="ex.isin(box.value,box.selected)" class="fa fa-circle" aria-hidden="true"></i>
                         <i  v-else  class="fa fa-circle-o" aria-hidden="true"></i>
                     </div>
