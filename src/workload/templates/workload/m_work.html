@@ -175,9 +175,9 @@
                         <!--<input type="checkbox" class="styled"  value="box.value"  @change="box.toggle_check(box.value)" >-->
                         <!--<label></label>-->
                     <!--</div>-->
-                    <div @click="box.toggle_check(box.value)">
-                        <i @click="box.toggle_check(box.value)" v-if="ex.isin(box.value,box.selected)" class="fa fa-circle" aria-hidden="true"></i>
-                        <i @click="box.toggle_check(box.value)" v-else  class="fa fa-circle-o" aria-hidden="true"></i>
+                    <div @click="box.toggle_check(box.value)" style="overflow: hidden;background-color: yellow;">
+                        <i  v-if="ex.isin(box.value,box.selected)" class="fa fa-circle" aria-hidden="true"></i>
+                        <i  v-else  class="fa fa-circle-o" aria-hidden="true"></i>
                     </div>
 
                 </template>
