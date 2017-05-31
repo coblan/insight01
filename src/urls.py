@@ -25,6 +25,7 @@ from hello import views as hello_view
 from workload import views as workload_view
 from helpers.wechat import urls as wechat_url
 from helpers.director import views as director_views
+from helpers.debug.debug_toolbar import debugtoolbar_setting
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -51,3 +52,5 @@ from django.conf.urls.static import static
 
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
+debugtoolbar_setting.AUTO_URL(globals())
