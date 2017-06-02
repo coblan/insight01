@@ -4,9 +4,9 @@ from helpers.debug.debug_toolbar import debugtoolbar_setting
 debugtoolbar_setting.SET(globals())
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'static'),)
-#MEDIA_ROOT= os.path.join( os.path.dirname(BASE_DIR),'media')
 
-#MIDDLEWARE_CLASSES =('helpers.maintenance.request_log.RequestMiddleware',)+MIDDLEWARE_CLASSES 
+from helpers.maintenance.log import log_setting
+log_setting.SET(globals())
 
 TEMPLATE_DEBUG = True
 

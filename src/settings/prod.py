@@ -1,8 +1,8 @@
 from base import *
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'static'),)
 
-from log import *
-MIDDLEWARE_CLASSES =['helpers.maintenance.request_log.RequestMiddleware']+MIDDLEWARE_CLASSES 
+from helpers.maintenance.log import log_setting
+log_setting.SET(globals())
 
 TEMPLATE_DEBUG = True
 
