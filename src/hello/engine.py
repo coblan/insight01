@@ -10,6 +10,8 @@ from .pages import WXHome
 from helpers.director.models import KVModel
 from django.core.urlresolvers import reverse
 
+from helpers.case.organize import menu as organize_menu
+
 class PcEngine(BaseEngine):
     url_name='pc_engine'
     menu=[

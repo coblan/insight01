@@ -40,6 +40,11 @@ INSTALLED_APPS = [
     'helpers.director',
     'helpers.wechat',
     'helpers.common',
+    
+    'helpers.case.organize',
+    'helpers.case.site_frame',
+    'helpers.case.work',
+    
     'employee',
     'workload',
     'hello'

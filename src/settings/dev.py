@@ -1,7 +1,7 @@
 from base import *
 from helpers.debug.debug_toolbar import debugtoolbar_setting
 
-debugtoolbar_setting.SET(globals())
+#debugtoolbar_setting.SET(globals())
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'static'),)
 
