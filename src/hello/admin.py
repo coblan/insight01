@@ -25,8 +25,8 @@ class CommentForm(ModelFields):
         super(CommentForm,self).__init__(dc, pk, crt_user)
         
         # 初始化的时候加上emp，因为不能让员工有修改emp属性的权限
-        if not self.instance.emp and self.crt_user.employeemodel_set.first():
-            self.instance.emp=self.crt_user.employeemodel_set.first()
+        if not self.instance.emp and self.crt_user.employee_set.first():
+            self.instance.emp=self.crt_user.employee_set.first()
             #self.instance.save()
     
     def can_access(self):

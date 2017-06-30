@@ -3,8 +3,12 @@
 from __future__ import unicode_literals
 from helpers.director.shortcut import page_dc,has_permit,permit_list
 from helpers.director.db_tools import to_dict
-from workload.models import WorkRecord
-from employee.models import EmployeeModel
+
+from helpers.case.organize.models import Employee
+from helpers.case.work.models import WorkRecord
+
+# from workload.models import WorkRecord
+# from employee.models import EmployeeModel
 from django.utils import timezone
 
 class StaticWork(object):
@@ -50,7 +54,7 @@ def get_static(start=None,end=None,month=None):
         month = timezone.datetime.strptime(month,'%Y-%m').strftime('%Y-%m')
         filters['finish_time__startswith']=month
         
-    for emp in EmployeeModel.objects.all():
+    for emp in Employee.objects.all():
         count=0
         for q in WorkRecord.objects.filter(emp=emp,status='pass').filter(**filters):
             if q.work:

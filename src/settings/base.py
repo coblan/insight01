@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'helpers.case.site_frame',
     'helpers.case.work',
     
-    'employee',
-    'workload',
+    # 'employee',
+    # 'workload',
     'hello'
 ]
 
