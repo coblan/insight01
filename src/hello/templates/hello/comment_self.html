@@ -12,6 +12,13 @@
         data:{
             comment_range:search_args.comment_range,
             can_reply:can_reply,
+            show_menu:false,
+        },
+        mounted:function(){
+            var self=this
+            bus.$on('menu_click',function(){
+                self.show_menu=true
+            })
         },
         methods:{
             update_search:function(args){
@@ -29,7 +36,7 @@
         }
     }
 
-    main_logic.mixins=[table_fun,scroll_loader,extra_logic]
+    main_logic.mixins=[table_fun,extra_logic]
 
 </script>
 
@@ -91,12 +98,13 @@
         </div>
 
 
-        <div style="text-align: right;padding: 0.5em 1em;">
-            <i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>
-        </div>
+        <!--<div style="text-align: right;padding: 0.5em 1em;">-->
+            <!--<i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>-->
+        <!--</div>-->
     </div>
 
-    <modal v-show="show_menu" @click.native="show_menu=false">
+<transition name="fade">
+    <modal id="pop-menu" v-show="show_menu" @click.native="show_menu=false">
         <div class="weui-actionsheet__menu" @click.stop="" style="width: 80vw;">
             <div class="weui-actionsheet__cell" @click="add_new();show_menu=false" v-if="can_add">新留言</div>
             <!--<div class="weui-actionsheet__cell" @click="del_item();show_menu=false" v-if="can_del &&selected.length>0">删除选中</div>-->
@@ -106,7 +114,7 @@
             <div class="weui-actionsheet__cell" @click="show_menu=false">取消</div>
         </div>
     </modal>
-
+</transition>
 {% endblock%}
 
 

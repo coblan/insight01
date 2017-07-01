@@ -44,7 +44,9 @@ urlpatterns = [
     # url(r'^dir_mana',workload_view.dir_man),
     
     url(r'^_ajax/(?P<app>\w+)?/?$',director_views.ajax_views,name='ajax_url'),
-    url(r'^_ajax/?$',director_views.ajax_views),    
+    url(r'^_ajax/?$',director_views.ajax_views),  
+    url(r'^_download/(?P<app>\w+)?/?$',director_views.donwload_views,name='download_url'),
+    
     url(r'^_wechat/',include(wechat_url)),
     
     url(r'^orgnize/',include(organize_urls)),

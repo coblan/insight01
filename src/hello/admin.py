@@ -77,9 +77,9 @@ class CommentSelfForm(CommentForm):
     class Meta:
         model=Comment
         fields=['emp','pub_type','content']
-    def get_row(self):
-        row=super(CommentSelfForm,self).get_row()
-        return row
+    #def get_row(self):
+        #row=super(CommentSelfForm,self).get_row()
+        #return row
     
 
 

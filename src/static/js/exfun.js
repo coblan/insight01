@@ -70,7 +70,7 @@ ex={
 				for (;i<len;i++) {
 					if (!seg[i]) { continue; }
 					s = seg[i].split('=');
-					ret[s[0]] = s[1];
+					ret[s[0]] = decodeURI(s[1]);
 				}
 				return ret;
 			})(),
@@ -495,7 +495,17 @@ ex={
 		})
 		return map_obj
 	},
-
+	unique: function(array){
+		var res = [];
+		var json = {};
+		for(var i = 0; i < array.length; i++){
+			if(!json[array[i]]){
+				res.push(array[i]);
+				json[array[i]] = 1;
+			}
+		}
+		return res;
+	}
 
 
 }

@@ -303,9 +303,10 @@ var table_fun = {
 
             can_add: can_add,
             can_del: can_del,
-            show_menu: false,
             search_args: search_args,
-            ex: ex
+            ex: ex,
+
+            help_url: help_url
         };
     },
     watch: {
@@ -321,16 +322,27 @@ var table_fun = {
             } else {
                 return false;
             }
+        },
+        has_next_page: function has_next_page() {
+            var final = row_pages.options[row_pages.options.length - 1];
+            return row_pages.crt_page < parseInt(final);
         }
     },
     methods: {
+        goto: function goto(url) {
+            location = url;
+        },
         search: function search() {
             location = ex.template('{path}{search}', { path: location.pathname,
                 search: encodeURI(ex.searchfy(this.search_args, '?')) });
         },
-        //rt_win:function(row){
-        //    ln.rtWin(row)
-        //},
+        load_next_page: function load_next_page() {
+            var self = this;
+            ex.get(ex.appendSearch({ _page: row_pages.crt_page + 1 }), function (resp) {
+                ex.assign(row_pages, resp.row_pages);
+                self.rows = self.rows.concat(resp.rows);
+            });
+        },
         filter_minus: function filter_minus(array) {
             // 移到 com-table 中去了
             return ex.map(array, function (v) {
@@ -416,11 +428,11 @@ var table_fun = {
             this.search();
         },
         add_new: function add_new() {
-            location = ex.template('{engine_url}/{page}.edit/?next={next}', {
+            var url = ex.template('{engine_url}/{page}.edit', {
                 engine_url: engine_url,
-                page: page_name,
-                next: encodeURIComponent(location.href)
+                page: page_name
             });
+            location = ex.appendSearch(url, search_args);
         }
     }
 
@@ -434,7 +446,7 @@ var com_table_btn = {
         };
     },
     props: ['add_new', 'del_item'],
-    template: '<div class=\'btn-group\' style=\'float: right;\'>\n\t\t\t<a type="button" class="btn btn-success btn-sm" :href=\'add_new()\' v-if=\'can_add\' role="button">\u521B\u5EFA</a>\n\t\t\t<button type="button" class="btn btn-danger btn-sm" @click=\'del_item()\' v-if=\'can_del\'>\u5220\u9664</button>\n\t\t</div>'
+    template: '<div class=\'btn-group\' style=\'float: right;\'>\n            <slot></slot>\n\t\t\t<a type="button" class="btn btn-success btn-sm" :href=\'add_new()\' v-if=\'can_add\' role="button">\u521B\u5EFA</a>\n\t\t\t<button type="button" class="btn btn-danger btn-sm" @click=\'del_item()\' v-if=\'can_del\'>\u5220\u9664</button>\n\t\t</div>'
 };
 
 Vue.component('com-table-btn', com_table_btn);

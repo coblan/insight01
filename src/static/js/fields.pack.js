@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 16);
+/******/ 	return __webpack_require__(__webpack_require__.s = 18);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -381,7 +381,7 @@ module.exports = function() {
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(15);
+var content = __webpack_require__(16);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(0)(content, {});
@@ -830,6 +830,26 @@ var field_base = exports.field_base = {
                 }
             }
         },
+        check_select: {
+            props: ['name', 'row', 'kw'],
+            computed: {
+                selected: {
+                    get: function get() {
+                        var data = this.row[this.name];
+                        if (data) {
+                            return data.split(',');
+                        } else {
+                            return [];
+                        }
+                    },
+                    set: function set(v) {
+                        this.row[this.name] = v.join(',');
+                    }
+
+                }
+            },
+            template: '<div>\n                <ul>\n                <li v-for=\'option in kw.options\' v-if="option.value"><input type="checkbox" :value="option.value" v-model="selected"/><span v-text="option.label"></span></li>\n                </ul>\n            </div>'
+        },
         tow_col: {
             props: ['name', 'row', 'kw'],
             template: '<div>\n\t        \t<ul v-if=\'kw.readonly\'><li v-for=\'value in row[name]\' v-text=\'get_label(value)\'></li></ul>\n\t        \t<tow-col-sel v-else v-model=\'row[name]\' :id="\'id_\'+name" :choices=\'kw.options\' :size=\'kw.size\' ></tow-col-sel>\n\t        \t</div>',
@@ -859,6 +879,7 @@ var field_base = exports.field_base = {
             props: ['name', 'row', 'kw'],
             template: '<div><span v-if=\'kw.readonly\' v-text=\'row[name]\'></span>\n            \t\t\t<ckeditor  v-model="row[name]" :id="\'id_\'+name"></ckeditor>\n                       </div>'
         }
+
     }
 
 };
@@ -896,7 +917,9 @@ var field_fun = exports.field_fun = {
         after_sub: function after_sub() {
             location = document.referrer;
         },
+        before_sub: function before_sub() {},
         submit: function submit() {
+            this.before_sub();
             var self = this;
             if (window.bus) {
                 window.bus.$emit('sync_data');
@@ -904,7 +927,8 @@ var field_fun = exports.field_fun = {
             show_upload();
             var search = ex.parseSearch();
             var post_data = [{ fun: 'save', row: this.kw.row }];
-            ex.post('/_ajax', JSON.stringify(post_data), function (resp) {
+            var url = ex.appendSearch('/_ajax', search_args);
+            ex.post(url, JSON.stringify(post_data), function (resp) {
                 hide_upload(500);
                 if (resp.save.errors) {
                     self.kw.errors = resp.save.errors;
@@ -925,7 +949,7 @@ var field_fun = exports.field_fun = {
                 history.back();
             }
         },
-        del_row: function del_row(path) {
+        get_del_link: function get_del_link() {
             var search_args = ex.parseSearch();
             if (this.kw.row.pk) {
                 return ex.template('{engine_url}/del_rows?rows={class}:{pk}&next={next}&_pop={pop}', { class: this.kw.row._class,
@@ -938,6 +962,9 @@ var field_fun = exports.field_fun = {
             } else {
                 return null;
             }
+        },
+        del_row: function del_row() {
+            return this.get_del_link();
         },
         log_url: function log_url() {
             var obj = {
@@ -1309,12 +1336,14 @@ var img_crop = {
             $(this.$el).find('.crop-img').cropper('setDragMode', 'crop');
         },
         on_change: function on_change(event) {
+
             if ($(this.$el).find('input[type=file]').val() == '') {
                 return;
             }
             var self = this;
             this.cropping = true;
             var img_file = event.target.files[0];
+
             //fl.read(img_file)
             //this.$emit('input', this.files)
             fl.read(img_file, function (data) {
@@ -1444,41 +1473,11 @@ window.fl = fl;
 "use strict";
 
 
-/**
- * Created by heyulin on 2017/1/24.
- *
->->front/input.rst>
-=======
-inputs
-=======
+var _tab_box = __webpack_require__(19);
 
-date
-========
-::
+var tab = _interopRequireWildcard(_tab_box);
 
-<date v-model='variable'></date>  // 选择默认set=date ,即选择日期
-
-<date v-model='variable' set='month'></date> // 选择 set=month ,即选择月份
-
-<date v-model='variable' set='month' :config='{}'></date>  //  config 是自定义的配置对象，具体需要参加帮助文件
-
-datetime
-===========
-::
-
-<datetime v-model='variable' :config='{}'></datetime> // 选择日期和时间
-
-color
-======
-
-forign-edit
-============
-示例::
-
-    <forign-edit :kw="person.emp_info" name="user" page_name="user" ></forign-edit>
-
-<-<
- */
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 var date_config_set = {
     date: {
@@ -1496,7 +1495,41 @@ var date_config_set = {
         autoclose: true
 
     }
-};
+}; /**
+    * Created by heyulin on 2017/1/24.
+    *
+   >->front/input.rst>
+   =======
+   inputs
+   =======
+   
+   date
+   ========
+   ::
+   
+   <date v-model='variable'></date>  // 选择默认set=date ,即选择日期
+   
+   <date v-model='variable' set='month'></date> // 选择 set=month ,即选择月份
+   
+   <date v-model='variable' set='month' :config='{}'></date>  //  config 是自定义的配置对象，具体需要参加帮助文件
+   
+   datetime
+   ===========
+   ::
+   
+   <datetime v-model='variable' :config='{}'></datetime> // 选择日期和时间
+   
+   color
+   ======
+   
+   forign-edit
+   ============
+   示例::
+   
+       <forign-edit :kw="person.emp_info" name="user" page_name="user" ></forign-edit>
+   
+   <-<
+    */
 
 Vue.component('date', {
     //template:'<input type="text" class="form-control">',
@@ -1690,8 +1723,9 @@ var check_box = {
         }
     },
     data: function data() {
+        var checked = this.checked || [];
         return {
-            inn_checked: this.checked
+            inn_checked: checked
         };
     },
     watch: {
@@ -1809,7 +1843,12 @@ var ln = {
 
         if (obj.init) {
             // && !history.state){
-            history.pushState(obj.init, '');
+            if (!history.state) {
+                history.pushState(obj.init, '');
+            }
+            //else{
+            //    history.replaceState(obj.init,'')
+            //}
         }
     },
     pushState: function pushState(state, url) {
@@ -2098,7 +2137,7 @@ Vue.component('tow-col-sel', {
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(13);
+var content = __webpack_require__(14);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(0)(content, {});
@@ -2124,7 +2163,7 @@ if(false) {
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(14);
+var content = __webpack_require__(15);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(0)(content, {});
@@ -2147,15 +2186,27 @@ if(false) {
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(1)();
-// imports
+// style-loader: Adds some css to the DOM by adding a <style> tag
 
-
-// module
-exports.push([module.i, ".img-uploader input {\n  display: none; }\n\n.img-uploader.disable {\n  background-color: #e3e2e1; }\n\n.up_wrap {\n  position: relative;\n  text-align: center;\n  border: 2px dashed #ccc;\n  background: #FDFDFD;\n  width: 200px; }\n\n.closeDiv {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  left: 0;\n  background-color: #ffffff; }\n\n.choose {\n  display: inline-block;\n  text-decoration: none;\n  padding: 5px;\n  border: 1px solid #0092F2;\n  border-radius: 4px;\n  font-size: 14px;\n  color: #0092F2;\n  cursor: pointer; }\n\n.choose:hover, .choose:active {\n  text-decoration: none;\n  color: #0092F2; }\n\n.close {\n  position: absolute;\n  top: 5px;\n  right: 10px;\n  cursor: pointer;\n  font-size: 14px;\n  color: #242424; }\n\n.logoImg {\n  max-height: 100px !important;\n  vertical-align: middle;\n  margin-top: 5px; }\n\n.img-crop .total-wrap {\n  padding: 30px; }\n\n.img-crop .crop-wrap {\n  max-width: 100%;\n  max-height: 90%;\n  overflow: hidden; }\n\n.img-crop .crop-img {\n  max-width: 100%;\n  max-height: 100%; }\n", ""]);
-
-// exports
-
+// load the styles
+var content = __webpack_require__(17);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(0)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!./../../../../node_modules/.0.26.1@css-loader/index.js!./../../../../node_modules/.1.3.3@postcss-loader/index.js??ref--1-2!./../../../../node_modules/.6.0.0@sass-loader/lib/loader.js!./tab_box.scss", function() {
+			var newContent = require("!!./../../../../node_modules/.0.26.1@css-loader/index.js!./../../../../node_modules/.1.3.3@postcss-loader/index.js??ref--1-2!./../../../../node_modules/.6.0.0@sass-loader/lib/loader.js!./tab_box.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
 
 /***/ }),
 /* 14 */
@@ -2166,7 +2217,7 @@ exports = module.exports = __webpack_require__(1)();
 
 
 // module
-exports.push([module.i, "@charset \"UTF-8\";\n#_load_frame_wrap {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: none;\n  z-index: 1000;\n  background: rgba(88, 88, 88, 0.2); }\n\n.imiddle {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  -ms-transform: translate(-50%, -50%);\n  /* IE 9 */\n  -moz-transform: translate(-50%, -50%);\n  /* Firefox */\n  -webkit-transform: translate(-50%, -50%);\n  /* Safari 和 Chrome */\n  -o-transform: translate(-50%, -50%);\n  text-align: center;\n  /*display: table;*/\n  z-index: 10000; }\n\n.popframe {\n  width: 500px;\n  height: 400px; }\n", ""]);
+exports.push([module.i, ".img-uploader input {\n  display: none; }\n\n.img-uploader.disable {\n  background-color: #e3e2e1; }\n\n.up_wrap {\n  position: relative;\n  text-align: center;\n  border: 2px dashed #ccc;\n  background: #FDFDFD;\n  width: 200px; }\n\n.closeDiv {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  left: 0;\n  background-color: #ffffff; }\n\n.choose {\n  display: inline-block;\n  text-decoration: none;\n  padding: 5px;\n  border: 1px solid #0092F2;\n  border-radius: 4px;\n  font-size: 14px;\n  color: #0092F2;\n  cursor: pointer; }\n\n.choose:hover, .choose:active {\n  text-decoration: none;\n  color: #0092F2; }\n\n.close {\n  position: absolute;\n  top: 5px;\n  right: 10px;\n  cursor: pointer;\n  font-size: 14px;\n  color: #242424; }\n\n.logoImg {\n  max-height: 100px !important;\n  vertical-align: middle;\n  margin-top: 5px; }\n\n.img-crop .total-wrap {\n  padding: 30px; }\n\n.img-crop .crop-wrap {\n  max-width: 100%;\n  max-height: 90%;\n  overflow: hidden; }\n\n.img-crop .crop-img {\n  max-width: 100%;\n  max-height: 100%; }\n", ""]);
 
 // exports
 
@@ -2180,13 +2231,41 @@ exports = module.exports = __webpack_require__(1)();
 
 
 // module
-exports.push([module.i, ".error {\n  color: red; }\n\n.field-panel {\n  background-color: #F5F5F5;\n  margin: 20px;\n  padding: 20px 30px;\n  position: relative;\n  border: 1px solid #D9D9D9;\n  overflow: auto; }\n  .field-panel:after {\n    content: '';\n    display: block;\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    bottom: 0px;\n    width: 180px;\n    border-radius: 6px;\n    background-color: #fff;\n    z-index: 0; }\n  .field-panel .form-group.field {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: start;\n        -ms-flex-align: start;\n            align-items: flex-start; }\n    .field-panel .form-group.field .field_input {\n      -webkit-box-flex: 0;\n          -ms-flex-positive: 0;\n              flex-grow: 0;\n      padding: 5px 20px; }\n      .field-panel .form-group.field .field_input .ckeditor {\n        padding: 20px; }\n    .field-panel .form-group.field:first-child .control-label {\n      border-top: 5px solid #FFF; }\n    .field-panel .form-group.field .control-label {\n      width: 150px;\n      text-align: right;\n      padding: 5px 30px;\n      z-index: 100;\n      -ms-flex-negative: 0;\n          flex-shrink: 0;\n      border-top: 1px solid #EEE; }\n  .field-panel .form-group.field .field_input ._tow-col-sel {\n    /*width:750px;*/ }\n  .field-panel .form-group.field .help_text {\n    padding: 10px;\n    color: #999;\n    font-style: italic;\n    font-size: 0.9em; }\n  .field-panel .field.error .error {\n    display: inline-block;\n    vertical-align: top;\n    padding-top: 8px; }\n\n._tow-col-sel select {\n  min-height: 7em; }\n\nimg.img-uploador {\n  max-width: 100px;\n  max-height: 100px; }\n\n.req_star {\n  color: red; }\n", ""]);
+exports.push([module.i, "@charset \"UTF-8\";\n#_load_frame_wrap {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: none;\n  z-index: 1000;\n  background: rgba(88, 88, 88, 0.2); }\n\n.imiddle {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  -ms-transform: translate(-50%, -50%);\n  /* IE 9 */\n  -moz-transform: translate(-50%, -50%);\n  /* Firefox */\n  -webkit-transform: translate(-50%, -50%);\n  /* Safari 和 Chrome */\n  -o-transform: translate(-50%, -50%);\n  text-align: center;\n  /*display: table;*/\n  z-index: 10000; }\n\n.popframe {\n  width: 500px;\n  height: 400px; }\n", ""]);
 
 // exports
 
 
 /***/ }),
 /* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, ".error {\n  color: red; }\n\n.field-panel {\n  background-color: #F5F5F5;\n  margin: 20px;\n  padding: 20px 30px;\n  position: relative;\n  border: 1px solid #D9D9D9;\n  overflow: auto; }\n  .field-panel:after {\n    content: '';\n    display: block;\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    bottom: 0px;\n    width: 180px;\n    border-radius: 6px;\n    background-color: #fff;\n    z-index: 0; }\n  .field-panel .form-group.field {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: start;\n        -ms-flex-align: start;\n            align-items: flex-start; }\n    .field-panel .form-group.field .field_input {\n      -webkit-box-flex: 0;\n          -ms-flex-positive: 0;\n              flex-grow: 0;\n      padding: 5px 20px; }\n      .field-panel .form-group.field .field_input .ckeditor {\n        padding: 20px; }\n    .field-panel .form-group.field:first-child .control-label {\n      border-top: 5px solid #FFF; }\n    .field-panel .form-group.field .control-label {\n      width: 150px;\n      text-align: right;\n      padding: 5px 30px;\n      z-index: 100;\n      -ms-flex-negative: 0;\n          flex-shrink: 0;\n      border-top: 1px solid #EEE; }\n  .field-panel .form-group.field .field_input ._tow-col-sel {\n    /*width:750px;*/ }\n  .field-panel .form-group.field .help_text {\n    padding: 10px;\n    color: #999;\n    font-style: italic;\n    font-size: 0.9em; }\n  .field-panel .field.error .error {\n    display: inline-block;\n    vertical-align: top;\n    padding-top: 8px; }\n\n._tow-col-sel select {\n  min-height: 7em; }\n\nimg.img-uploador {\n  max-width: 100px;\n  max-height: 100px; }\n\n.req_star {\n  color: red; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, ".tab-lite {\n  display: inline-block;\n  padding: 0.2em 0.7em;\n  background-color: rgba(76, 173, 247, 0.3);\n  border: 1px solid #7cc9ff;\n  border-radius: 0.2em;\n  margin: 0.2em 0.3em; }\n\n.tab-lite.selected {\n  background-color: rgba(76, 173, 247, 0.6);\n  border: 1px solid #1a6aff; }\n\n.tab-lite .cross {\n  margin-left: 0.8em; }\n\n.tab-lite .cross:hover {\n  cursor: pointer; }\n\n.tab-box {\n  border: 1px solid #f4efeb;\n  padding: 0.2em 0.5em;\n  min-height: 2em;\n  display: inline-block;\n  min-width: 10em; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2416,6 +2495,43 @@ window.use_ckeditor = ck.use_ckeditor;
 window.show_upload = _ajax_fun.show_upload;
 window.hide_upload = _ajax_fun.hide_upload;
 window.merge = merge;
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+__webpack_require__(13);
+
+var tab_lite = {
+    // event: close(value)
+    template: '<div class="tab-lite">\n        <span v-text="label"></span>\n        <span v-if="!readonly" @click="$emit(\'close\',value)" class="cross">X</span>\n    </div>',
+    props: ['value', 'label', 'readonly']
+};
+Vue.component('com-tab-lite', tab_lite);
+
+var tab_box = {
+    template: '  <div class="tab-box">\n        <com-tab-lite :class="{\'selected\':seleced_item==item}" v-for="item in value" :value="item.value" :label="item.label" :readonly="readonly" @close="on_tab_close_click($event)" @click.native="on_tab_click(item)"></com-tab-lite>\n    </div>',
+    props: ['value', 'readonly'],
+    data: function data() {
+        return {
+            seleced_item: {}
+        };
+    },
+    methods: {
+        on_tab_close_click: function on_tab_close_click(tab_value) {
+            ex.remove(this.value, { value: tab_value });
+            this.$emit('input', this.value);
+        },
+        on_tab_click: function on_tab_click(item) {
+            this.seleced_item = item;
+            this.$emit('selected', item.value);
+        }
+    }
+};
+Vue.component('com-tab-box', tab_box);
 
 /***/ })
 /******/ ]);

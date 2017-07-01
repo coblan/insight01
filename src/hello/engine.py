@@ -5,13 +5,15 @@ from helpers.director.shortcut import page_dc,has_permit
 from django.contrib.auth.models import User,Group
 # from employee.models import EmployeeModel,BasicInfo
 # from workload.models import Work,WorkRecord
+from helpers.pageadaptor.models import WebPage
 from hello.models import Comment
 from .pages import WXHome
 from helpers.director.models import KVModel
 from django.core.urlresolvers import reverse
-
+from helpers.maintenance.update_static_timestamp import static_file_timestamp_dict
 from helpers.case.organize import menu as organize_menu
 from helpers.case.work import menu as work_menu
+from helpers.pageadaptor.shotcut import Press
 
 class PcEngine(BaseEngine):
     url_name='pc_engine'
@@ -38,9 +40,10 @@ class PcEngine(BaseEngine):
                     # {'label':'工作记录','url':page('workrecord'),'visible':can_touch(WorkRecord)}
                     # ]
          # },
+         
         {'label':'留言','url':page('comment'),'icon':fa('fa-home')},
         {'label':'设置','url':page('kv'),'icon':fa('fa-home'),'visible':can_touch(KVModel)},
-        #{'label':'Page Admin','url':page('webpage'),'icon':fa('fa-home'),'visible':can_touch(WebPage)},
+        {'label':'Page Admin','url':page('webpage'),'icon':fa('fa-home'),'visible':can_touch(WebPage)},
     
     ]    
 
@@ -70,6 +73,14 @@ class WxEngine(BaseEngine):
         {'label':'统计','url':page('static'),'icon':fa('fa-bar-chart fa-2x'),'visible':and_list( ['static.work'])},
         
     ]
+    
+    def custome_ctx(self, ctx):
+        help_name = 'help_'+ctx['page_name']
+        ctx['stamp']=static_file_timestamp_dict
+        engine_press=Press(help_name)
+        if engine_press.page:
+            ctx['help_url']=self.get_url('press')+'?_name=%s'%help_name
+        return ctx    
 
 WxEngine.add_pages(page_dc)
 WxEngine.add_pages({'home.wx':WXHome})
