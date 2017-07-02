@@ -97,10 +97,6 @@
             </div>
         </div>
 
-
-        <!--<div style="text-align: right;padding: 0.5em 1em;">-->
-            <!--<i class="fa fa-align-justify fa-2x" aria-hidden="true" @click="show_menu=true"></i>-->
-        <!--</div>-->
     </div>
 
 <transition name="fade">
@@ -119,24 +115,29 @@
 
 
 {% block item_view %}
-
-    <div v-for="row in rows" class="flex comment-row">
-        <div class="head">
-            <img :src="row.emp_info.head" alt="" style="width: 2em;border-radius: 1em;"/>
-        </div>
-        <div class="bd flex-grow">
-            <div class="flex flex-ac">
-                <span class="name flex-grow" v-text="row.emp"></span>
-                <a v-if="can_reply" class="edit-btn"  :href="get_edit_link(row.pk)">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+<div class="flex-grow" style="position: relative;">
+    <div class="scroll-wraper">
+        <div v-for="row in rows" class="flex comment-row">
+            <div class="head">
+                <img :src="row.emp_info.head" alt="" style="width: 2em;border-radius: 1em;"/>
             </div>
-            <p v-html="txt_to_html(row.content)"></p>
-            <div class="rep" v-if="row.rep_content">
-                <div class="reply name">管理员答复:</div>
-                <p class="content" v-html="txt_to_html(row.rep_content)"></p>
+            <div class="bd flex-grow">
+                <div class="flex flex-ac">
+                    <span class="name flex-grow" v-text="row.emp"></span>
+                    <a v-if="can_reply" class="edit-btn"  :href="get_edit_link(row.pk)">
+                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                </div>
+                <p v-html="txt_to_html(row.content)"></p>
+                <div class="rep" v-if="row.rep_content">
+                    <div class="reply name">管理员答复:</div>
+                    <p class="content" v-html="txt_to_html(row.rep_content)"></p>
+                </div>
             </div>
         </div>
     </div>
+
+</div>
+
 {% endblock %}
 
 
