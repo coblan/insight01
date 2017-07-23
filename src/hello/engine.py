@@ -14,6 +14,7 @@ from helpers.maintenance.update_static_timestamp import static_file_timestamp_di
 from helpers.case.organize import menu as organize_menu
 from helpers.case.work import menu as work_menu
 from helpers.pageadaptor.shotcut import Press
+from helpers.case.map_daka import menu as map_daka_menu
 
 class PcEngine(BaseEngine):
     url_name='pc_engine'
@@ -84,3 +85,34 @@ class WxEngine(BaseEngine):
 
 WxEngine.add_pages(page_dc)
 WxEngine.add_pages({'home.wx':WXHome})
+
+
+class F7Engine(BaseEngine):
+    url_name='f7_engine'
+    prefer='f7'
+    root_page='/f7/home.f7'
+    
+    menu=organize_menu.f7_menu+ \
+        work_menu.f7_menu  + \
+        map_daka_menu.f7_menu
+    
+    def custome_ctx(self, ctx):
+        ctx['stamp']=static_file_timestamp_dict
+        
+        help_name = 'help_'+ctx['page_name']
+        engine_press=Press(help_name)
+        if engine_press.page:
+            ctx['help_url']=self.get_url('press')+'?_name=%s'%help_name
+        return ctx    
+
+class F7FrameWraper(object):
+    template='f7/frame_wraper.html'
+    def __init__(self,request):
+        src= request.GET.get('src')
+        self.src=urllib.unquote( src)
+        
+    def get_context(self):
+        return {'src':self.src}
+    
+F7Engine.add_pages(page_dc)
+F7Engine.add_pages({'f7.html':F7FrameWraper})

@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.conf.urls import url,include
 from django.contrib import admin
-from hello.engine import PcEngine,WxEngine
+from hello.engine import PcEngine,WxEngine,F7Engine
 #from helpers.director import urls as director_urls
 from helpers.director import login_url
 # from employee import views as emp_views
@@ -33,6 +33,7 @@ from helpers.case.work import urls as work_urls
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'pc/([\w\.]+)/?$',PcEngine.as_view(),name=PcEngine.url_name),
+    url(r'f7/([\w\.]+)/?$',F7Engine.as_view(),name=F7Engine.url_name),
     
     url(r'^wx/help.wx$',hello_view.help_view),
     
@@ -46,6 +47,7 @@ urlpatterns = [
     url(r'^_ajax/(?P<app>\w+)?/?$',director_views.ajax_views,name='ajax_url'),
     url(r'^_ajax/?$',director_views.ajax_views),  
     url(r'^_download/(?P<app>\w+)?/?$',director_views.donwload_views,name='download_url'),
+    #url(r'^_f7_iframe/?$',director_views.f7_frame_wraper),
     
     url(r'^_wechat/',include(wechat_url)),
     

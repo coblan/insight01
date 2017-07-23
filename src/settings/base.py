@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'helpers.case.organize',
     'helpers.case.site_frame',
     'helpers.case.work',
+    'helpers.case.map_daka',
+    
     'helpers.pageadaptor',
     
     # 'employee',
