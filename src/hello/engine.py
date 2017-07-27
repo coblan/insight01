@@ -15,6 +15,7 @@ from helpers.case.organize import menu as organize_menu
 from helpers.case.work import menu as work_menu
 from helpers.pageadaptor.shotcut import Press
 from helpers.case.map_daka import menu as map_daka_menu
+from django.views.decorators.cache import cache_control
 
 class PcEngine(BaseEngine):
     url_name='pc_engine'
@@ -87,6 +88,7 @@ WxEngine.add_pages(page_dc)
 WxEngine.add_pages({'home.wx':WXHome})
 
 
+
 class F7Engine(BaseEngine):
     url_name='f7_engine'
     prefer='f7'
@@ -103,7 +105,11 @@ class F7Engine(BaseEngine):
         engine_press=Press(help_name)
         if engine_press.page:
             ctx['help_url']=self.get_url('press')+'?_name=%s'%help_name
-        return ctx    
+        return ctx  
+    
+    # @cache_control(max_age=0,must_revalidate=True)
+    # def view(self, request, name):
+        # return super(F7Engine,self).view(request,name)
 
 class F7FrameWraper(object):
     template='f7/frame_wraper.html'
