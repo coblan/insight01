@@ -29,9 +29,13 @@ from helpers.debug.debug_toolbar import debugtoolbar_setting
 
 from helpers.case.organize import urls as organize_urls
 from helpers.case.work import urls as work_urls
+from django.views.generic import RedirectView 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    
+    url(r'wx/home.wx',RedirectView.as_view(url='/f7/home.f7')),
+    
     url(r'pc/([\w\.]+)/?$',PcEngine.as_view(),name=PcEngine.url_name),
     url(r'f7/([\w\.]+)/?$',F7Engine.as_view(),name=F7Engine.url_name),
     
