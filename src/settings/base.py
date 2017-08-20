@@ -141,3 +141,16 @@ MEDIA_ROOT= os.path.join( os.path.dirname(BASE_DIR),'media')
 MEDIA_URL = '/media/'
 
 # USE_ETAGS=True
+
+STATICFILES_FINDERS=[
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+]
+
+import sys
+if 'collectstatic' not in sys.argv:
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR, 'static').replace('\\', '/'),
+    )
+else:
+    STATIC_ROOT= os.path.join(BASE_DIR, 'static').replace('\\', '/')

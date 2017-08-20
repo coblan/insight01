@@ -1,5 +1,6 @@
 # encoding:utf-8
 
+import os
 from helpers.director.engine import BaseEngine,can_list,can_touch,fa,page,and_list
 from helpers.director.shortcut import page_dc,has_permit
 from django.contrib.auth.models import User,Group
@@ -10,7 +11,7 @@ from hello.models import Comment
 from .pages import WXHome
 from helpers.director.models import KVModel
 from django.core.urlresolvers import reverse
-from helpers.maintenance.update_static_timestamp import static_file_timestamp_dict
+from helpers.maintenance.update_static_timestamp import static_file_timestamp_dict,get_static_obj,org_static_file_path
 from helpers.case.organize import menu as organize_menu
 from helpers.case.work import menu as work_menu
 from helpers.pageadaptor.shotcut import Press
@@ -87,7 +88,7 @@ class WxEngine(BaseEngine):
 WxEngine.add_pages(page_dc)
 WxEngine.add_pages({'home.wx':WXHome})
 
-
+organize_static= os.path.join(org_static_file_path,'organize')
 
 class F7Engine(BaseEngine):
     url_name='f7_engine'
@@ -100,7 +101,7 @@ class F7Engine(BaseEngine):
     
     def custome_ctx(self, ctx):
         ctx['stamp']=static_file_timestamp_dict
-        
+        ctx['organize_stamp']= get_static_obj(organize_static)
         help_name = 'help_'+ctx['page_name']
         engine_press=Press(help_name)
         if engine_press.page:

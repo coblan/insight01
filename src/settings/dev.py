@@ -3,7 +3,7 @@ from helpers.debug.debug_toolbar import debugtoolbar_setting
 
 #debugtoolbar_setting.SET(globals())
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR,'static'),)
+#STATICFILES_DIRS = (os.path.join(BASE_DIR,'static'),)
 
 from helpers.maintenance.log import log_setting
 log_setting.SET(globals())
