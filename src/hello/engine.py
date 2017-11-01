@@ -26,6 +26,7 @@ class PcEngine(BaseEngine):
          'submenu':[
              {'label':'用户管理','url':page('user'),'visible':can_touch(User)},
              {'label':'用户组','url':page('group'),'visible':can_touch(Group)},
+             {'label':'权限分组','url':page('group_human'),'visible':can_touch(Group)},
              ]},
         
         organize_menu.pc_menu,

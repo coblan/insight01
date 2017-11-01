@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
 /******/ 			exports: {}
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// identity function for calling harmony imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
-
+/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -46,7 +46,7 @@
 /******/ 			});
 /******/ 		}
 /******/ 	};
-
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -55,111 +55,19 @@
 /******/ 		__webpack_require__.d(getter, 'a', getter);
 /******/ 		return getter;
 /******/ 	};
-
+/******/
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
->5>front/table.rst>
-
-table的过滤器
-============
-::
-
-    class SalaryFilter(RowFilter):
-    names=['is_checked']
-    range_fields=[{'name':'month','type':'month'}]
-    model=SalaryRecords
-
-<-<
- */
-
-Vue.component('com-filter', {
-    props: ['heads', 'search', 'search_tip'],
-    template: ex.template('\n    <form class=\'com-filter\' autocomplete="on" v-if=\'search_tip || heads.length>0\'>\n            <input v-if=\'search_tip\' type="text" name="_q" v-model=\'search._q\' :placeholder=\'search_tip\' class=\'form-control\'/>\n            <select v-if="filter.options"  v-for=\'filter in heads\'\n                v-model=\'search[filter.name]\' class=\'form-control\'>\n                <option :value="undefined" v-text=\'filter.label\'></option>\n                <option value="">-------</option>\n                <option v-for=\'option in filter.options\' :value="option.value" v-text=\'option.label\'></option>\n            </select>\n            <div  v-for=\'filter in heads\' v-if="[\'time\',\'date\',\'month\'].indexOf(filter.type)!=-1" class="date-filter flex">\n                <span>{From}</span>\n                <date v-if="filter.type==\'month\'" set="month" v-model="search[\'_start_\'+filter.name]"></date>\n                <date v-if="filter.type==\'date\'"  v-model="search[\'_start_\'+filter.name]"></date>\n                <span>{To}</span>\n                <date v-if="filter.type==\'month\'" set="month" v-model="search[\'_end_\'+filter.name]"></date>\n                <date v-if="filter.type==\'date\'"  v-model="search[\'_end_\'+filter.name]"></date>\n            </div>\n\n            <slot></slot>\n\n            <button name="go" type="button" class="btn btn-info" @click=\'m_submit()\' >{submit}</button>\n        </form>\n    ', ex.trList(['From', 'To', 'submit'])),
-    created: function created() {
-        var self = this;
-        ex.each(self.heads, function (filter) {
-            if (ex.isin(filter.type, ['month', 'date'])) {
-                if (!self.search['_start_' + filter.name]) {
-                    Vue.set(self.search, '_start_' + filter.name, '');
-                }
-                if (!self.search['_end_' + filter.name]) {
-                    Vue.set(self.search, '_end_' + filter.name, '');
-                }
-            }
-        });
-    },
-    methods: {
-        m_submit: function m_submit() {
-            this.$emit('submit');
-            //if(this.submit){
-            //    this.submit()
-            //}else{
-            //    location =ex.template('{path}{search}',{path:location.pathname,
-            //        search: encodeURI(ex.searchfy(this.search,'?')) })
-            //}
-        }
-    }
-
-});
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(2);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// add the styles to the DOM
-var update = __webpack_require__(4)(content, {});
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js??ref--1-2!./../../../node_modules/sass-loader/lib/loader.js!./table.scss", function() {
-			var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js??ref--1-2!./../../../node_modules/sass-loader/lib/loader.js!./table.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(3)();
-// imports
-
-
-// module
-exports.push([module.i, "table.fake-suit {\n  border: 1px solid #DDD;\n  border-radius: 6px; }\n  table.fake-suit th {\n    font-weight: bold;\n    background-color: #e5e5e5;\n    background-image: -webkit-linear-gradient(top, #f3f3f3, #e5e5e5);\n    background-image: linear-gradient(to bottom, #f3f3f3, #e5e5e5); }\n  table.fake-suit td {\n    border-left: 1px solid #F5F5F5; }\n  table.fake-suit tr > td:first-child {\n    border-left: none; }\n  table.fake-suit tbody tr {\n    background-color: white; }\n  table.fake-suit tbody td {\n    border-top: 1px solid #E7E7E7;\n    padding-top: 3px;\n    padding-bottom: 3px; }\n  table.fake-suit tbody tr:nth-child(even) {\n    background-color: #FAFAFA; }\n  table.fake-suit tbody tr:hover {\n    background-color: #F5F5F5; }\n\n.paginator input {\n  width: 20px; }\n\n.paginator .page-input-block {\n  display: inline-block; }\n\n.paginator button {\n  vertical-align: top; }\n\n.sort-mark img {\n  width: 20px; }\n\nul.pagination li {\n  display: inline;\n  cursor: pointer; }\n\nul.pagination li span {\n  color: black;\n  float: left;\n  padding: 4px 10px;\n  text-decoration: none;\n  border: 1px solid #ddd; }\n\nul.pagination li span.active {\n  background-color: #4CAF50;\n  color: white; }\n\nul.pagination li span:hover:not(.active) {\n  background-color: #ddd; }\n\n.com-filter .date-filter {\n  padding-left: 10px; }\n  .com-filter .date-filter span {\n    padding-left: 5px; }\n  .com-filter .date-filter .datetime-picker {\n    min-width: 10em;\n    max-width: 14em; }\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports) {
 
 /*
@@ -215,7 +123,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 4 */
+/* 1 */
 /***/ (function(module, exports) {
 
 /*
@@ -231,7 +139,7 @@ var stylesInDom = {},
 		};
 	},
 	isOldIE = memoize(function() {
-		return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		return /msie [6-9]\b/.test(self.navigator.userAgent.toLowerCase());
 	}),
 	getHeadElement = memoize(function () {
 		return document.head || document.getElementsByTagName("head")[0];
@@ -467,21 +375,210 @@ function updateLink(linkElement, obj) {
 
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+>5>front/table.rst>
+
+table的过滤器
+============
+::
+
+    class SalaryFilter(RowFilter):
+    names=['is_checked']
+    range_fields=[{'name':'month','type':'month'}]
+    model=SalaryRecords
+
+
+<-<
+ */
+
+__webpack_require__(8);
+
+Vue.component('com-filter', {
+    props: ['heads', 'search', 'search_tip'],
+    template: ex.template('\n    <form v-if=\'search_tip || heads.length>0\' class="com-filter flex flex-grow flex-ac">\n                <input style="max-width: 20em;min-width: 10em;" v-if=\'search_tip\' type="text" name="_q" v-model=\'search._q\' :placeholder=\'search_tip\' class=\'form-control\'/>\n                <div class="flex row-filter"  style="flex-grow:0;min-width: 10em;">\n                    <!--<component is="sim-filter"  v-model=\'search[filter.name]\' v-if="filter.options"  v-for=\'filter in heads\' :id="\'filter-\'+filter.name"-->\n                    <!--</component>-->\n                     <component :is="filter.type?filter.type:\'sim-filter\'"  :filter="filter" v-model=\'search[filter.name]\' v-if="filter.options"  v-for=\'filter in heads\' :id="\'filter-\'+filter.name">\n                    </component>\n\n                    <!--<select  v-if="filter.options" v-for=\'filter in heads\' :id="\'filter-\'+filter.name"-->\n                        <!--v-model=\'value\' class=\'form-control\' >-->\n                        <!--<option :value="undefined" v-text=\'filter.label\'></option>-->\n                        <!--<option value="">-&#45;&#45;&#45;&#45;&#45;&#45;</option>-->\n                        <!--<option v-for=\'option in orderBy( filter.options,"label")\' :value="option.value" v-text=\'option.label\'></option>-->\n                    <!--</select>-->\n                </div>\n\n                <div  v-for=\'filter in heads\' v-if="[\'time\',\'date\',\'month\'].indexOf(filter.type)!=-1" class="date-filter flex flex-ac">\n                    <span v-text="filter.label"></span>\n                    <span>{From}</span>\n                    <div>\n                         <date v-if="filter.type==\'month\'" set="month" v-model="search[\'_start_\'+filter.name]"></date>\n                        <date v-if="filter.type==\'date\'"  v-model="search[\'_start_\'+filter.name]"></date>\n                    </div>\n                    <span>{To}</span>\n                    <div>\n                        <date v-if="filter.type==\'month\'" set="month" v-model="search[\'_end_\'+filter.name]"></date>\n                        <date v-if="filter.type==\'date\'"  v-model="search[\'_end_\'+filter.name]"></date>\n                    </div>\n\n                </div>\n\n                <slot></slot>\n\n          <button name="go" type="button" class="btn btn-info btn-sm" @click=\'m_submit()\' >{search}</button>\n        </form>\n    ', ex.trList(['From', 'To', 'search'])),
+    created: function created() {
+        var self = this;
+        ex.each(self.heads, function (filter) {
+            if (ex.isin(filter.type, ['month', 'date'])) {
+                if (!self.search['_start_' + filter.name]) {
+                    Vue.set(self.search, '_start_' + filter.name, '');
+                }
+                if (!self.search['_end_' + filter.name]) {
+                    Vue.set(self.search, '_end_' + filter.name, '');
+                }
+            }
+        });
+    },
+    methods: {
+        m_submit: function m_submit() {
+            this.$emit('submit');
+        },
+        orderBy: function orderBy(array, key) {
+            return array.slice().sort(function (a, b) {
+                if (isChinese(a[key]) && isChinese(b[key])) {
+                    return a[key].localeCompare(b[key], 'zh');
+                } else {
+                    return compare(a[key], b[key]);
+                }
+            });
+        }
+    }
+
+});
+
+function isChinese(temp) {
+    var re = /[^\u4E00-\u9FA5]/;
+    if (re.test(temp[0])) {
+        return false;
+    }
+    return true;
+}
+function compare(temp1, temp2) {
+    if (temp1 < temp2) {
+        return -1;
+    } else if (temp1 == temp2) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+var sim_filter = {
+    props: ['filter', 'value'],
+    data: function data() {
+        return {
+            myvalue: this.value
+        };
+    },
+    watch: {
+        myvalue: function myvalue(v) {
+            this.$emit('input', v);
+        }
+    },
+    methods: {
+        orderBy: function orderBy(array, key) {
+            return array.slice().sort(function (a, b) {
+                if (isChinese(a[key]) && isChinese(b[key])) {
+                    return a[key].localeCompare(b[key], 'zh');
+                } else {
+                    return compare(a[key], b[key]);
+                }
+            });
+        }
+    },
+    template: '<select  v-if="filter.options"\n    v-model=\'myvalue\' class=\'form-control\' >\n    <option :value="undefined" v-text=\'filter.label\'></option>\n    <option value="">-------</option>\n    <option v-for=\'option in orderBy( filter.options,"label")\' :value="option.value" v-text=\'option.label\'></option>\n    </select>\n\n    '
+};
+Vue.component('sim-filter', sim_filter);
+
+var sim_filter_with_search = {
+    props: ['filter', 'value'],
+    data: function data() {
+        return {
+            myvalue: this.value
+        };
+    },
+    mounted: function mounted() {
+        var self = this;
+        ex.load_js("/static/lib/bootstrap-select.min.js", function () {
+            $(self.$el).selectpicker();
+        });
+        ex.load_css("/static/lib/bootstrap-select.min.css");
+    },
+    watch: {
+        myvalue: function myvalue(v) {
+            this.$emit('input', v);
+        }
+    },
+    methods: {
+        orderBy: function orderBy(array, key) {
+            return array.slice().sort(function (a, b) {
+                if (isChinese(a[key]) && isChinese(b[key])) {
+                    return a[key].localeCompare(b[key], 'zh');
+                } else {
+                    return compare(a[key], b[key]);
+                }
+            });
+        }
+    },
+    template: '<select class="selectpicker form-control"  data-live-search="true" v-model=\'myvalue\'>\n        <option :value="undefined" v-text=\'filter.label\'></option>\n        <option value="">-------</option>\n        <option v-for=\'option in orderBy( filter.options,"label")\' :value="option.value"\n           :data-tokens="option.label" v-text=\'option.label\'>\n        </option>\n        </select>\n    '
+};
+Vue.component('sel-search-filter', sim_filter_with_search);
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var first_col = {
+    props: ['row', 'name'],
+    methods: {
+        ret: function ret(row) {
+            ln.ret(row);
+        },
+        form_link: function form_link(name, row) {
+            return ex.template('{edit}?pk={pk}', { edit: page_name + '.edit',
+                pk: row.pk
+            });
+        },
+        is_pop: function is_pop() {
+            return search_args._pop;
+        }
+    },
+    template: '<div>\n    <span v-if="is_pop()"  v-text="row[name]" @click="ret(row)" style="cursor: pointer;color: #5d9cd3"></span>\n    <a v-else :href="form_link(name,row)" v-text="row[name]"></a>\n    </div>'
+};
+
+Vue.component('first-col', first_col);
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(6);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/postcss-loader/index.js??ref--1-2!../../../node_modules/sass-loader/lib/loader.js!./table.scss", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/postcss-loader/index.js??ref--1-2!../../../node_modules/sass-loader/lib/loader.js!./table.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _filter = __webpack_require__(0);
+var _filter = __webpack_require__(2);
 
 var myfilter = _interopRequireWildcard(_filter);
 
+var _first_col = __webpack_require__(3);
+
+var first_col = _interopRequireWildcard(_first_col);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-__webpack_require__(1);
-
-// 下面这个sort-table应该是不用了的。有空来清理它
 
 /*
 >->front/table.rst>
@@ -499,6 +596,9 @@ rows=[{xxx:"jjy",jb:'hahaer'}]
 <-<
  */
 
+__webpack_require__(4);
+
+// 下面这个sort-table应该是不用了的。有空来清理它
 Vue.component('sort-table', {
     props: {
         value: {},
@@ -627,9 +727,31 @@ var com_table = {
         },
         is_sortable: function is_sortable(name) {
             return ex.isin(name, this.row_sort.sortable);
+        },
+        toggle: function toggle(sort_str, name) {
+            var ls = ex.split(sort_str, ',');
+            var norm_ls = this.filter_minus(ls);
+            var idx = norm_ls.indexOf(name);
+            if (idx != -1) {
+                ls[idx] = ls[idx].startsWith('-') ? name : '-' + name;
+            } else {
+                ls.push(name);
+            }
+            return ls.join(',');
+        },
+        toggle_all: function toggle_all(e) {
+            var checked = e.currentTarget.checked;
+            if (checked) {
+                this.selected = ex.map(this.rows, function (row) {
+                    return row.pk;
+                });
+            } else {
+                this.selected = [];
+            }
         }
+
     },
-    template: '\t<table>\n\t\t<thead>\n\t\t\t<tr >\n\t\t\t\t<th style=\'width:50px\' v-if=\'has_check\'>\n\t\t\t\t\t<input type="checkbox" name="test" value=""/>\n\t\t\t\t</th>\n\t\t\t\t<th v-for=\'head in heads\' :class=\'["td_"+head.name,{"selected":is_sorted(row_sort.sort_str ,head.name )}]\'>\n\t\t\t\t\t<span v-if=\'is_sortable(head.name)\' v-text=\'head.label\' class=\'clickable\'\n\t\t\t\t\t\t@click=\'row_sort.sort_str = toggle( row_sort.sort_str,head.name)\'></span>\n\t\t\t\t\t<span v-else v-text=\'head.label\'></span>\n\t\t\t\t\t<sort-mark class=\'sort-mark\' v-model=\'row_sort.sort_str\' :name=\'head.name\'></sort-mark>\n\t\t\t\t</th>\n\t\t\t</tr>\n\t\t</thead>\n\t\t<tbody>\n\t\t\t<tr v-for=\'row in rows\'>\n\t\t\t\t<td v-if=\'has_check\'>\n\t\t\t\t\t<input type="checkbox" name="test" :value="row.pk" v-model=\'selected\'/>\n\t\t\t\t</td>\n\t\t\t\t<td v-for=\'head in heads\' :class=\'"td_"+head.name\'>\n\t\t\t\t\t<span v-html=\'m_map(head.name,row)\'></span>\n\t\t\t\t</td>\n\t\t\t</tr>\n\t\t</tbody>\n\t</table>'
+    template: '\t<table>\n\t\t<thead>\n\t\t\t<tr >\n\t\t\t\t<th style=\'width:50px\' v-if=\'has_check\'>\n\t\t\t\t\t<input type="checkbox" name="test" value="" @click="toggle_all($event)"/>\n\t\t\t\t</th>\n\t\t\t\t<th v-for=\'head in heads\' :class=\'["td_"+head.name,{"selected":is_sorted(row_sort.sort_str ,head.name )}]\'>\n\t\t\t\t\t<span v-if=\'is_sortable(head.name)\' v-text=\'head.label\' class=\'clickable\'\n\t\t\t\t\t\t@click=\'row_sort.sort_str = toggle( row_sort.sort_str,head.name)\'></span>\n\t\t\t\t\t<span v-else v-text=\'head.label\'></span>\n\t\t\t\t\t<sort-mark class=\'sort-mark\' v-model=\'row_sort.sort_str\' :name=\'head.name\'></sort-mark>\n\t\t\t\t</th>\n\t\t\t</tr>\n\t\t</thead>\n\t\t<tbody>\n\t\t\t<tr v-for=\'row in rows\'>\n\t\t\t\t<td v-if=\'has_check\'>\n\t\t\t\t\t<input type="checkbox" name="test" :value="row.pk" v-model=\'selected\'/>\n\t\t\t\t</td>\n\t\t\t\t<td v-for=\'head in heads\' :class=\'"td_"+head.name\'>\n\t\t\t\t    <component v-if="head.type" :is="head.type" :name="head.name" :row="row"></component>\n\t\t\t\t\t<span v-else v-html=\'m_map(head.name,row)\'></span>\n\t\t\t\t</td>\n\t\t\t</tr>\n\t\t</tbody>\n\t</table>'
 };
 
 Vue.component('com-table', com_table);
@@ -721,6 +843,8 @@ var build_table_args = {
 
 var table_fun = {
     data: function data() {
+        heads[0].type = 'first-col';
+
         return {
             heads: heads,
             rows: rows,
@@ -752,8 +876,9 @@ var table_fun = {
             location = url;
         },
         search: function search() {
-            location = ex.template('{path}{search}', { path: location.pathname,
-                search: encodeURI(ex.searchfy(this.search_args, '?')) });
+            location = ex.appendSearch(this.search_args);
+            //location =ex.template('{path}{search}',{path:location.pathname,
+            //    search: encodeURI(ex.searchfy(this.search_args,'?')) })
         },
         //rt_win:function(row){
         //    ln.rtWin(row)
@@ -774,6 +899,7 @@ var table_fun = {
             var norm_ls = this.filter_minus(ls);
             return ex.isin(name, norm_ls);
         },
+        // 我放到 com table 去，试试。如果行，证明这里的无用了。
         toggle: function toggle(sort_str, name) {
             var ls = ex.split(sort_str, ',');
             var norm_ls = this.filter_minus(ls);
@@ -794,11 +920,14 @@ var table_fun = {
         },
         map: function map(name, row) {
             var content = row[name];
-            if (this.search_args._pop) {
-                ln.rtWin(row);
-            } else if (name == this.heads[0].name) {
-                return this.form_link(name, row);
-            } else if (content === true) {
+            //if(name==this.heads[0].name){
+            //    if(this.search_args._pop){
+            //        return '<a onclick="ln.ret(row)">'+row[name]+'</a>'
+            //    }else{
+            //        return this.form_link(name,row)
+            //    }
+            //}else
+            if (content === true) {
                 return '<img src="//res.enjoyst.com/true.png" width="15px" />';
             } else if (content === false) {
                 return '<img src="//res.enjoyst.com/false.png" width="15px" />';
@@ -843,11 +972,12 @@ var table_fun = {
             this.search();
         },
         add_new: function add_new() {
-            return ex.template('{engine_url}/{page}.edit/?next={next}', {
+            var url = ex.template('{engine_url}/{page}.edit/?next={next}', {
                 engine_url: engine_url,
                 page: page_name,
                 next: encodeURIComponent(location.href)
             });
+            location = url;
         }
     }
 
@@ -861,7 +991,7 @@ var com_table_btn = {
         };
     },
     props: ['add_new', 'del_item'],
-    template: '<div class=\'btn-group\'>\n    <slot></slot>\n\t\t\t<a type="button" class="btn btn-success btn-sm" :href=\'add_new()\' v-if=\'can_add\' role="button">\u521B\u5EFA</a>\n\t\t\t<button type="button" class="btn btn-danger btn-sm" @click=\'del_item()\' v-if=\'can_del\'>\u5220\u9664</button>\n\n\t\t</div>'
+    template: '<div class=\'btn-group\'>\n            <slot></slot>\n\t\t\t<button type="button" class="btn btn-success btn-sm" @click=\'add_new()\' v-if=\'can_add\'>\u521B\u5EFA</button>\n\t\t\t<button type="button" class="btn btn-danger btn-sm" @click=\'del_item()\' v-if=\'can_del\'>\u5220\u9664</button>\n\n\t\t</div>'
 };
 
 Vue.component('com-table-btn', com_table_btn);
@@ -875,7 +1005,7 @@ Vue.component('sort-mark', {
         };
     },
     mixins: [table_fun],
-    template: '<div class=\'sort-mark\'>\n\t\t\t<span v-if=\'index>0\' v-text=\'index\'></span>\n\t\t\t<img v-if=\'status=="up"\' src=\'http://res.enjoyst.com/image/up_01.png\'\n\t\t\t\t\t @click=\'sort_str=toggle(sort_str,name);$emit("input",sort_str)\'/>\n\t\t\t<img v-if=\'status=="down"\' src=\'http://res.enjoyst.com/image/down_01.png\'\n\t\t\t\t\t @click=\'sort_str=toggle(sort_str,name);$emit("input",sort_str)\'/>\n\t\t\t<img v-if=\'status!="no_sort"\' src=\'http://res.enjoyst.com/image/cross.png\' \n\t\t\t\t\t@click=\'sort_str=remove_sort(sort_str,name);$emit("input",sort_str)\'/>\n\t\t\t</div>\n\t',
+    template: '<span class=\'sort-mark\'>\n\t\t\t<span v-if=\'index>0\' v-text=\'index\'></span>\n\t\t\t<img v-if=\'status=="up"\' src=\'http://res.enjoyst.com/image/up_01.png\'\n\t\t\t\t\t @click=\'sort_str=toggle(sort_str,name);$emit("input",sort_str)\'/>\n\t\t\t<img v-if=\'status=="down"\' src=\'http://res.enjoyst.com/image/down_01.png\'\n\t\t\t\t\t @click=\'sort_str=toggle(sort_str,name);$emit("input",sort_str)\'/>\n\t\t\t<img v-if=\'status!="no_sort"\' src=\'http://res.enjoyst.com/image/cross.png\' \n\t\t\t\t\t@click=\'sort_str=remove_sort(sort_str,name);$emit("input",sort_str)\'/>\n\t\t\t</span>\n\t',
     computed: {
         status: function status() {
             var sorted = this.value.split(',');
@@ -896,10 +1026,86 @@ Vue.component('sort-mark', {
             return 'no_sort';
         }
     }
+    //methods:{
+
+    //	get_status:function () {
+    //		var sorted=this.sort_str.split(',')
+    //		for(var x=0;x<sorted.length;x++){
+    //			var org_name=sorted[x]
+    //			if(org_name.startsWith('-')){
+    //				var name=org_name.slice(1)
+    //				var minus='up'
+    //			}else{
+    //				var name=org_name
+    //				var minus='down'
+    //			}
+    //			if(name==this.name){
+    //				this.index=x+1
+    //				return minus
+    //			}
+    //		}
+    //		return 'no_sort'
+    //	}
+    //}
+
 });
 
 window.table_fun = table_fun;
 window.build_table_args = build_table_args;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(0)();
+// imports
+
+
+// module
+exports.push([module.i, "table.fake-suit {\n  border: 1px solid #DDD;\n  border-radius: 6px; }\n  table.fake-suit th {\n    font-weight: bold;\n    background-color: #e5e5e5;\n    background-image: linear-gradient(to bottom, #f3f3f3, #e5e5e5); }\n  table.fake-suit td {\n    border-left: 1px solid #F5F5F5; }\n  table.fake-suit tr > td:first-child {\n    border-left: none; }\n  table.fake-suit tbody tr {\n    background-color: white; }\n  table.fake-suit tbody td {\n    border-top: 1px solid #E7E7E7;\n    padding-top: 3px;\n    padding-bottom: 3px; }\n  table.fake-suit tbody tr:nth-child(even) {\n    background-color: #FAFAFA; }\n  table.fake-suit tbody tr:hover {\n    background-color: #F5F5F5; }\n\n.paginator input {\n  width: 20px; }\n\n.paginator .page-input-block {\n  display: inline-block; }\n\n.paginator button {\n  vertical-align: top; }\n\n.sort-mark img {\n  width: 10px; }\n\nul.pagination li {\n  display: inline;\n  cursor: pointer; }\n\nul.pagination li span {\n  color: black;\n  float: left;\n  padding: 4px 10px;\n  text-decoration: none;\n  border: 1px solid #ddd; }\n\nul.pagination li span.active {\n  background-color: #4CAF50;\n  color: white; }\n\nul.pagination li span:hover:not(.active) {\n  background-color: #ddd; }\n\n.com-filter .date-filter {\n  padding-left: 10px; }\n  .com-filter .date-filter span {\n    padding-left: 5px; }\n  .com-filter .date-filter .datetime-picker {\n    min-width: 10em;\n    max-width: 14em; }\n\n.clickable {\n  cursor: pointer;\n  color: #39718e; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(0)();
+// imports
+
+
+// module
+exports.push([module.i, ".date-filter {\n  margin: 0 1em; }\n\n.com-filter {\n  -webkit-box-align: start;\n      -ms-flex-align: start;\n          align-items: flex-start;\n  -ms-flex-wrap: wrap;\n      flex-wrap: wrap; }\n\n.row-filter .bootstrap-select {\n  min-width: 10em; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(7);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/postcss-loader/index.js??ref--1-2!../../../node_modules/sass-loader/lib/loader.js!./table_filter.scss", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/postcss-loader/index.js??ref--1-2!../../../node_modules/sass-loader/lib/loader.js!./table_filter.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
 
 /***/ })
 /******/ ]);

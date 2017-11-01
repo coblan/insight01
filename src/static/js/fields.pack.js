@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 18);
+/******/ 	return __webpack_require__(__webpack_require__.s = 20);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -381,7 +381,7 @@ module.exports = function() {
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(16);
+var content = __webpack_require__(18);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(0)(content, {});
@@ -514,9 +514,9 @@ ex.load_css('/static/lib/font-awesome4.7/font-awesome4.7.min.css');
 
 if (!window.__uploading_mark) {
 	window.__uploading_mark = true;
-	document.write('\n\t\t<style>\n\t\t.popup{\n\t\t\tposition: fixed;\n\t\t\ttop: 0;\n\t\t\tleft: 0;\n\t\t\tright: 0;\n\t\t\tbottom: 0;\n\t\t\tdisplay:none;\n\t\t\tz-index: 9000;\n\t\t}\n\t\t#_upload_inn{\n\t\t\tbackground: rgba(88, 88, 88, 0.2);\n\t\t\tborder-radius: 5px;\n\t\t\twidth:180px;\n\t\t\theight:120px;\n\t\t\tz-index: 9500;\n\t\t\t/*padding:30px 80px ;*/\n\t\t}\n\t\t.imiddle{\n\t\t    position: absolute;\n\t        top: 50%;\n\t        left: 50%;\n\t        transform: translate(-50%, -50%);\n\t        -ms-transform:translate(-50%, -50%); \t/* IE 9 */\n\t\t\t-moz-transform:translate(-50%, -50%); \t/* Firefox */\n\t\t\t-webkit-transform:translate(-50%, -50%); /* Safari \u548C Chrome */\n\t\t\t-o-transform:translate(-50%, -50%); \n\t\t\t\n\t        text-align: center;\n\t\t\t/*display: table;*/\n\t        z-index: 10000;\n    \t}\n    \t#_upload_mark{\n    \t\tfloat: left;\n\n    \t}\n\t\t</style>');
+	document.write('\n\t\t<style>\n\t\t._popup{\n\t\t\tposition: fixed;\n\t\t\ttop: 0;\n\t\t\tleft: 0;\n\t\t\tright: 0;\n\t\t\tbottom: 0;\n\t\t\tdisplay:none;\n\t\t\tz-index: 9000;\n\t\t}\n\t\t#_upload_inn{\n\t\t\tbackground: rgba(88, 88, 88, 0.2);\n\t\t\tborder-radius: 5px;\n\t\t\twidth:180px;\n\t\t\theight:120px;\n\t\t\tz-index: 9500;\n\t\t\t/*padding:30px 80px ;*/\n\t\t}\n\t\t.imiddle{\n\t\t    position: absolute;\n\t        top: 50%;\n\t        left: 50%;\n\t        transform: translate(-50%, -50%);\n\t        -ms-transform:translate(-50%, -50%); \t/* IE 9 */\n\t\t\t-moz-transform:translate(-50%, -50%); \t/* Firefox */\n\t\t\t-webkit-transform:translate(-50%, -50%); /* Safari \u548C Chrome */\n\t\t\t-o-transform:translate(-50%, -50%); \n\t\t\t\n\t        text-align: center;\n\t\t\t/*display: table;*/\n\t        z-index: 10000;\n    \t}\n    \t#_upload_mark{\n    \t\tfloat: left;\n\n    \t}\n\t\t</style>');
 	$(function () {
-		$('body').append('<div class="popup" id="load_wrap"><div id=\'_upload_inn\' class="imiddle">\n\t\t<div  id="_upload_mark" class="imiddle"><i class="fa fa-spinner fa-spin fa-3x"></i></div></div></div>');
+		$('body').append('<div class="_popup" id="load_wrap"><div id=\'_upload_inn\' class="imiddle">\n\t\t<div  id="_upload_mark" class="imiddle"><i class="fa fa-spinner fa-spin fa-3x"></i></div></div></div>');
 	});
 }
 
@@ -692,6 +692,96 @@ var edit_level = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+exports.back_ops = back_ops;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+*
+* 这个文件里面的东西不用了。
+* 因为对象映射，牵涉到异步加载问题，只能用函数代替，结果调用方式不在优雅，
+* 不如直接在前段写一个封装函数。见back_ops函数。
+*
+* 直接将后端操作对象暴露到前端
+*
+*
+* bk_manager=new BackOps(myurl)
+* bk_manager.call_some_method(function(resp){
+*       do_something
+*   }
+* )
+* */
+
+var BackOps = exports.BackOps = function () {
+    function BackOps(url) {
+        _classCallCheck(this, BackOps);
+
+        this.url = url;
+        this.init_methods();
+    }
+
+    _createClass(BackOps, [{
+        key: "init_methods",
+        value: function init_methods() {
+            var url = ex.appendSearch(this.url, { get_class: 1 });
+            var self = this;
+            ex.get(url, function (resp) {
+                for (var k in resp) {
+                    var name = resp[k];
+                    if (typeof name == "string") {
+                        (function (name) {
+                            self[name] = function (kw, callback) {
+                                if (typeof kw == 'function') {
+                                    callback = kw;
+                                    kw = null;
+                                }
+                                self.rout_methods(name, kw, callback);
+                            };
+                        })(name);
+                    }
+                }
+            });
+        }
+    }, {
+        key: "rout_methods",
+        value: function rout_methods(name, kw, callback) {
+            var args = { fun: name };
+            if (kw) {
+                ex.assign(args, kw);
+            }
+            ex.post(this.url, JSON.stringify([args]), function (resp) {
+                callback(resp[name]);
+            });
+        }
+    }]);
+
+    return BackOps;
+}();
+
+function back_ops(url) {
+    var proc = function proc(kw_list, callback) {
+        ex.post(url, JSON.stringify(kw_list), function (resp) {
+            if (callback) {
+                callback(resp);
+            }
+        });
+    };
+    return proc;
+}
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 var field_base = exports.field_base = {
     props: {
         name: {
@@ -746,6 +836,41 @@ var field_base = exports.field_base = {
         },
         blocktext: {
             props: ['name', 'row', 'kw'],
+            //data:function(){
+            //    return {
+            //        org_height:0,
+            //    }
+            //},
+            //mounted:function(){
+            //    var self=this
+            //    Vue.nextTick(function(){
+            //        self.on_input()
+            //    })
+            //
+            //},
+            //methods:{
+            //    on_input:function(){
+            //        if(this.kw.readonly) return
+            //        var textarea = $(this.$el).find('textarea')[0]
+            //        if(this.org_height!=textarea.scrollHeight){
+            //            $(textarea).height(textarea.scrollHeight-12)
+            //            this.org_height=textarea.scrollHeight
+            //        }
+            //    }
+            //},
+            //computed:{
+            //    value:function(){
+            //        return this.row[this.name]
+            //    }
+            //},
+            //watch:{
+            //    value:function(v){
+            //        var self=this
+            //        Vue.nextTick(function(){
+            //            self.on_input()
+            //        })
+            //    }
+            //},
             template: '<div>\n            <span v-if=\'kw.readonly\' v-text=\'row[name]\'></span>\n            <textarea v-else class="form-control" rows="3" :id="\'id_\'+name" v-model="row[name]" :placeholder="kw.placeholder" :readonly=\'kw.readonly\'></textarea>\n            </div>'
         },
         color: {
@@ -803,16 +928,7 @@ var field_base = exports.field_base = {
                     model: this.row[this.name]
                 };
             },
-            template: '<div>\n            <span v-if=\'kw.readonly\' v-text=\'get_label(kw.options,row[name])\'></span>\n            <select v-else v-model=\'row[name]\'  :id="\'id_\'+name"  class="form-control">\n            \t<option v-for=\'opt in kw.options\' :value=\'opt.value\' v-text=\'opt.label\'></option>\n            </select>\n            </div>',
-            // 添加，修改，删除的按钮代码，暂时不用。<option :value='null'>----</option>
-            //`<div><select v-model='model'  :id="'id_'+name" :readonly='kw.readonly'>
-            //	<option :value='null'>----</option>
-            //	<option v-for='opt in kw.options' :value='opt.value' v-text='opt.label'></option>
-            //</select>
-            //<span v-if='kw.add_url' @click='add()'><img src='http://res.enjoyst.com/image/add.png' /></span>
-            //<span v-if='kw.change_url' @click='edit()'><img src='http://res.enjoyst.com/image/edit.png' /></span>
-            //<span v-if='kw.del_url' @click='del_row()'><img src='http://res.enjoyst.com/image/delete.png' /></a>
-            //</div>`,
+            template: '<div>\n            <span v-if=\'kw.readonly\' v-text=\'get_label(kw.options,row[name])\'></span>\n            <select v-else v-model=\'row[name]\'  :id="\'id_\'+name"  class="form-control">\n            \t<option v-for=\'opt in orderBy(kw.options,"label")\' :value=\'opt.value\' v-text=\'opt.label\'></option>\n            </select>\n            </div>',
             mounted: function mounted() {
                 if (this.kw.default && !this.row[this.name]) {
                     Vue.set(this.row, this.name, this.kw.default);
@@ -827,9 +943,45 @@ var field_base = exports.field_base = {
                     } else {
                         return option.label;
                     }
+                },
+                orderBy: function orderBy(array, key) {
+                    return order_by_key(array, key);
                 }
             }
         },
+        search_select: {
+            props: ['name', 'row', 'kw'],
+            data: function data() {
+                return {
+                    model: this.row[this.name]
+                };
+            },
+            template: '<div>\n            <span v-if=\'kw.readonly\' v-text=\'get_label(kw.options,row[name])\'></span>\n            <select v-else v-model=\'row[name]\'  :id="\'id_\'+name"  class="selectpicker form-control" data-live-search="true">\n            \t<option v-for=\'opt in orderBy(kw.options,"label")\' :value=\'opt.value\'\n            \t :data-tokens="opt.label" v-text=\'opt.label\'></option>\n            </select>\n            </div>',
+            mounted: function mounted() {
+                var self = this;
+                if (this.kw.default && !this.row[this.name]) {
+                    Vue.set(this.row, this.name, this.kw.default);
+                }
+                ex.load_css("/static/lib/bootstrap-select.min.css");
+                ex.load_js("/static/lib/bootstrap-select.min.js", function () {
+                    $(self.$el).find('.selectpicker').selectpicker();
+                });
+            },
+            methods: {
+                get_label: function get_label(options, value) {
+                    var option = ex.findone(options, { value: value });
+                    if (!option) {
+                        return '---';
+                    } else {
+                        return option.label;
+                    }
+                },
+                orderBy: function orderBy(array, key) {
+                    return order_by_key(array, key);
+                }
+            }
+        },
+
         check_select: {
             props: ['name', 'row', 'kw'],
             computed: {
@@ -869,7 +1021,7 @@ var field_base = exports.field_base = {
         },
         date: {
             props: ['name', 'row', 'kw'],
-            template: '<div><span v-if=\'kw.readonly\' v-text=\'row[name]\'></span>\n            \t\t\t<date v-else v-model="row[name]" :id="\'id_\'+name"\n                        \t:placeholder="kw.placeholder"></date>\n                       </div>'
+            template: '<div><span v-if=\'kw.readonly\' v-text=\'row[name]\'></span>\n                                <date v-else v-model="row[name]" :id="\'id_\'+name"\n                                    :placeholder="kw.placeholder"></date>\n                               </div>'
         },
         datetime: {
             props: ['name', 'row', 'kw'],
@@ -885,7 +1037,7 @@ var field_base = exports.field_base = {
 };
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -910,12 +1062,21 @@ var field_fun = exports.field_fun = {
             can_log: can_log,
             can_edit: can_edit,
 
-            page_label: page_label
+            page_label: page_label,
+            help_url: help_url
         };
     },
     methods: {
-        after_sub: function after_sub() {
-            location = document.referrer;
+        goto: function goto(url) {
+            location = url;
+        },
+        after_sub: function after_sub(new_row) {
+            //ff.back()
+            if (search_args.next) {
+                location = decodeURIComponent(search_args.next);
+            } else {
+                location = document.referrer;
+            }
         },
         before_sub: function before_sub() {},
         submit: function submit() {
@@ -932,12 +1093,8 @@ var field_fun = exports.field_fun = {
                 hide_upload(500);
                 if (resp.save.errors) {
                     self.kw.errors = resp.save.errors;
-                } else if (search._pop == 1) {
-                    window.ln.try_rt({ row: resp.save.row });
-                } else if (search.next) {
-                    location = decodeURIComponent(search.next);
                 } else {
-                    self.after_sub();
+                    self.after_sub(resp.save.row);
                 }
             });
         },
@@ -979,7 +1136,45 @@ var field_fun = exports.field_fun = {
 };
 
 /***/ }),
-/* 7 */
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.order_by_key = order_by_key;
+function isChinese(temp) {
+    var re = /[^\u4E00-\u9FA5]/;
+    if (re.test(temp[0])) {
+        return false;
+    }
+    return true;
+}
+function compare(temp1, temp2) {
+    if (temp1 < temp2) {
+        return -1;
+    } else if (temp1 == temp2) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+function order_by_key(array, key) {
+    return array.slice().sort(function (a, b) {
+        if (isChinese(a[key]) && isChinese(b[key])) {
+            return a[key].localeCompare(b[key], 'zh');
+        } else {
+            return compare(a[key], b[key]);
+        }
+    });
+}
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1083,7 +1278,7 @@ img-uploador
 <<<<
 */
 
-__webpack_require__(11);
+__webpack_require__(13);
 
 var fl = {
     read: function read(file, callback) {
@@ -1467,13 +1662,13 @@ Vue.component('logo-input', {
 window.fl = fl;
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _tab_box = __webpack_require__(19);
+var _tab_box = __webpack_require__(21);
 
 var tab = _interopRequireWildcard(_tab_box);
 
@@ -1533,7 +1728,7 @@ var date_config_set = {
 
 Vue.component('date', {
     //template:'<input type="text" class="form-control">',
-    template: " <div class=\"input-group datetime-picker\">\n                <input type=\"text\" class=\"form-control\" readonly :placeholder=\"placeholder\"/>\n                <div class=\"input-group-addon\" @click=\"$emit('input','')\">\n                    <i class=\"fa fa-calendar-times-o\" aria-hidden=\"true\"></i>\n                </div>\n                </div>",
+    template: " <div class=\"input-group datetime-picker\" style=\"width: 12em;\">\n                <input type=\"text\" class=\"form-control\" readonly :placeholder=\"placeholder\"/>\n                <div class=\"input-group-addon\" @click=\"$emit('input','')\">\n                    <i class=\"fa fa-calendar-times-o\" aria-hidden=\"true\"></i>\n                </div>\n                </div>",
     props: ['value', 'set', 'config', 'placeholder'],
     mounted: function mounted() {
         var self = this;
@@ -1750,7 +1945,7 @@ var check_box = {
 Vue.component('com-check-box', check_box);
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1828,7 +2023,7 @@ popUrlListen:
 <-<
  */
 
-__webpack_require__(12);
+__webpack_require__(14);
 
 var ln = {
     history_handle: function history_handle(obj) {
@@ -1873,23 +2068,37 @@ var ln = {
         sessionStorage.setItem('_stack_' + location.href, JSON.stringify(cache_obj));
         location = ex.appendSearch(url, { _pop: 1 });
     },
-    try_rt: function try_rt(value) {
-        var search_args = ex.parseSearch();
-        if (search_args._pop) {
-            if (search_args._frame) {
-                if (parent.__fram_back) {
-                    parent.__fram_back(value);
-                }
-            } else if (window.opener) {
-                this.rtWin(value);
-            } else {
-                sessionStorage.setItem('_rt', JSON.stringify(value));
-                history.back();
-            }
-            return true;
+    ret: function ret(value) {
+        if (window.opener) {
+            this._ret_win(value);
         } else {
-            return false;
+            this._ret_frame(value);
         }
+    },
+    _ret_frame: function _ret_frame(value) {
+        // 在iframe中运行
+        //var search_args=ex.parseSearch()
+        if (search_args._pop) {
+            if (window.parent.__fram_back) {
+                window.parent.__fram_back(value);
+            }
+
+            //if(search_args._frame){
+            //    if(parent.__fram_back){
+            //        parent.__fram_back(value)
+            //    }
+            //}else if(window.opener){
+            //    this.rtWin(value)
+            //}else{
+            //    sessionStorage.setItem('_rt',JSON.stringify(value))
+            //    history.back()
+            //}
+            //return  true
+        }
+
+        //else{
+        //    return false
+        //}
     },
 
     readCache: function readCache() {
@@ -1982,7 +2191,7 @@ var ln = {
         window.open(norm_url, url, 'height=500,width=800,resizable=yes,scrollbars=yes,top=200,left=300');
         window.__on_subwin_close = callback;
     },
-    rtWin: function rtWin(resp) {
+    _ret_win: function _ret_win(resp) {
         if (window.opener && window.opener.__on_subwin_close) {
             window.opener.__on_subwin_close(resp);
         }
@@ -2004,10 +2213,10 @@ var ln = {
             }
         });
     },
-    openFrame: function openFrame(url, callback, css) {
+    openFrame: function openFrame(url, title, callback, css) {
         var self = this;
         if (!window.__load_frame) {
-            $('body').append('<div id="_load_frame_wrap"><div class="imiddle popframe"><iframe id="_load_frame" frameborder="0" width="100%" height="100%"></iframe></div></div>');
+            $('body').append('<div id="_load_frame_wrap">\n            <div class="imiddle popframe flex-v">\n                <span class="title"><b>' + title + '</b></span>\n                <span class="close-btn" onclick="ln.closeFrame()"><i class="fa fa-times fa-2x" aria-hidden="true"></i></span>\n                <iframe id="_load_frame" frameborder="0" class="flex-grow"></iframe>\n            </div>\n            </div>');
             window.__load_frame = true;
         }
         var url = ex.appendSearch(url, { _pop: 1, _frame: 1 });
@@ -2036,7 +2245,7 @@ var ln = {
 window.ln = ln;
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2103,15 +2312,7 @@ Vue.component('tow-col-sel', {
 	},
 	methods: {
 		orderBy: function orderBy(array, key) {
-			return array.slice().sort(function (a, b) {
-				if (a[key] > b[key]) {
-					return 1;
-				} else if (a[key] < b[key]) {
-					return -1;
-				} else {
-					return 0;
-				}
-			});
+			return order_by_key(array, key);
 		},
 		batch_add: function batch_add() {
 			var self = this;
@@ -2131,13 +2332,13 @@ Vue.component('tow-col-sel', {
 });
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(14);
+var content = __webpack_require__(16);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(0)(content, {});
@@ -2157,13 +2358,13 @@ if(false) {
 }
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(15);
+var content = __webpack_require__(17);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(0)(content, {});
@@ -2183,13 +2384,13 @@ if(false) {
 }
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(17);
+var content = __webpack_require__(19);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(0)(content, {});
@@ -2209,7 +2410,7 @@ if(false) {
 }
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(1)();
@@ -2223,35 +2424,35 @@ exports.push([module.i, ".img-uploader input {\n  display: none; }\n\n.img-uploa
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(1)();
-// imports
-
-
-// module
-exports.push([module.i, "@charset \"UTF-8\";\n#_load_frame_wrap {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: none;\n  z-index: 1000;\n  background: rgba(88, 88, 88, 0.2); }\n\n.imiddle {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  -ms-transform: translate(-50%, -50%);\n  /* IE 9 */\n  -moz-transform: translate(-50%, -50%);\n  /* Firefox */\n  -webkit-transform: translate(-50%, -50%);\n  /* Safari 和 Chrome */\n  -o-transform: translate(-50%, -50%);\n  text-align: center;\n  /*display: table;*/\n  z-index: 10000; }\n\n.popframe {\n  width: 500px;\n  height: 400px; }\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(1)();
-// imports
-
-
-// module
-exports.push([module.i, ".error {\n  color: red; }\n\n.field-panel {\n  background-color: #F5F5F5;\n  margin: 20px;\n  padding: 20px 30px;\n  position: relative;\n  border: 1px solid #D9D9D9;\n  overflow: auto; }\n  .field-panel:after {\n    content: '';\n    display: block;\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    bottom: 0px;\n    width: 180px;\n    border-radius: 6px;\n    background-color: #fff;\n    z-index: 0; }\n  .field-panel .form-group.field {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: start;\n        -ms-flex-align: start;\n            align-items: flex-start; }\n    .field-panel .form-group.field .field_input {\n      -webkit-box-flex: 0;\n          -ms-flex-positive: 0;\n              flex-grow: 0;\n      padding: 5px 20px; }\n      .field-panel .form-group.field .field_input .ckeditor {\n        padding: 20px; }\n    .field-panel .form-group.field:first-child .control-label {\n      border-top: 5px solid #FFF; }\n    .field-panel .form-group.field .control-label {\n      width: 150px;\n      text-align: right;\n      padding: 5px 30px;\n      z-index: 100;\n      -ms-flex-negative: 0;\n          flex-shrink: 0;\n      border-top: 1px solid #EEE; }\n  .field-panel .form-group.field .field_input ._tow-col-sel {\n    /*width:750px;*/ }\n  .field-panel .form-group.field .help_text {\n    padding: 10px;\n    color: #999;\n    font-style: italic;\n    font-size: 0.9em; }\n  .field-panel .field.error .error {\n    display: inline-block;\n    vertical-align: top;\n    padding-top: 8px; }\n\n._tow-col-sel select {\n  min-height: 7em; }\n\nimg.img-uploador {\n  max-width: 100px;\n  max-height: 100px; }\n\n.req_star {\n  color: red; }\n", ""]);
-
-// exports
-
-
-/***/ }),
 /* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "@charset \"UTF-8\";\n#_load_frame_wrap {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: none;\n  z-index: 1000;\n  background: rgba(88, 88, 88, 0.2); }\n\n#_load_frame {\n  width: 100%;\n  height: 100%;\n  border-top: 1px solid #b6b6b6; }\n\n.imiddle {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  -ms-transform: translate(-50%, -50%);\n  /* IE 9 */\n  -moz-transform: translate(-50%, -50%);\n  /* Firefox */\n  -webkit-transform: translate(-50%, -50%);\n  /* Safari 和 Chrome */\n  -o-transform: translate(-50%, -50%);\n  text-align: center;\n  /*display: table;*/\n  z-index: 10000; }\n\n.popframe {\n  max-width: 90vw;\n  max-height: 90vh;\n  min-width: 40em;\n  min-height: 30em;\n  border: 2px solid #8e8e8e;\n  box-shadow: 2px 2px 20px #828282;\n  border-radius: 1em;\n  padding-top: 3em;\n  background-color: white; }\n  .popframe .close-btn {\n    position: absolute;\n    right: 0.5em;\n    top: 0.4em;\n    cursor: pointer; }\n  .popframe .title {\n    position: absolute;\n    top: 0.5em;\n    left: 50%;\n    -webkit-transform: translate(-50%, 0);\n            transform: translate(-50%, 0); }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, ".error {\n  color: red; }\n\n.field-panel {\n  background-color: #F5F5F5;\n  margin: 20px;\n  padding: 20px 30px;\n  position: relative;\n  border: 1px solid #D9D9D9; }\n  .field-panel:after {\n    content: '';\n    display: block;\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    bottom: 0px;\n    width: 180px;\n    border-radius: 6px;\n    background-color: #fff;\n    z-index: 0; }\n  .field-panel .form-group.field {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: start;\n        -ms-flex-align: start;\n            align-items: flex-start; }\n    .field-panel .form-group.field .field_input {\n      -webkit-box-flex: 0;\n          -ms-flex-positive: 0;\n              flex-grow: 0;\n      padding: 5px 20px; }\n      .field-panel .form-group.field .field_input .ckeditor {\n        padding: 20px; }\n    .field-panel .form-group.field:first-child .control-label {\n      border-top: 5px solid #FFF; }\n    .field-panel .form-group.field .control-label {\n      width: 150px;\n      text-align: right;\n      padding: 5px 30px;\n      z-index: 100;\n      -ms-flex-negative: 0;\n          flex-shrink: 0;\n      border-top: 1px solid #EEE; }\n  .field-panel .form-group.field .field_input ._tow-col-sel {\n    /*width:750px;*/ }\n  .field-panel .form-group.field .help_text {\n    padding: 10px;\n    color: #999;\n    font-style: italic;\n    font-size: 0.9em; }\n  .field-panel .field.error .error {\n    display: inline-block;\n    vertical-align: top;\n    padding-top: 8px; }\n\n._tow-col-sel select {\n  min-height: 7em; }\n\nimg.img-uploador {\n  max-width: 100px;\n  max-height: 100px; }\n\n.req_star {\n  color: red; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(1)();
@@ -2265,7 +2466,7 @@ exports.push([module.i, ".tab-lite {\n  display: inline-block;\n  padding: 0.2em
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2278,7 +2479,7 @@ exports.merge = merge;
 
 var _ajax_fun = __webpack_require__(3);
 
-var _file = __webpack_require__(7);
+var _file = __webpack_require__(9);
 
 var f = _interopRequireWildcard(_file);
 
@@ -2286,21 +2487,25 @@ var _ckeditor = __webpack_require__(4);
 
 var ck = _interopRequireWildcard(_ckeditor);
 
-var _multi_sel = __webpack_require__(10);
+var _multi_sel = __webpack_require__(12);
 
 var multi = _interopRequireWildcard(_multi_sel);
 
-var _inputs = __webpack_require__(8);
+var _inputs = __webpack_require__(10);
 
 var inputs = _interopRequireWildcard(_inputs);
 
-var _link = __webpack_require__(9);
+var _link = __webpack_require__(11);
 
 var ln = _interopRequireWildcard(_link);
 
-var _base = __webpack_require__(5);
+var _base = __webpack_require__(6);
 
-var _field_page = __webpack_require__(6);
+var _field_page = __webpack_require__(7);
+
+var _backend = __webpack_require__(5);
+
+var _order = __webpack_require__(8);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -2402,7 +2607,7 @@ Vue.component('com-form-btn', {
 			return this.del_row();
 		}
 	},
-	template: '<div style=\'overflow: hidden;\'>\n\t\t<div class="btn-group" style=\'float: right;\'>\n\t\t\t<button type="button" class="btn btn-default" @click=\'submit()\' v-if=\'can_add\'>Save</button>\n\t\t\t<a type="button" class="btn btn-default" v-if=\'can_del &&del_link\' :href=\'del_link\'>\u5220\u9664</a>\n\t\t\t<button type="button" class="btn btn-default" @click=\'cancel()\' >Cancel</button>\n\t\t</div>\n\t</div>'
+	template: '<div style=\'overflow: hidden;\'>\n\t\t<div class="btn-group" style=\'float: right;\'>\n\t\t\t<button type="button" class="btn btn-default" @click=\'submit()\' v-if=\'can_add\'>\u4FDD\u5B58</button>\n\t\t\t<a type="button" class="btn btn-default" v-if=\'can_del &&del_link\' :href=\'del_link\'>\u5220\u9664</a>\n\t\t\t<button type="button" class="btn btn-default" @click=\'cancel()\' >\u53D6\u6D88</button>\n\t\t</div>\n\t</div>'
 });
 
 var fieldset_fun = {
@@ -2495,15 +2700,18 @@ window.use_ckeditor = ck.use_ckeditor;
 window.show_upload = _ajax_fun.show_upload;
 window.hide_upload = _ajax_fun.hide_upload;
 window.merge = merge;
+window.BackOps = _backend.BackOps;
+window.back_ops = _backend.back_ops;
+window.order_by_key = _order.order_by_key;
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(13);
+__webpack_require__(15);
 
 var tab_lite = {
     // event: close(value)
